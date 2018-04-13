@@ -1,0 +1,170 @@
+	<div class="page">
+		<div class="navdiv">
+			<nav class="navbar navbar-default no-margin">
+				<!-- Navbar Header -->
+				<div class="navbar-header fixed-brand">
+					<div class="navbar-spc">
+						<button class="navbar-toggle collapse in collapse-button" data-toggle="collapse" id="menu-toggle-2">
+							<i class="fa fa-bars" aria-hidden="true"></i>
+						</button>
+
+						<button class="navbar-toggle collapsed collapse-button" data-toggle="collapse" id="menu-toggle">
+						   <i class="fa fa-bars" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div class="navbar-brand"><i ng-show="::(appConfig.logoType == 0)" class="fa fa-{{::appConfig.logoIconName}} fa-4"></i> <img id="sqrimg" ng-show="::(appConfig.logoType == 1)" src="./imgs/logo-sqr.png"></img><img id="rectimg" ng-show="::(appConfig.logoType == 2)" src="./imgs/logo-rect.png"></img>{{::(appConfig.logoType == 2 ? '' : appConfig.appName)}}</div>
+
+					<button class="navbar-toggle collapsed collapse-button menu-button" data-toggle="collapse" data-target="#main-bar" id="nav-toggle">
+						<i class="fa fa-th-large" aria-hidden="true"></i>
+					</button>
+				</div>
+				<!-- Navbar Header -->
+
+				<!-- Navbar Right Menu -->
+				<div class="container-fluid main-navbar collapse navbar-collapse" id="main-bar">
+					<ul class="nav navbar-nav" id="main-navbar-buttons">
+
+						<app-plugin ng-repeat="m in plugins.menuButtons track by $index" template="{{::('app/plugins/' + m + '/large.html')}}">
+						</app-plugin>
+
+						<li class="nav-icon-btn nav-icon-btn-warning hidden-xs" ng-if="::appConfig.notifications">
+							<button class="dropdown-toggle menu-button" data-toggle="dropdown">
+								<i class="nav-icon icon-only fa fa-bell-o"></i><span class="small-screen-text">{{::lang.l.btnNotifications}}</span>
+							</button>
+						</li>
+
+						<li class="dropdown hidden-xs" ng-if="::(lang.langs.length > 1)">
+							<button class="dropdown-toggle user-menu menu-button" data-toggle="dropdown" id="droplang">
+								<i class="nav-icon fa fa-globe"></i> {{::lang.l.btnLang}}
+							</button>
+
+							<ul class="dropdown-menu" id="lang-menu">
+								<li ng-repeat="lng in lang.langs" class="{{::(lng.code == lang.currentLang ? 'lang-selected' : '')}}">
+									<a ng-click="changeLang(lng.code)"><img ng-src="imgs/flags/{{::lng.code}}.png" class="lang-flag"></img> {{::lng.name}}</a>
+								</li>
+							</ul>
+						</li>
+
+						<li class="dropdown hidden-xs">
+							<button class="dropdown-toggle user-menu menu-button" data-toggle="dropdown" id="dropmain">
+								<i class="nav-icon fa fa-user"></i>
+							</button>
+							<ul class="dropdown-menu" id="main-menu-right">
+								<li ng-if="::appConfig.myaccount">
+									<a href="#!/account"><i class="fa fa-user"></i>{{::lang.l.menuMyAccount}}</a>
+								</li>
+								<li ng-if="::appConfig.invoices">
+									<a href="#!/account/invoices"><i class="fa fa-file-text-o"></i>{{::lang.l.menuInvoices}}</a>
+								</li>
+								<li class="hidden-xs">
+									<a href="#!/logout" class="">
+										<i class="fa fa-sign-out"></i>{{::lang.l.menuSignOut}}
+									</a>
+								</li>
+							</ul>
+						</li>
+
+						<li class="hidden-sm hidden-md hidden-lg" ng-if="::appConfig.notifications">
+							<a href="#!/notifications"><i class="fa fa-bell-o"></i>{{::lang.l.btnNotifications}}</a>
+						</li>
+
+						<li class="hidden-sm hidden-md hidden-lg" ng-if="::(lang.langs.length > 1)">
+							<a data-toggle="modal"  data-target="#langModal"><i class="fa fa-globe"></i> {{::lang.l.btnLang}}</a>
+						</li>
+
+						<li class="hidden-sm hidden-md hidden-lg" ng-if="::appConfig.myaccount">
+							<a href="#!/account"><i class="fa fa-user"></i> {{::lang.l.menuMyAccount}}</a>
+						</li>
+
+						<li class="hidden-sm hidden-md hidden-lg" ng-if="::appConfig.invoices">
+							<a href="#!/account/invoices"><i class="fa fa-file-text-o"></i> {{::lang.l.menuInvoices}}</a>
+						</li>
+
+						<app-plugin ng-repeat="m in plugins.menuButtons track by $index" template="{{'app/plugins/' + m + '/small.html'}}">
+						</app-plugin>
+
+
+						<li class="hidden-sm hidden-md hidden-lg">
+							<a href="#!/logout">
+								<i class="nav-icon fa fa-sign-out"></i> {{::lang.l.menuSignOut}}
+							</a>
+						</li>
+					</ul>
+				</div>
+				<!-- Navbar Right Menu -->
+			</nav>
+		</div>
+
+	</div>
+
+	<div id="page-content">
+		<div id="wrapper">
+			<!-- Sidebar -->
+			<div id="sidebar-wrapper">
+				<ul class="sidebar-nav nav-pills nav-stacked" id="menu">
+					<li ng-repeat="m in menu" class="{{m.active ? 'active ' : ''}} {{::m.isOpen ? 'menu-open' : ''}}">
+						<a href="{{::(m.isGroup ? '#' : '#!/' + m.name)}}" class="{{::(m.isGroup ? 'nav-group' : '')}}" onclick="return false">
+						<span class="fa-stack fa-lg pull-left"><i class="fa fa-{{::m.icon}} fa-stack-1x"></i></span>
+						{{::(m.isGroup || lang.l['group_' + m.name] ? (!lang.l['group_' + m.name] ? m.caption : lang.l['group_' + m.name].name || m.caption ) : (lang.l['res_' + m.name].name || m.caption))}}</a>
+						<ul ng-if="::m.isGroup" class="nav-pills nav-stacked nav-subitem {{::(m.isOpen ? 'nav-subitem-open' : '')}}">
+						  <li ng-repeat="s in m.items" class="{{s.active ? 'active' : ''}}">
+							<a href="#!/{{::s.name}}" onclick="return false"><span class="fa-stack fa-lg pull-left">
+							<i class="fa fa-{{::s.icon}} fa-stack-1x"></i></span>
+							{{::(!lang.l['res_' + s.name] ? s.caption : lang.l['res_' + s.name].name || s.caption)}}</a>
+						  </li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<!-- /#sidebar-wrapper -->
+
+			<!-- Page Content -->
+			<div id="page-content-wrapper">
+				<div class="container-fluid xyz">
+					<div class="row">
+						<div class="page-header">
+						<h1><i class="nav-icon fa fa-{{currentResource.icon}}"></i>{{(!lang.l['res_' + currentResource.name] ? currentResource.caption : lang.l['res_' + currentResource.name].name || currentResource.caption)}}</h1>
+					</div>
+					</div>
+				</div>
+			</div>
+			<div id="page-content-wrapper">
+				<div class="container-fluid xyz">
+					<div class="row">
+						<div class="col-sm-12 content_top">
+								<ng-view />
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /#page-content-wrapper -->
+		</div>
+		<!-- /#wrapper -->
+	</div>
+
+	<ui-message-box visible="showMessageBox"></ui-message-box>
+
+	<div id="langModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">{{::lang.l.msgSelectLanguage}}</h4>
+				</div>
+				<div class="modal-body">
+
+					<div class="lang-modal-button" ng-repeat="lng in lang.langs">
+						<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="changeLang(lng.code)">
+							<img ng-src="imgs/flags/{{::lng.code}}.png" class="lang-flag"></img> {{::lng.name}}
+						</button>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">{{::lang.l.btnCancel}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<app-plugin ng-repeat="p in plugins.appPlugins track by $index" template="{{::('app/plugins/' + p + '/plugin.html')}}">
+	</app-plugin>

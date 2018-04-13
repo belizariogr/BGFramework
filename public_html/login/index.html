@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html ng-app="loginApp" ng-controller="loginCtrl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<link rel="stylesheet" type="text/css" href="../lib/bootstrap/bootstrap.min.css">
+	<link href="../css/style.css" rel="stylesheet">
+	<link href="../fonts/font-awesome.min.css" rel="stylesheet">
+
+	<script src="../lib/angular/angular.min.js"></script>
+
+	<script src="../config.js"></script>
+	<script src="./app/app.js"></script>
+	<script src="./app/controllers/loginCtrl.js"></script>
+
+
+
+	<script src="../lib/jquery-3.1.1.min.js"></script>
+	<script src="../lib/slide-menu.js"></script>
+	<script src="../lib/bootstrap/bootstrap.min.js"></script>
+
+	<title ng-bind="title"></title>
+
+	<link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/favicons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+	<link rel="manifest" href="/favicons/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+</head>
+<body id="login-body">
+
+	<div class="content-login">
+		<div class="logo-login">
+			<i ng-show="appConfig.logoType == 0" class="fa fa-{{appConfig.logoIconName}} fa-4"></i><img id="sqrimg" ng-show="appConfig.logoType == 1" src="/imgs/logo-sqr.png"></img><img id="rectimg" ng-show="appConfig.logoType == 2" src="/imgs/logo-rect.png"></img>{{appConfig.logoType == 2 ? '' : appName}}
+		</div>
+
+		<div class="col-md-12">
+			<div class="login-box">
+				<div class="login-title">
+					<h1>SIGN IN TO YOUR ACCOUNT</h1>
+				</div>
+				<div class="login-form">
+					<form>
+					<div class="alert alert-danger" ng-show="invalidLogin">
+						{{message}}
+					</div>
+					  <div class="form-group">
+						<input type="text" class="form-control input-lg" id="edtUserName" aria-describedby="usernameHelp" placeholder="Username" ng-model="userData.username">
+					  </div>
+					  <div class="form-group">
+							<input type="password" class="form-control input-lg" id="edtPassword" placeholder="Password" ng-model="userData.password">
+					  </div>
+
+					  <button type="submit" class="btn btn-primary btn-block btn-lg" ng-click="login()" ng-disabled="login_button_disabled">Sign in</button>
+					</form>
+					<div class="lostaccount">
+						<a href="/lostaccount">I forgot my password</a>
+					</div>
+				</div>
+			</div>
+			<div class="signup-box">
+				<strong>Doesn't have an account?</strong>
+				<h4><a href="/register">Sign up!</a></h4>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

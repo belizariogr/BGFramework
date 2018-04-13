@@ -1,0 +1,23 @@
+<div id="messageBox" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{messageBoxContent.title}}</h4>
+            </div>
+            <div class="modal-body">
+                <p>{{messageBoxContent.text}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" data-ng-click="messageBoxContent.delete()" ng-if="btnDelete">
+                    <i class="fa fa-trash"></i> {{::lang.l.btnDelete}}
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-click="messageBoxContent.yes()" ng-if="btnYes">{{::lang.l.btnYes}}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-click="messageBoxContent.no()" ng-if="btnNo">{{::lang.l.btnNo}}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-click="messageBoxContent.cancel()" ng-if="btnCancel">{{::lang.l.btnCancel}}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-ng-click="messageBoxContent.ok()" ng-if="btnOk">{{::lang.l.btnOk}}</button>
+
+            </div>
+        </div>
+    </div>
+</div>

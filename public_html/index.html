@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html ng-app="mainApp" ng-controller="homeCtrl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+
+	<link href="./fonts/font-awesome.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="./lib/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="./lib/bootstrap/bootstrap-datetimepicker.min.css">
+
+	<link href="./css/style.css" rel="stylesheet">
+	<link href="./css/ui.css" rel="stylesheet">
+	<script src="./lib/date-functions.min.js"></script>
+	<script src="./lib/format-functions.min.js"></script>
+
+	<script src="./lib/require.js"></script>
+	<script src="./lib/jquery-3.1.1.min.js"></script>
+	<script src="./lib/bootstrap/bootstrap.min.js"></script>
+	<script src="./lib/bootstrap/bootstrap-datetimepicker.min.js"></script>
+
+	<script src="./lib/angular/angular.min.js"></script>
+	<script src="./lib/angular/angular-mask.min.js"></script>
+	<script src="./lib/angular/angular-route.min.js"></script>
+
+	<script src="./lib/slide-menu.js"></script>
+	<script src="./lib/modal-control-focus.js"></script>
+	<script src="./config.js"></script>
+	<script src="./app/core/services/restAPI.js"></script>
+	<script src="./app/core/services/routeResolver.js"></script>
+	<script src="./app/core/services/tokenValidation.js"></script>
+	<script src="./app/core/services/language.js"></script>
+
+	<script src="./app/app.js"></script>
+	<script src="./app/core/directives/includeReplace.js"></script>
+	<script src="./app/core/directives/appPlugin.js"></script>
+	<script src="./app/core/directives/ui/uiDataViewer.js"></script>
+	<script src="./app/core/directives/ui/uiEditModal.js"></script>
+	<script src="./app/core/directives/ui/uiErrorMessage.js"></script>
+	<script src="./app/core/directives/ui/uiMessageBox.js"></script>
+	<script src="./app/core/directives/ui/uiFilterColumn.js"></script>
+	<script src="./app/core/directives/ui/filters/uiDateFilter.js"></script>
+	<script src="./app/core/directives/ui/filters/uiBoolFilter.js"></script>
+	<script src="./app/core/directives/ui/filters/uiOptionsFilter.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputCombo.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputMask.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputMemo.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputPhone.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputText.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputNumber.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputDateTime.js"></script>
+
+	<script src="./app/core/controllers/home.js"></script>
+	<title ng-bind="appTitle"></title>
+
+	<link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/favicons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+
+	<link rel="manifest" href="/favicons/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+</head>
+<body id="app-body" >
+	<div ng-include="homeView"></div>
+</body>
+
+
+
+</html>

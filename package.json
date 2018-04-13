@@ -1,0 +1,17 @@
+{
+  "name": "Backend",
+  "version": "1.0.0",
+  "description": "Backend API",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "cors": "^2.8.1",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^7.3.0",
+    "node-firebird": "^0.8.1",
+    "npm": "^5.8.0"
+  },
+  "keywords": [],
+  "author": "Belizário Gonçalves Ribeiro Filho.",
+  "license": "ISC"
+}

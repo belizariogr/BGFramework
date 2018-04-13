@@ -1,0 +1,71 @@
+{
+	"name": "English (United States)",
+	"code": "en-us",
+	"values": {
+		"localeCode": "en-US",
+		"languageCode": "en",
+		"masks": {
+			"date": 	"19/39/9999",
+			"time": 	"19:59:59 AA",
+			"datetime":	"19/39/9999 19:59:59 AA",
+			"phone":	"(999)9?9?999-9999"
+		},
+		"formats": {
+			"date":				 "MM/dd/yyyy",
+			"time":				 "hh:mm:ss a",
+			"datetime":			 "MM/dd/yyyy hh:mm:ss a",
+			"dateSperator":		 "/",
+			"timeSeparator":	 ":",
+			"decimalSeparator":	 ".",
+			"thousandSeparator": ",",
+			"24Hour" :			 "false"
+		},
+		"dates": {
+			"months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+			"monthsShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    		"today": "Today"
+		},
+		"btnNotifications": 	"Notifications",
+		"btnLang":				"Language",
+		"menuMyAccount":		"My Account",
+		"menuInvoices":			"Invoices",
+		"menuSignOut":			"Sign Out",
+		"msgSelectLanguage":	"Please select your language",
+
+		"btnSave":				"Save",
+		"btnYes":				"Yes",
+		"btnNo":				"No",
+		"btnCancel":			"Cancel",
+		"btnOk":				"OK",
+		"btnNew":		 		"New",
+		"btnDelete": 			"Delete",
+		"edtSearch": 			"Search...",
+		"btnFilter":			"Filter",
+		"btnClearFilters":		"Clear Filters",
+		"edtStartDateFilter":	"Start Date",
+		"edtEndDateFilter":		"End Date",
+		"btnGoto":				"Go To",
+		"editTitle":			"Edit",
+		"insertTitle":			"New",
+		"msgDeleteTitle": 		"Delete",
+		"msgDeleteNoSelect":	"No records selected.",
+		"msgDeleteText":		"Confirm deletion of selected records?",
+		"msgLoadingGrid":		"Loading data...",
+		"msgNoRecordFound":		"No records found.",
+		"msgLoadingErrorGrid":	"Error on loading data!",
+		"msgGotoPageTitle":		"Go To",
+		"msgGotoPageText":		"Page",
+		"msgSaveError":			"Could not save the record.",
+		"msgInvalidPeriod":		"Invalid period.",
+
+		"res_dashboard":{
+			"name": 				"Dashboard"
+		},
+		"res_costumers": {
+			"name":					"Costumers"
+		},
+		"res_products": {
+			"name": 				"Products"
+		}
+ 	}
+}

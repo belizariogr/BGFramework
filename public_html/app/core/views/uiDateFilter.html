@@ -1,0 +1,41 @@
+<div class="filter date-filter">
+    <div class="row">
+        <div class="caption col-md-12">{{::displayLabel}}</div>
+    </div>
+    <div class="row month-container" ng-show="filter.showMonth">
+        <div>
+            <div class=year>
+                <div class="btn-year minus"><a ng-click=decYear() href><i class="fa fa-chevron-left"></i> </a> </div>
+                <div class=year-number> <a ng-click=yearClick() href>{{Year}}</a> </div>
+                <div class="btn-year plus"> <a ng-click=incYear() href> <i class="fa fa-chevron-right"></i> </a> </div>
+            </div>
+        </div>
+    </div>
+    <div class=row>
+        <div class="months col-md-12" ng-show="filter.showMonth">
+            <div class={{months[1]}}><a ng-click=monthClick(1) href>{{::lang.l.dates.months[0]}}</a></div>
+            <div class="{{months[2]}} mid"><a ng-click=monthClick(2) href>{{::lang.l.dates.months[1]}}</a></div>
+            <div class={{months[3]}}><a ng-click=monthClick(3) href>{{::lang.l.dates.months[2]}}</a></div>
+            <div class={{months[4]}}><a ng-click=monthClick(4) href>{{::lang.l.dates.months[3]}}</a></div>
+            <div class="{{months[5]}} mid"><a ng-click=monthClick(5) href>{{::lang.l.dates.months[4]}}</a></div>
+            <div class={{months[6]}}><a ng-click=monthClick(6) href>{{::lang.l.dates.months[5]}}</a></div>
+            <div class={{months[7]}}><a ng-click=monthClick(7) href>{{::lang.l.dates.months[6]}}</a></div>
+            <div class="{{months[8]}} mid"><a ng-click=monthClick(8) href>{{::lang.l.dates.months[7]}}</a></div>
+            <div class={{months[9]}}><a ng-click=monthClick(9) href>{{::lang.l.dates.months[8]}}</a></div>
+            <div class={{months[10]}}><a ng-click=monthClick(10) href>{{::lang.l.dates.months[9]}}</a></div>
+            <div class="{{months[11]}} mid"><a ng-click=monthClick(11) href>{{::lang.l.dates.months[10]}}</a></div>
+            <div class={{months[12]}}><a ng-click=monthClick(12) href>{{::lang.l.dates.months[11]}}</a></div>
+        </div>
+    </div>
+    <form>
+        <div class=row>
+            <div class="col-md-12 filter-dates">
+                <div class="start-date input-group {{startValueError}}"> </div>
+                <div class="end-date input-group {{endValueError}}"> </div>
+            </div>
+        </div>
+        <div class=row ng-show="startValueError || endValueError">
+            <div class="col-md-6 filter-alert alert alert-danger">{{::lang.l.msgInvalidPeriod}}</div>
+        </div>
+    </form>
+</div>
