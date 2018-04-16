@@ -471,6 +471,17 @@
 	height: 34px;
 }
 
+.edit-row-label-check {
+	display: flex;
+	align-items: center;
+	margin-bottom: 0 !important;
+	height: 18px;
+}
+
+.edit-row input[type=checkbox], input[type=radio] {
+    margin: 0 !important;
+ }
+
 .edit-row-input .input-group {
 	width: 100%;
 }

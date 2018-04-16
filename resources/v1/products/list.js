@@ -10,6 +10,6 @@ module.exports.instance = function(){
 		{name: "Description", 		dataType: "string", searchable: true},
 		{name: "Price", 			dataType: "float", searchable: true},
 		{name: "Stock", 			dataType: "float"},
-
+		{name: "Is_Service", 		dataType: "bool", searchable: true},
 	];
 }

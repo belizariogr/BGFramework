@@ -9,7 +9,8 @@ module.exports.instance = function(){
 		{name: "Name",			dataType: "string"},
 		{name: "Description",	dataType: "string"},
 		{name: "Price",			dataType: "float"},
-		{name: "Stock",			dataType: "float", readOnly: true}
+		{name: "Stock",			dataType: "float", readOnly: true},
+		{name: "Is_Service", 	dataType: "bool"},
 	];
 
 	this.validateRecord = function(rec){

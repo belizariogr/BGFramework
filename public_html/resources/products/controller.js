@@ -23,6 +23,7 @@ app.register.controller('productsCtrl', ['$scope', function($scope){
 			{name: "Name", displayLabel: "Name", fieldSize: 85, fieldType: "string", sortable: true, searchable: true, required: true},
 			{name: "Description", displayLabel: "Description", hide: true},
 			{name: "Price", displayLabel: "Price", fieldSize: 15, fieldType: "float", alignment: "right", format: ",0.00"},
+			{name: "Is_Service", displayLabel: "Service", fieldType: "bool"},
 		];
 
 	}

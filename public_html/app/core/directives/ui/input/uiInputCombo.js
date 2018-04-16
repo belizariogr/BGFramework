@@ -18,10 +18,10 @@ app.directive("uiInputCombo", function(){
 			$scope.editSize = $scope.size || 12 - $scope.labelSize;
 			var f = $scope.$parent.config.findField($scope.field);
 			try{
-				$scope.label = app.lang.l["res_" + $scope.$parent.config.path].fields[f.name];
+				$scope.label = app.lang.l["res_" + $scope.$parent.config.path].fields[f.name] || f.displayLabel || f.name;
 			}catch(err){
 				try{
-					$scope.label = f.displayLabel;
+					$scope.label = f.displayLabel || f.name;
 				}catch(err){
 					$scope.label = f.name;
 				}

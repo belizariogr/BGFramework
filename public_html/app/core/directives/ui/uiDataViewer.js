@@ -174,7 +174,20 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 								break;
 							case "float":
 								if (operation == 'browse')
-								rec[p] = formatNumber(rec[p] + "", f.format, app.lang.l.formats)
+									rec[p] = formatNumber(rec[p] + "", f.format, app.lang.l.formats)
+								break;
+							case "bool":
+								if (operation == 'browse')
+								{
+									if (typeof(rec[p]) == "boolean"){
+										rec[p] = rec[p] == true ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
+									} else if (typeof(rec[p]) == "string") {
+										rec[p] = rec[p] == 'T' ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
+									}
+
+								} else if (typeof(rec[p]) == "string") {
+									rec[p] = rec[p] == 'T'
+								}
 								break;
 						}
 

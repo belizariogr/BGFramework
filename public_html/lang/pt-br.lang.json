@@ -100,7 +100,8 @@
 			"fields": {
 				"Name":				"Nome",
 				"Description":		"Descrição",
-				"Price":			"Preço"
+				"Price":			"Preço",
+				"Is_Service":		"Serviço"
 			},
 			"errors": {
 				"1": 			"Campo 'Nome' é obrigatório.",

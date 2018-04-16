@@ -19,7 +19,7 @@ app.directive("uiInputNumber", function(){
 			$scope.input = element.find('.input');
 			var f = $scope.$parent.config.findField($scope.field);
 			try{
-				$scope.placeholder = app.lang.l["res_" + $scope.$parent.config.path].fields[f.name];
+				$scope.placeholder = app.lang.l["res_" + $scope.$parent.config.path].fields[f.name] || f.displayLabel || f.name;
 			}catch(err){
 				try{
 					$scope.placeholder = f.displayLabel || f.name;

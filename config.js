@@ -40,7 +40,7 @@ module.exports = {
 	fb_host: 'localhost',
 	fb_user: 'SYSDBA',
 	fb_pass: 'masterkey',
-	fb_database: 'D:/Desenvolvimento/Projetos/Git/BGFramework/DATABASE.FDB',
+	fb_database: 'D:/Desenvolvimento/Projetos/BGFramework/DATABASE.FDB',
 	fb_connectionLimit: 50,
 
 

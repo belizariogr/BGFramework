@@ -45,6 +45,8 @@ module.exports.RecordPrototype = function(){
 									return
 								}
 							} else if (f.dataType == "bool") {
+								if (typeof(value) == "boolean")
+									value = value ? 'T' : 'F';
 								if (value != "T" && value != "F"){
 									dataSet.errorMsg = 'Invalid bool value (' + value + ') for field "' + f.name + '."';
 									dataSet.errorField = f.name;
