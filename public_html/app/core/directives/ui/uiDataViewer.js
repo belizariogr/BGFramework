@@ -161,7 +161,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				var props = Object.keys(rec);
 				props.forEach(function(p){
 					var f = $scope.config.findField(p);
-					if (f){
+					if (f && rec[p]){
 						switch (f.fieldType){
 							case "date":
 								rec[p] = formatDate(new Date(rec[p]), app.lang.l.formats.date);

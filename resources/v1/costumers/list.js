@@ -8,6 +8,9 @@ module.exports.instance = function(){
 		{name: "Name", 			dataType: "string", searchable: true, contains: true},
 		{name: "PhoneNumber",	dataType: "string"},
 		{name: "Birthday", 		dataType: "date", searchable: true},
+		{name: "Add_Date", 		dataType: "date", searchable: true},
+		{name: "Add_Time", 		dataType: "time", searchable: true},
+		{name: "Add_TimeStamp",	dataType: "datetime", searchable: true},
 		{name: "Gender", 		dataType: "string", searchable: true, isOptions: true},
 		{name: "Is_Married", 	dataType: "string", searchable: true, isOptions: true},
 	];
