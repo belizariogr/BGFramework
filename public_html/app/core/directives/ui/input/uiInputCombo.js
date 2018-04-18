@@ -4,7 +4,7 @@ var app = angular.module('mainApp');
 app.directive("uiInputCombo", function(){
 	return {
 		restrict: "E",
-		template: '<div class="edit-row default-focus"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><select class="form-control" id="{{::fieldId}}" ng-model="value" ng-readonly="readOnly"><option ng-repeat="opt in options track by $index" value="{{::opt.value}}">{{::opt.text}}</option></select></div></div>',
+		template: '<div class="edit-row default-focus"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><select class="form-control" id="{{::fieldId}}" ng-model="value" ng-readonly="readOnly"><option ng-repeat="opt in options track by opt.value" value="{{::opt.value}}">{{::opt.text}}</option></select></div></div>',
 		replace: true,
 		scope: {
 			fieldId: '@',
@@ -28,15 +28,14 @@ app.directive("uiInputCombo", function(){
 			}
 			if (f.required)
 				$scope.label += '*';
-
 			if (f.fieldType == "bool"){
 				$scope.options = [];
 				if (!f.required)
 					$scope.options.push({value: "", text: ""});
 				try {$scope.trueText = app.lang.l.formats.trueText || 'True';} catch(e) {$scope.trueText = 'True';}
 				try {$scope.falseText = app.lang.l.formats.falseText || 'False';} catch(e) {$scope.falseText = 'False';}
-				$scope.options.push({value: "T", text: $scope.trueText});
-				$scope.options.push({value: "F", text: $scope.falseText });
+				$scope.options.push({value: "true", text: $scope.trueText});
+				$scope.options.push({value: "false", text: $scope.falseText});
 			} else {
 				$scope.options = angular.copy(f.options);
 				if (!f.required)

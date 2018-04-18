@@ -177,16 +177,14 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 									rec[p] = formatNumber(rec[p] + "", f.format, app.lang.l.formats)
 								break;
 							case "bool":
-								if (operation == 'browse')
-								{
-									if (typeof(rec[p]) == "boolean"){
-										rec[p] = rec[p] == true ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
+								if (operation == 'browse'){
+									if (typeof(rec[p]) == "boolean") {
+										rec[p] = rec[p] ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
 									} else if (typeof(rec[p]) == "string") {
 										rec[p] = rec[p] == 'T' ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
 									}
-
 								} else if (typeof(rec[p]) == "string") {
-									rec[p] = rec[p] == 'T'
+									rec[p] = rec[p] == 'T' ? 'true' : 'false';
 								}
 								break;
 						}
@@ -644,10 +642,16 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 							r[field] = convertUTCDateToLocalDate(new Date(getDateFromFormat(r[field], app.lang.l.formats[f.fieldType.toLowerCase()])));
 						else
 							r[field] = null;
+					} else if (f.fieldType && f.fieldType.toLowerCase() == "bool") {
+						if (typeof(r[field]) == "string"){
+							if (r[field].toLowerCase() == 'true' || r[field].toLowerCase() == 'false')
+								r[field] = r[field].toLowerCase() == 'true';
+							else
+								r[field] = null;
+						}
 					}
 				}
 			}
-
 			$scope.dataLoading = true;
 			$timeout(function(){if($scope.dataLoading)$scope.showEditDim=true;});
 			var res;
