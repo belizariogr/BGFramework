@@ -181,10 +181,12 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 									if (typeof(rec[p]) == "boolean") {
 										rec[p] = rec[p] ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
 									} else if (typeof(rec[p]) == "string") {
-										rec[p] = rec[p] == 'T' ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
+										rec[p] = rec[p].charAt(0).toLowerCase() == 't' ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
 									}
-								} else if (typeof(rec[p]) == "string") {
-									rec[p] = rec[p] == 'T' ? 'true' : 'false';
+								} else {
+
+									if (typeof(rec[p]) == "string" && rec[p] != "")
+										rec[p] = rec[p].charAt(0).toLowerCase() == 't';
 								}
 								break;
 						}
