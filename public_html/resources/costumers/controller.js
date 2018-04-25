@@ -35,22 +35,22 @@ app.register.controller('costumersCtrl', ['$scope',
 		};
 
 		$scope.fields = [
-			{name: "Id", fieldType: "integer", primaryKey: true, hide: true},
-			{name: "Name", displayLabel: "Name", fieldSize: 70, fieldType: "string", sortable: true, searchable: true, required: true},
-			{name: "Address", displayLabel: "Address", hide: true, required: true},
-			{name: "PhoneNumber", displayLabel: "Phone Number", fieldSize: 15, fieldType: "string", alignment: "center"},
-			{name: "Birthday", displayLabel: "Birthday", fieldSize: 15, fieldType: "date", sortable: true, alignment: "center"},
-			{name: "Add_Date", displayLabel: "Date", fieldSize: 15, fieldType: "date", sortable: true, alignment: "center"},
-			{name: "Add_Time", displayLabel: "Time", fieldSize: 15, fieldType: "time", sortable: true, alignment: "center"},
-			{name: "Add_TimeStamp", displayLabel: "TimeStamp", fieldSize: 15, fieldType: "datetime", sortable: true, alignment: "center"},
-			{name: "Email", displayLabel: "Email", hide: true},
-			{name: "Gender", displayLabel: "Gender", hide: true, fieldType: "options",
+			{name: "Id", 			dataType: "integer", primaryKey: true, hide: true},
+			{name: "Name", 			dataType: "string", displayLabel: "Name", fieldSize: 70, sortable: true, searchable: true, required: true},
+			{name: "Address", 		dataType: "string", displayLabel: "Address", hide: true, required: true},
+			{name: "PhoneNumber", 	dataType: "string", displayLabel: "Phone Number", fieldSize: 15, alignment: "center"},
+			{name: "Birthday", 		dataType: "date", displayLabel: "Birthday", fieldSize: 15, sortable: true, alignment: "center"},
+			{name: "Add_Date", 		dataType: "date", displayLabel: "Date", fieldSize: 15, sortable: true, alignment: "center"},
+			{name: "Add_Time", 		dataType: "time", displayLabel: "Time", fieldSize: 15, sortable: true, alignment: "center"},
+			{name: "Add_TimeStamp", dataType: "datetime", displayLabel: "TimeStamp", fieldSize: 15, sortable: true, alignment: "center"},
+			{name: "Email", 		dataType: "string", displayLabel: "Email", hide: true},
+			{name: "Gender", 		dataType: "options", displayLabel: "Gender", hide: true,
 				options: [
 					{value: "F", text: "Female"},
 					{value: "M", text: "Male"}
 				]
 			},
-			{name: "Is_Married", displayLabel: "Married", hide: true, fieldType: "bool"},
+			{name: "Is_Married", 	dataType: "bool", displayLabel: "Married", hide: true},
 		];
 
 		$scope.filters = [

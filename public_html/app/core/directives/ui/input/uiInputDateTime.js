@@ -29,8 +29,8 @@ app.directive("uiInputDateTime", ['$compile', '$timeout', function($compile, $ti
 			$scope.label = $scope.placeholder + (f.required ? '*' : '');
 			var validTypes = new Set(['date', 'time', 'datetime']);
 			$scope.type = 'datetime';
-			if (validTypes.has(f.fieldType.toLowerCase()))
-				$scope.type = f.fieldType.toLowerCase();
+			if (validTypes.has(f.dataType.toLowerCase()))
+				$scope.type = f.dataType.toLowerCase();
 			$scope.dataFormat = app.lang.l.formats[$scope.type];
 			$scope.dataMask = app.lang.l.masks[$scope.type] || '99/99/9999 99:99:99';
 
@@ -64,7 +64,7 @@ app.directive("uiInputDateTime", ['$compile', '$timeout', function($compile, $ti
 				var d = null;
 				try {
 					if (!!$scope.value)
-						d = new Date(getDateFromFormat($scope.value, app.lang.l.formats[f.fieldType.toLowerCase()]));
+						d = new Date(getDateFromFormat($scope.value, app.lang.l.formats[f.dataType.toLowerCase()]));
 				} catch(err){
 					d = null;
 				}
@@ -77,8 +77,8 @@ app.directive("uiInputDateTime", ['$compile', '$timeout', function($compile, $ti
 			$scope.$watch('value', function(newValue, oldValue) {
 				if (!$scope.picker)
 					return
-				if (isDate(newValue, app.lang.l.formats[f.fieldType.toLowerCase()])) {
-					var d = new Date(getDateFromFormat(newValue, app.lang.l.formats[f.fieldType.toLowerCase()]));
+				if (isDate(newValue, app.lang.l.formats[f.dataType.toLowerCase()])) {
+					var d = new Date(getDateFromFormat(newValue, app.lang.l.formats[f.dataType.toLowerCase()]));
 					$scope.picker.setDate(convertUTCDateToLocalDate(d));
 					$scope.lastValidDate = d;
 				}
@@ -86,11 +86,11 @@ app.directive("uiInputDateTime", ['$compile', '$timeout', function($compile, $ti
 
 			element.on('changeDate', function(ev){
 				var oldValue;
-				if (!!$scope.value && isDate($scope.value, app.lang.l.formats[f.fieldType.toLowerCase()]))
+				if (!!$scope.value && isDate($scope.value, app.lang.l.formats[f.dataType.toLowerCase()]))
 					oldValue = $scope.value;
 				var newValue;
 				if (ev.date)
-					newValue = formatDate(convertLocalDateToUTCDate(ev.date), app.lang.l.formats[f.fieldType.toLowerCase()]);
+					newValue = formatDate(convertLocalDateToUTCDate(ev.date), app.lang.l.formats[f.dataType.toLowerCase()]);
 				if ((!oldValue && !!newValue) || (!!oldValue && !newValue) || (oldValue && newValue && (newValue !== oldValue))){
 					$scope.value = newValue;
 					if ($scope.picker.viewMode == 0 && !$scope.picker.pickingTime())
@@ -106,7 +106,7 @@ app.directive("uiInputDateTime", ['$compile', '$timeout', function($compile, $ti
 			$scope.onInputExit = function(){
 				if (!$scope.value) {
 					$scope.lastValidDate = null;
-				} else if (!isDate($scope.value, app.lang.l.formats[f.fieldType.toLowerCase()])) {
+				} else if (!isDate($scope.value, app.lang.l.formats[f.dataType.toLowerCase()])) {
 					if (!!$scope.lastValidDate)
 						$scope.value = formatDate($scope.lastValidDate, app.lang.l.formats[$scope.type]);
 					else

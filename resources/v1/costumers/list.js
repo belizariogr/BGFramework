@@ -12,6 +12,6 @@ module.exports.instance = function(){
 		{name: "Add_Time", 		dataType: "time", searchable: true},
 		{name: "Add_TimeStamp",	dataType: "datetime", searchable: true},
 		{name: "Gender", 		dataType: "string", searchable: true, isOptions: true},
-		{name: "Is_Married", 	dataType: "string", searchable: true, isOptions: true},
+		{name: "Is_Married", 	dataType: "bool", searchable: true, isOptions: true},
 	];
 }

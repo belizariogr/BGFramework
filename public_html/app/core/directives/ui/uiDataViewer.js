@@ -162,7 +162,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				props.forEach(function(p){
 					var f = $scope.config.findField(p);
 					if (f && rec[p]){
-						switch (f.fieldType){
+						switch (f.dataType){
 							case "date":
 								rec[p] = formatDate(new Date(rec[p]), app.lang.l.formats.date);
 								break;
@@ -637,12 +637,12 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 			for (var field in r){
 				var f = fieldByName($scope.fields, field);
 				if (f){
-					if (f.fieldType && (f.fieldType.toLowerCase() == 'date' || f.fieldType.toLowerCase() == 'time' ||f.fieldType.toLowerCase() == 'datetime')){
+					if (f.dataType && (f.dataType.toLowerCase() == 'date' || f.dataType.toLowerCase() == 'time' ||f.dataType.toLowerCase() == 'datetime')){
 						if (!!r[field])
-							r[field] = convertUTCDateToLocalDate(new Date(getDateFromFormat(r[field], app.lang.l.formats[f.fieldType.toLowerCase()])));
+							r[field] = convertUTCDateToLocalDate(new Date(getDateFromFormat(r[field], app.lang.l.formats[f.dataType.toLowerCase()])));
 						else
 							r[field] = null;
-					} else if (f.fieldType && f.fieldType.toLowerCase() == "bool") {
+					} else if (f.dataType && f.dataType.toLowerCase() == "bool") {
 						if (typeof(r[field]) == "string"){
 							if (r[field].toLowerCase() == 'true' || r[field].toLowerCase() == 'false')
 								r[field] = r[field].toLowerCase() == 'true';

@@ -14,11 +14,11 @@ module.exports.RecordPrototype = function(){
 				if (("" + f.name).toLowerCase() == k.toLowerCase()){
 					if (!f.readOnly){
 						var value = rec[k];
-						if (f.required && !value){
+						if (f.required && (value === null || value === undefined)){
 							dataSet.errorMsg = 'Field "' + f.name + '" is required.';
 							return
 						}
-						else if (!!value){
+						else if (!(value === null || value === undefined)){
 							if (f.dataType == "integer"){
 								if (isNaN(value) || !Number.isInteger(Number(value))){
 									dataSet.errorMsg = 'Invalid integer value (' + value + ') for field "' + f.name + '."';
@@ -45,9 +45,10 @@ module.exports.RecordPrototype = function(){
 									return
 								}
 							} else if (f.dataType == "bool") {
-								if (typeof(value) == "boolean")
+								if (typeof(value) == "boolean"){
 									value = value ? 'T' : 'F';
-								if (value != "T" && value != "F"){
+								}
+								else if (value != "T" && value != "F"){
 									dataSet.errorMsg = 'Invalid bool value (' + value + ') for field "' + f.name + '."';
 									dataSet.errorField = f.name;
 									dataSet.errorDataType = f.dataType;

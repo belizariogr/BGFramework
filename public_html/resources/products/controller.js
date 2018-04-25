@@ -19,11 +19,11 @@ app.register.controller('productsCtrl', ['$scope', function($scope){
 		};
 
 		$scope.fields = [
-			{name: "Id", fieldType: "integer", primaryKey: true, hide: true},
-			{name: "Name", displayLabel: "Name", fieldSize: 85, fieldType: "string", sortable: true, searchable: true, required: true},
-			{name: "Description", displayLabel: "Description", hide: true},
-			{name: "Price", displayLabel: "Price", fieldSize: 15, fieldType: "float", alignment: "right", format: ",0.00"},
-			{name: "Is_Service", displayLabel: "Service", fieldType: "bool"},
+			{name: "Id", 			dataType: "integer", primaryKey: true, hide: true},
+			{name: "Name", 			dataType: "string", displayLabel: "Name", fieldSize: 85, sortable: true, searchable: true, required: true},
+			{name: "Description", 	dataType: "string", displayLabel: "Description", hide: true},
+			{name: "Price", 		dataType: "float", displayLabel: "Price", fieldSize: 15, alignment: "right", format: ",0.00"},
+			{name: "Is_Service", 	dataType: "bool", displayLabel: "Service"},
 		];
 
 	}
