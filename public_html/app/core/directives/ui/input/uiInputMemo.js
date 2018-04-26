@@ -22,11 +22,11 @@ app.directive("uiInputMemo", function(){
 			$scope.f = $scope.$parent.config.findField($scope.field);
 			if (!$scope.f) return;
 			try{
-				$scope.placeholder = app.lang.l["res_" + $scope.$parent.config.path].fields[f.name] || $scope.f.displayLabel || $scope.f.name;
+				$scope.placeholder = app.lang.l["res_" + $scope.$parent.config.path].fields[$scope.f.name] || $scope.f.displayLabel || $scope.f.name;
 			}catch(err){
 				$scope.placeholder = $scope.f.displayLabel || $scope.f.name;
 			};
-			$scope.label = $scope.placeholder + (f.required ? '*' : '');
+			$scope.label = $scope.placeholder + ($scope.f.required ? '*' : '');
 		}
 	}
 });
