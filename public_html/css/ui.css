@@ -480,6 +480,11 @@
 
 .edit-row input[type=checkbox], input[type=radio] {
     margin: 0 !important;
+    cursor: pointer;
+ }
+
+ .edit-row-combo .btn-group {
+ 	width: 300px ;
  }
 
 .edit-row-input .input-group {
@@ -678,4 +683,34 @@
 .bootstrap-datetimepicker-widget .timepicker-minutes,
 .bootstrap-datetimepicker-widget .timepicker-seconds{
 	margin: 4px;
+}
+
+.combo-menu {
+	max-height:196px;
+	overflow:auto;
+	width: calc(100% - 39px);
+	margin-left: 0px;
+	margin-top: -1px;
+	z-index: 1001;
+}
+
+.combo-menu li {
+	padding: 8px;
+	min-height: 32px;
+}
+
+.combo-menu > li:hover {
+	background-color: #337ab7 !important;
+	color: #fff !important;
+	cursor: pointer;
+	padding: 8px;
+}
+
+.combo-menu .selected {
+	background-color: #69A5D6 !important;
+	color: #fff !important;
+}
+
+.bootstrap-datetimepicker-widget {
+	z-index: 100 !important;
 }

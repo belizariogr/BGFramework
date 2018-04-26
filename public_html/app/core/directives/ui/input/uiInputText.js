@@ -16,18 +16,15 @@ app.directive("uiInputText", function(){
 		link: function($scope, element, attrs){
 			$scope.labelSize = $scope.labelSize || 3;
 			$scope.editSize = $scope.size || 12 - $scope.labelSize;
-			var f = $scope.$parent.config.findField($scope.field);
+			$scope.label = $scope.field;
+			$scope.f = $scope.$parent.config.findField($scope.field);
+			if (!$scope.f) return;
 			try{
-				$scope.placeholder = app.lang.l["res_" + $scope.$parent.config.path].fields[f.name] || f.displayLabel || f.name;
+				$scope.placeholder = app.lang.l["res_" + $scope.$parent.config.path].fields[$scope.f.name] || $scope.f.displayLabel || $scope.f.name;
 			}catch(err){
-				try{
-					$scope.placeholder = f.displayLabel || f.name;
-				}catch(err){
-					$scope.placeholder = f.name;
-				}
-			}
-
-			$scope.label = $scope.placeholder + (f.required ? '*' : '');
+				$scope.placeholder = $scope.f.displayLabel || $scope.f.name;
+			};
+			$scope.label = $scope.placeholder + ($scope.f.required ? '*' : '');
 		}
 	}
 });

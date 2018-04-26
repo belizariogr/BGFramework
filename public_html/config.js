@@ -26,7 +26,7 @@ angular.module('appConfigService', []).provider('appConfig', function(){
 	this.myaccount = false;
 
 	// Backend Address
-	this.backend_addr = 'http://localhost';
+	this.backend_addr = 'http://192.168.5.1';
 
 	// SET THE MENU GROUPS HERE...
 
