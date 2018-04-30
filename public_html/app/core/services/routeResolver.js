@@ -49,6 +49,7 @@ angular.module('routeResolverService', []).provider('routeResolver', function(){
 
 			routeDef.resolve = {
 				load: function($location, $q, $rootScope){
+					$('.bootstrap-datetimepicker-widget').remove();
 					load($location);
 					var dependencies = [resControllerFullPath];
 					return resolveDependencies($q, $rootScope, dependencies);

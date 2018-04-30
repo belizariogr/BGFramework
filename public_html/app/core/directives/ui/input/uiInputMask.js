@@ -4,7 +4,7 @@ var app = angular.module('mainApp');
 app.directive("uiInputMask", function(){
 	return {
 		restrict: "E",
-		template: '<div class="edit-row default-focus"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><input class="form-control" ng-model="value" type="text" id="{{::fieldId}}" placeholder="{{::placeholder}}" mask="{{::mask}}" restrict="{{::restrict}}" ng-readonly="readOnly"></div></div>',
+		template: '<div class="edit-row"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><input class="form-control" ng-model="value" type="text" id="{{::fieldId}}" placeholder="{{::placeholder}}" mask="{{::mask}}" restrict="{{::restrict}}" ng-readonly="readOnly"></div></div>',
 		replace: true,
 		scope: {
 			fieldId: '@',

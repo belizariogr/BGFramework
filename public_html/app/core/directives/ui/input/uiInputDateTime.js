@@ -4,7 +4,7 @@ var app = angular.module('mainApp');
 app.directive("uiInputDateTime", ['$compile', '$timeout', function($compile, $timeout){
 	return {
 		restrict: "E",
-		template: '<div class="edit-row default-focus"><div class="col-md-{{::labelSize}}"><label for="input_{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><div id="{{::fieldId}}" class="input-group form_date date {{::fieldId}}" data-format="{{dataFormat}}"></div></div></div>',
+		template: '<div class="edit-row"><div class="col-md-{{::labelSize}}"><label for="input_{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><div id="{{::fieldId}}" class="input-group form_date date {{::fieldId}}" data-format="{{dataFormat}}"></div></div></div>',
 		replace: true,
 		scope: {
 			fieldId: '@',

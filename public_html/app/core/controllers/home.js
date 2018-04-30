@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var app = angular.module("mainApp");
 app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', function($scope, $rootScope, $window, $location){
@@ -122,5 +122,5 @@ app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', func
 	app.messageBox = function(msg){
 		$scope.showMessageBox = !$scope.showMessageBox;
 		$scope.messageBoxContent = msg;
-	}
+	};
 }]);

@@ -4,7 +4,7 @@ var app = angular.module('mainApp');
 app.directive("uiInputCheck", function(){
 	return {
 		restrict: "E",
-		template: '<div class="edit-row default-focus"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label-check">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><input type="checkbox" ng-model="value" id="{{::fieldId}}" ng-readonly="readOnly"></div></div>',
+		template: '<div class="edit-row"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label-check">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><input type="checkbox" ng-model="value" id="{{::fieldId}}" ng-readonly="readOnly"></div></div>',
 		replace: true,
 		scope: {
 			fieldId: '@',

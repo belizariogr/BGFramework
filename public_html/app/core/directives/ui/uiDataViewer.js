@@ -10,7 +10,6 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 		return f[0];
 	}
 
-
 	var linker = function($scope, element, attrs){
 		if (!$scope.config.api)
 			$scope.config.api = app.restAPI;
@@ -43,9 +42,8 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				$scope.filters.forEach(function(f){
 					if (f.used){
 						var filter = {name: f.name};
-						if (f.value){
+						if (f.value)
 							filter.value = f.value;
-						}
 						else if (f.startValue){
 							filter.startValue = f.startValue;
 							if (f.endValue)
@@ -62,7 +60,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				showFilters: $scope.showFilters,
 				result: result || false,
 				filters: filters
-			}
+			};
 			writeStates(states);
 		}
 
@@ -77,12 +75,11 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 
 					if ($scope.sortField) {
 						$scope.sortDirection = state.sortDirection;
-						$scope.fields.forEach(function(f){
-							if (f.name.toLowerCase() == $scope.sortField.toLowerCase()){
+						$scope.fields.forEach(function(f) {
+							if (f.name.toLowerCase() == $scope.sortField.toLowerCase())
 								f.direction = $scope.sortDirection || 'asc';
-							}
 						});
-					}
+					};
 
 					if (state.filters && state.filters.length > 0){
 						$scope.filtered = false;
@@ -93,8 +90,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 										$scope.filtered = true;
 										f.used = true;
 										f.value = s.value;
-									}
-									else if (s.startValue){
+									} else if (s.startValue){
 										$scope.filtered = true;
 										f.used = true;
 										f.startValue = s.startValue;
@@ -102,16 +98,16 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 											f.endValue = s.endValue;
 									}
 								}
-							});
-						});
-					}
+							})
+						})
+					};
 					if (state.showFilters && $scope.filtered)
 						$timeout(function(){
 							openFilters();
-						});
+						})
 				}
 			}
-		}
+		};
 
 		var getErrorMsg = function(errorCode, error){
 			var msg;
@@ -129,9 +125,9 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				}
 				else
 					msg = app.lang.l.msgSaveError;
-			}
+			};
 			return msg;
-		}
+		};
 
 		$scope.editId = false;
 		if ($routeParams.id == 'new')
@@ -139,22 +135,27 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 		else {
 			try{
 				$scope.editId = Number(atob($routeParams.id));
-			}
-			catch(err){
+			} catch(err){
 				$scope.editId = false;
 			}
-		}
+		};
 
 		$scope.getTemplateUrl = function(){
 			if (!!attrs.template)
 				return attrs.template;
-			else if (!$scope.editId) {
+			else if (!$scope.editId)
 				return "app/core/views/uiDataViewer.html"
-			}
-			else{
+			else
 				return "app/core/views/uiDataEdit.html";
+		};
+
+		var selectFirstInput = function(){
+			if (!isMobileBrowser()){
+				var input = $('input:visible:enabled:first');
+				input.select();
+				input.focus();
 			}
-		}
+		};
 
 		var prepareRecords = function(dataset, $scope, operation){
 			dataset.rows.forEach(function(rec){
@@ -178,26 +179,20 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 								break;
 							case "bool":
 								if (operation == 'browse'){
-									if (typeof(rec[p]) == "boolean") {
-										rec[p] = rec[p] ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
-									} else if (typeof(rec[p]) == "string") {
-										rec[p] = rec[p].charAt(0).toLowerCase() == 't' ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False')
-									}
-								} else {
-
-									if (typeof(rec[p]) == "string" && rec[p] != "")
-										rec[p] = rec[p].charAt(0).toLowerCase() == 't';
-								}
+									if (typeof(rec[p]) == "boolean")
+										rec[p] = rec[p] ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False');
+									else if (typeof(rec[p]) == "string")
+										rec[p] = rec[p].charAt(0).toLowerCase() == 't' ? (app.lang.l.formats.trueText || 'True') : (app.lang.l.formats.falseText || 'False');
+								} else if (typeof(rec[p]) == "string" && rec[p] != "")
+									rec[p] = rec[p].charAt(0).toLowerCase() == 't';
 								break;
 						}
-
 					}
 				});
 				if ($scope.config.onPrepareRecord)
 					$scope.config.onPrepareRecord(rec, $scope, operation);
 			});
-		}
-
+		};
 
 		if ($scope.editId){
 			$scope.editPath = 'resources/' + $scope.config.path + '/edit.html';
@@ -207,11 +202,10 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				if (!!$scope.config.newRecord)
 					$scope.config.newRecord($scope, $scope.rec);
 				$scope.editTitle = app.lang.l.insertTitle;
-			}
-			else {
+			} else {
 				$scope.operation = 2;
 				$scope.editTitle = app.lang.l.editTitle;
-			}
+			};
 
 			var load = function(){
 				$scope.dataLoading = true;
@@ -224,11 +218,10 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 							var dataset = {rows: []};
 							dataset.rows.push($scope.rec);
 							prepareRecords(dataset, $scope,'edit');
-							if ($scope.config.afterLoad){
+							if ($scope.config.afterLoad)
 								$scope.config.afterLoad(dataset, $scope);
-							}
-						}
-						else {
+							selectFirstInput();
+						} else {
 							$scope.rec = {};
 							$scope.showEditError = true;
 							$scope.editErrorMsg = app.lang.l.msgLoadingErrorGrid || "Cannot load data.";
@@ -244,23 +237,22 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 						$scope.errorLoading = true;
 						$scope.editErrorMsg = app.lang.l.msgLoadingErrorGrid || "Cannot load data.";
 					}
-				);
-			}
+				)
+			};
 			if ($scope.editId !== -1){
 				if ($scope.config.onEditLoad){
-					$scope.config.onEditLoad($scope, null, $scope.editId)
-				}
-				else
+					$scope.config.onEditLoad($scope, null, $scope.editId);
+					selectFirstInput();
+				} else
 					load();
-			}
+			};
 
 			$scope.cancel = function(){
 				var states = readStates();
 				writeStates(states);
 				$location.path($scope.config.path);
 			}
-		}
-		else {
+		} else {
 			$scope.visibleFields = $scope.fields.filter(function(e, i, a){
 				return !e.hide;
 			});
@@ -280,7 +272,6 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 			if ($scope.config.editStyle !== "modal")
 				loadState();
 
-
 			$scope.itemCheckClick = function(){
 				$scope.itemClicked = true;
 				$scope.checkedAll = false;
@@ -288,20 +279,16 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 			}
 
 			$scope.$watch('checkedAll', function(value){
-				if (!$scope.itemClicked && !$scope.clean){
-					$scope.dataset.rows.forEach(function(i){
-						i.checked = value;
-					});
-				}
+				if (!$scope.itemClicked && !$scope.clean)
+					$scope.dataset.rows.forEach(function(i){ i.checked = value;	});
 			});
 
 			$scope.sort = function(field){
 				if (!field.sortable)
 					return;
 				$scope.fields.forEach(function(f){
-					if (f !== field && f.sortable){
+					if (f !== field && f.sortable)
 						f.direction = 'both';
-					}
 				});
 
 				switch (field.direction){
@@ -319,36 +306,33 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 						field.direction = 'asc';
 						$scope.sortDirection = "";
 						$scope.sortField = field.name;
-				}
+				};
 				$scope.refresh($scope.page);
-			}
+			};
 
 			$scope.search = function(q){
 				q = encodeURIComponent(q.trim());
 				if (!q){
 					if (searchValues == "")
-						return
+						return;
 					searchValues = "";
-				}
-				else if (!!$scope.config.getSearch){
+				} else if (!!$scope.config.getSearch)
 					searchValues = $scope.config.getSearch(q);
-				}
 				else {
 					searchValues = "";
 					$scope.fields.forEach(function(f){
-						if (f.searchable){
+						if (f.searchable)
 							searchValues += (searchValues == "" ? "" : "|") + f.name;
-						}
 					});
 					searchValues += q;
 				}
 				$scope.page = 1;
 				$scope.refresh($scope.page);
-			}
+			};
 
 			var load = function(page, reload){
 				if (!!$scope.config.beforeLoad)
-					$scope.config.beforeLoad($scope)
+					$scope.config.beforeLoad($scope);
 				$scope.dataLoading = true;
 				if (!reload)
 					$scope.dataset.loading = true;
@@ -370,11 +354,11 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 								filterStr = f.field + '=' + f.startValue;
 								if (f.endValue)
 									filterStr += '|' + f.endValue;
-							}
+							};
 							filterValue += (filterValue ? '&' : '') + filterStr;
 						}
 					});
-				}
+				};
 
 				var conditions = "";
 
@@ -390,13 +374,12 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 							if (res.data.page > res.data.pagecount){
 								$scope.page = res.data.pagecount;
 								$scope.refresh($scope.page);
-								return
-							}
-							else if (res.data.page < 1){
+								return;
+							} else if (res.data.page < 1){
 								$scope.page = 1;
 								$scope.refresh(1);
-								return
-							}
+								return;
+							};
 							$scope.dataset = res.data;
 							$scope.clean = false;
 							$scope.page = $scope.dataset.page;
@@ -407,11 +390,9 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 							$scope.dataset.showDim = false;
 							createPages();
 							prepareRecords($scope.dataset, $scope, 'browse');
-							if ($scope.config.afterLoad){
+							if ($scope.config.afterLoad)
 								$scope.config.afterLoad($scope.dataset, $scope);
-							}
-						}
-						else {
+						} else {
 							$scope.clean = true;
 							$scope.dataset.pagecount = 0;
 							$scope.dataset.rows = [];
@@ -456,11 +437,9 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 			};
 
 			$scope.clearFilters = function(){
-				$scope.filters.forEach(function(f){
-					f.clearFilter();
-				});
+				$scope.filters.forEach(function(f){ f.clearFilter() });
 				$scope.filter(true);
-			}
+			};
 
 			var selections = function(){
 				var sel = [];
@@ -477,7 +456,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 					});
 				}
 				return sel;
-			}
+			};
 
 			$scope.delete = function(){
 				var sel = selections();
@@ -485,8 +464,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				if (sel.length == 0){
 					msg.text = app.lang.l.msgDeleteNoSelect;
 					msg.buttons = 'ok';
-				}
-				else {
+				} else {
 					msg.text = app.lang.l.msgDeleteText;
 					msg.buttons = 'delete;cancel';
 					msg.delete = function(){
@@ -500,13 +478,12 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 									msg.buttons = 'ok';
 									app.messageBox(msg);
 								}, 1000)
-
 							}
 						);
 					}
-				}
+				};
 				app.messageBox(msg);
-			}
+			};
 
 			var createPages = function(){
 				var first = 1;
@@ -515,13 +492,11 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 					if ($scope.page + 2 <= $scope.dataset.pagecount && $scope.page - 2 > 1) {
 						last = $scope.page + 2
 						first = $scope.page - 2;
-					}
-					else if ($scope.page + 2 >= $scope.dataset.pagecount) {
+					} else if ($scope.page + 2 >= $scope.dataset.pagecount) {
 						last = $scope.dataset.pagecount;
 						first = $scope.dataset.pagecount - 4;
 					}
-				}
-				else
+				} else
 					last = $scope.dataset.pagecount;
 				var showFirst = first > 1;
 				var showLast = last < $scope.dataset.pagecount;
@@ -533,16 +508,16 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				for (var i = first; i <= last; i++){
 					$scope.pages.push({id: idx, page: i, active: (i == $scope.page), hideSM: showFirst && showLast && (idx == 1 || idx == 5) });
 					idx++;
-				}
+				};
 				if (showLast)
 					$scope.pages.push({last: true, page: $scope.dataset.pagecount});
-			}
+			};
 
 			$scope.goto = function(page){
 				if (page == $scope.page)
 					return;
 				$scope.refresh(page);
-			}
+			};
 
 			load($scope.page);
 
@@ -555,21 +530,18 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 					$scope.showEditError = false;
 					$scope.editTitle = app.lang.l.insertTitle;
 					$scope.showEditModal = "open";
-				}
-				else {
+				} else {
 					saveState();
 					$location.path($scope.config.path + '/new');
 				}
-			}
+			};
 
 			$scope.edit = function(r){
-
 				if ($scope.config.editStyle == "modal") {
 					if ($scope.config.onLoad){
 						$scope.rec = {};
 						$scope.config.onLoad($scope, r);
-					}
-					else {
+					} else {
 						$scope.dataLoading = true;
 						$timeout(function(){if($scope.dataLoading)$scope.showEditDim = true;}, 200);
 						$scope.errorLoading = false;
@@ -586,8 +558,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 									prepareRecords(dataset, $scope, 'edit');
 									if ($scope.config.afterLoad)
 										$scope.config.afterLoad(dataset, $scope);
-								}
-								else {
+								} else {
 									$scope.rec = {};
 									$scope.showEditError = true;
 									$scope.editErrorMsg = app.lang.l.msgLoadingErrorGrid || "Cannot load data.";
@@ -605,23 +576,21 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 								$scope.editErrorMsg = app.lang.l.msgLoadingErrorGrid || "Cannot load data.";
 							}
 						);
-					}
+					};
 					$scope.showEditError = false;
 					$scope.showEditModal = "open";
 					$scope.operation = 2;
 					$scope.editTitle = app.lang.l.editTitle;
-				}
-				else {
+				} else {
 					saveState(true);
 					if($scope.config.onGetId)
 						var Id = $scope.config.onGetId(r)
 					else
 						var Id = r.Id;
-
 					$location.path($scope.config.path + '/' + btoa(Id));
 				}
 			}
-		}
+		};
 
 		$scope.save = function(){
 			var msg = "";
@@ -631,7 +600,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				$scope.editErrorMsg = msg;
 				$scope.showEditError = true;
 				return
-			}
+			};
 
 			var r = angular.copy($scope.rec);
 			if (r.$options)
@@ -653,9 +622,9 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 						}
 					}
 				}
-			}
+			};
 			$scope.dataLoading = true;
-			$timeout(function(){if($scope.dataLoading)$scope.showEditDim=true;});
+			$timeout(function(){ if ($scope.dataLoading) $scope.showEditDim = true; });
 			var res;
 			if ($scope.operation == 1)
 				res = $scope.config.api.post($scope.config.editResource, $scope.config.publicResource, r);
@@ -669,8 +638,7 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 						$scope.showEditDim = false;
 						$scope.showEditModal = "close";
 						$scope.refresh($scope.page);
-					}
-					else {
+					} else {
 						var states = readStates();
 						states[$scope.config.path].result = true;
 						writeStates(states);
@@ -690,20 +658,18 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 					$scope.editErrorMsg = msg;
 				}
 			);
-		}
+		};
 
 		var openFilters = function(){
 			$scope.showFilters = true;
 			$(element).find('.filters-container').stop().css('display','block').hide().slideDown();
-		}
+		};
 
 		var closeFilters = function(){
 			$scope.showFilters = false;
 			$(element).find('.filters-container').stop().css('display','none').show().slideUp();
-			$timeout(function(){
-				$scope.clearFilters();
-			}, 400);
-		}
+			$timeout(function(){ $scope.clearFilters(); }, 400);
+		};
 
 		$scope.showFiltersBtnClick = function(){
 			if (!$scope.filters)
@@ -713,25 +679,31 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 			else
 				closeFilters();
 			saveState();
-		}
+		};
 
 		if ($scope.filters){
-			$scope.filters.forEach(function(f){
-				f.filter = $scope.filter;
-			});
-
+			$scope.filters.forEach(function(f){ f.filter = $scope.filter; });
 			$scope.filtersCol1 = $scope.filters.filter(function(f){ return f.column == 1; });
 			$scope.filtersCol2 = $scope.filters.filter(function(f){ return f.column == 2; });
 			$scope.filtersCol3 = $scope.filters.filter(function(f){ return f.column == 3; });
-		}
+		};
 
 		if ($scope.config.editStyle == "modal"){
 			$timeout(function(){
 				var code = '<ui-edit-modal></ui-edit-modal>';
 				element.append($compile(code)($scope));
 			}, 100);
-		}
-	}
+		};
+
+		var to;
+        var listener = $scope.$watch(function() {
+            clearTimeout(to);
+            to = setTimeout(function () {
+                selectFirstInput();
+                listener();
+            }, 50);
+        });
+	};
 
 	return {
 		restrict: "E",

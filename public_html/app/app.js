@@ -26,9 +26,8 @@ app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$prov
 					return response;
 				},
 				'responseError': function (rejection) {
-					if(rejection.status === 401) {
+					if(rejection.status === 401)
 						$location.path('/logout');
-					}
 					return $q.reject(rejection);
 				}
 			}
@@ -46,13 +45,11 @@ app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$prov
 			app.setCurrentResource($location.path());
 		};
 
-		var routeCheck = function(){}
-
+		var routeCheck = function(){};
 		app.appConfig.resources.forEach(function(r){
 			$routeProvider.when('/' + r.name, route.resolve(r.name, false, false, r, routeLoad, routeCheck));
-			if (!r.modal){
+			if (!r.modal)
 				$routeProvider.when('/' + r.name + '/:id', route.resolve(r.name, false, false, r, routeLoad, routeCheck));
-			}
 		});
 		$routeProvider
 			.when('/', route.resolve(app.appConfig.resources[0].name, false, false, false, routeLoad, routeCheck))
@@ -66,9 +63,8 @@ app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$prov
 
 		app.appConfig.plugins.forEach(function(p){
 			require('plugins/' + p.name + '/plugin.js');
-			if (p.type === 'menu-button'){
+			if (p.type === 'menu-button')
 				app.plugins.menuButtons.push(p.name)
-			}
 			else
 				app.plugins.appPlugins.push(p.name)
 		});
@@ -80,8 +76,7 @@ app.run(['$window', '$rootScope', '$http', function($window, $rootScope, $http){
 	if (!app.validateToken()){
 		$window.open('/login/', '_self');
 		return
-	}
-
+	};
 	var token = localStorage.getItem("token", token);
 	var t = token.split('.');
 	try{
@@ -92,10 +87,18 @@ app.run(['$window', '$rootScope', '$http', function($window, $rootScope, $http){
 	}catch(err){
 		$window.open('/login/', '_self');
 		return
-	}
+	};
 	app.lang.http = $http;
 	var lang = $window.navigator.language || $window.navigator.userLanguage;
 	lang = lang.toLowerCase();
 	app.lang.config(app.appConfig.languages, localStorage.getItem("lang") || lang || app.appConfig.languages[0].code);
-	// require('app/core/directives/uiMessageBox.js');
+	$rootScope.$on('$routeChangeStart', function(evt, next, current) {
+		if ((window.innerWidth <= 768 || isMobileBrowser()) && $('.modal-backdrop').length){
+			var btnClose = $('#editModal').find(".close");
+			if (btnClose.click)
+				btnClose.click();
+			$('.modal').modal("hide");
+			evt.preventDefault();
+		}
+	});
 }]);

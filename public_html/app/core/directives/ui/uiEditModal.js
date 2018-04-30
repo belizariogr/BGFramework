@@ -7,14 +7,13 @@ app.directive("uiEditModal", function(){
 		templateUrl: "app/core/views/uiEditModal.html",
 		replace: true,
 		link: function($scope, element, attrs){
+			$scope.modal = $(element).modal({backdrop: 'static', keyboard: true, show: false});
 			$scope.editPath = 'resources/' + $scope.config.path + '/edit.html';
 			$scope.$watch('showEditModal', function(value){
-				if(value === "open") {
-					$(element).modal({backdrop: 'static', keyboard: false});
-				}
+				if(value === "open")
+					$scope.modal.modal('show');
 				else if (value === "close")
-					$(element).modal("hide");
-
+					$scope.modal.modal("hide");
 			});
 
 			$(element).on('hidden.bs.modal', function(){
@@ -22,7 +21,6 @@ app.directive("uiEditModal", function(){
 					$scope.showEditModal = 'close';
 				});
 			});
-
 		}
 	}
 });
