@@ -686,8 +686,9 @@
 }
 
 .combo-menu {
-	max-height:196px;
-	overflow:auto;
+	max-height:194px;
+	overflow-y: auto;
+	overflow-x: hidden;
 	width: calc(100% - 39px);
 	margin-left: 0px;
 	margin-top: -1px;
@@ -696,18 +697,17 @@
 
 .combo-menu li {
 	padding: 8px;
-	min-height: 32px;
+	height: 32px;
+	white-space: nowrap;
 }
 
 .combo-menu > li:hover {
-	background-color: #337ab7 !important;
-	color: #fff !important;
 	cursor: pointer;
 	padding: 8px;
 }
 
 .combo-menu .selected {
-	background-color: #69A5D6 !important;
+	background-color: #337ab7 !important;
 	color: #fff !important;
 }
 

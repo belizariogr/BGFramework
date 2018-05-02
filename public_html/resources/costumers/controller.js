@@ -1,11 +1,7 @@
-'use strict'
+'use strict';
 
 var app = angular.module('mainApp');
-app.register.controller('costumersCtrl', ['$scope',
-	function($scope){
-
-		var prepareRecs =
-
+app.register.controller('costumersCtrl', ['$scope',	function($scope){
 		$scope.config = {
 			path: "costumers",
 			showRefresh: false,
@@ -14,24 +10,19 @@ app.register.controller('costumersCtrl', ['$scope',
 			editResource: "costumers",
 			pagination: true,
 			publicResource: false,
-
 			afterLoad: function(dataset, scope){
 
 			},
-
 			getSearch: function(searchText){
 				return "name=" + searchText;
 			},
-
 			onPrepareRecord: function(rec, scope, operation){
 				if (rec.PhoneNumber)
 					rec.PhoneNumber = formatPhone(rec.PhoneNumber);
 			},
-
 			validateRecord: function(record){
 
 			}
-
 		};
 
 		$scope.fields = [

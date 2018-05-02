@@ -63,6 +63,7 @@
 		"msgSaveError":			"Não foi possível salvar o registro.",
 		"msgInvalidPeriod":		"Período inválido.",
 		"msgDeleteError":		"Erro ao excluir o(s) registro(s).",
+		"msgNoResultsFound": 	"Sem resultados.",
 
 		"res_dashboard":{
 			"name": 				"Visão Geral",

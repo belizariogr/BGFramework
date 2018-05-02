@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive("uiInputPhone", function(){
+app.directive("uiInputPhone", ['$timeout', function($timeout){
 	return {
 		restrict: "E",
 		template: '<div class="edit-row"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><input class="form-control" ng-model="value" type="tel" id="{{::fieldId}}" placeholder="{{::placeholder}}" mask="(99)9?9999-9999" clean="true" ng-readonly="readOnly"></div></div>',
@@ -25,6 +25,15 @@ app.directive("uiInputPhone", function(){
 				$scope.placeholder = $scope.f.displayLabel || $scope.f.name;
 			};
 			$scope.label = $scope.placeholder + ($scope.f.required ? '*' : '');
+			$scope.$watch('value', function(newValue, oldValue) {
+				if (newValue == "") {
+					$timeout(function(){
+						$scope.$apply(function(){
+							$scope.value = null;
+						})
+					})
+				}
+			});
 		}
 	}
-});
+}]);

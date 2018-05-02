@@ -1,0 +1,18 @@
+<div class="edit-row">
+	<div class="col-md-{{::labelSize}}">
+		<label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label>
+	</div>
+	<div class="edit-row-input col-md-{{::editSize}}">
+
+
+		<div class="input-group dropdown combo-group">
+			<input class="form-control" type="text" id="{{::fieldId}}" ng-model="text" ng-focus="onFocus()" ng-blur="onExit()">
+			<ul class="dropdown-menu combo-menu">
+				<li id="combo-item-{{i.value}}" class="{{i.sel}}" ng-repeat="i in items track by i.value" ng-click="select(i)" ng-mousemove="mouseMove(i)" ng-mousedown="mouseDownItem()">{{i.text}}</li>
+				<li ng-show="items.length === 0"><strong>{{::lang.l.msgNoResultsFound}}</strong></li>
+			</ul>
+			<a class="btn-toggle" data-toggle="{{options.length == 0 ? '' : 'dropdown'}}"></a>
+			<a role="button" ng-click="btnClick()" ng-mousedown="mouseDownBtn()" class="btn btn-default input-group-addon add-on"><i class="fa fa-chevron-{{btnIcon}}" aria-hidden="true"></i> </a>
+		</div>
+	</div>
+</div>

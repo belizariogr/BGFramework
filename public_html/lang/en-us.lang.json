@@ -57,6 +57,7 @@
 		"msgGotoPageText":		"Page",
 		"msgSaveError":			"Could not save the record.",
 		"msgInvalidPeriod":		"Invalid period.",
+		"msgNoResultsFound": 	"No results.",
 
 		"res_dashboard":{
 			"name": 				"Dashboard"
