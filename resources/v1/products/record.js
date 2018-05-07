@@ -4,8 +4,7 @@ module.exports.instance = function(){
 	this.__proto__ = new recordPrototype();
 	this.resource = "products";
 	this.fields = [
-		{name: "UserId", 		dataType: "integer"},
-		{name: "Id", 			dataType: "integer", isKey: true, inWhere: true},
+		{name: "Id", 			dataType: "integer", isKey: true},
 		{name: "Name",			dataType: "string"},
 		{name: "Description",	dataType: "string"},
 		{name: "Price",			dataType: "float"},

@@ -46,8 +46,8 @@ module.exports = {
 
 
 	use_autoinc: true,
-	autoinc_table: 'Users_AutoInc',
-	autoinc_accountField: 'UserId',
+	autoinc_table: 'Accounts_AutoInc',
+	autoinc_accountField: 'AccountId',
 	autoinc_tableField: 'TableName',
 	autoinc_IdField: 'Id',
 

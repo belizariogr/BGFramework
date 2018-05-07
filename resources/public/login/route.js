@@ -8,9 +8,7 @@ module.exports.route = function(){
 
 		post: function(req, res){
 			if (!req.body || !req.body.username || !req.body.password){
-				res.json({
-					error: 'Invalid username or password.'
-				});
+				res.json({ error: 'Invalid username or password.' });
 				return
 			}
 
@@ -18,16 +16,13 @@ module.exports.route = function(){
 				if (err)
 					throw err;
 
-				db.query("SELECT Id, UserName, Password FROM Users WHERE UserName = ?", [req.body.username], function(err, rows){
-					if (!!err){
+				db.query("SELECT Id, UserName, Password FROM Accounts WHERE UserName = ?", [req.body.username], function(err, rows){
+					if (!!err)
 						res.send(err);
-					}
-					else if (!rows[0] || !rows[0].USERNAME || rows[0].PASSWORD !== req.body.password) {
+					else if (!rows[0] || !rows[0].USERNAME || rows[0].PASSWORD !== req.body.password)
 						res.json({error: 'Invalid username or password.'});
-					}
-					else {
+					else
 						res.json(token_service.login(rows[0].ID, rows[0].ID));
-					}
 					db.detach();
 				})
 			});

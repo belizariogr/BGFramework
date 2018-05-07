@@ -17,8 +17,7 @@ module.exports.RecordPrototype = function(){
 						if (f.required && (value === null || value === undefined)){
 							dataSet.errorMsg = 'Field "' + f.name + '" is required.';
 							return
-						}
-						else if (!(value === null || value === undefined)){
+						} else if (!(value === null || value === undefined)){
 							if (f.dataType == "integer"){
 								if (isNaN(value) || !Number.isInteger(Number(value))){
 									dataSet.errorMsg = 'Invalid integer value (' + value + ') for field "' + f.name + '."';
@@ -47,8 +46,7 @@ module.exports.RecordPrototype = function(){
 							} else if (f.dataType == "bool") {
 								if (typeof(value) == "boolean"){
 									value = value ? 'T' : 'F';
-								}
-								else if (value != "T" && value != "F"){
+								} else if (value != "T" && value != "F"){
 									dataSet.errorMsg = 'Invalid bool value (' + value + ') for field "' + f.name + '."';
 									dataSet.errorField = f.name;
 									dataSet.errorDataType = f.dataType;
@@ -90,64 +88,40 @@ module.exports.RecordPrototype = function(){
 				this.values.push(value);
 			}
 		}
-
 		return dataSet;
 	}
 
-	this.query = function(condition, params, callback){
-		try{
-			var sql = "SELECT ";
-			for (var i = 0; i < this.fields.length; i++){
-				sql += this.fields[i].name + ' "' + this.fields[i].name + '"';
-				if (i !== this.fields.length - 1)
-					sql += ",";
-				sql += " ";
-			}
-			sql += "FROM " + this.resource + " " + condition;
-
-			mysql_pool.query(sql, params, function(error, rows, fields){
-				callback(error, rows, fields);
-			});
-
-		}catch(err){
-			callback(err)
-		}
-	}
-
 	this.get = function(req, res){
-		try{
+		try {
 			var where = "";
 			var table = this.resource;
 			var params = {};
 			var query;
 			if (!!req.query && Object.keys(req.query).length !== 0){
 				query = req.query;
-				for (var q in query){
+				for (var q in query)
 					params[q.toLowerCase()] = query[q];
-				}
-			}
-			else {
-				var k = this.fields.filter(function(f){ return !!f.isKey || f.name.toLowerCase() == 'id'; });
+			} else {
+				var k = this.fields.filter(function(f){ return f.isKey });
 				if (!k || !Array.isArray(k) || k.length == 0)
 					throw 'No key fields.';
-				if (req.params && req.params.id){
-					params[k[0].name.toLowerCase()] = req.params.id;
+				if (req.params) {
+					k.forEach(function(key){
+						params[key.name.toLowerCase()] = req.params[key.name.toLowerCase()];
+					});
 				}
 			}
 
-			var keys = this.fields.filter(function(f){ return !!f.inWhere; });
-
+			var keys = this.fields.filter(function(f){ return f.isKey });
 			if (!keys || !Array.isArray(keys) || keys.length == 0)
 				throw 'No key fields.';
-			if (!!global.account_check){
-				where += account_check('list', table, req.token_obj, req) || "";
-			}
-
+			if (!!global.account_check)
+				where += account_check('list', table, req.token_obj, req, params) || "";
 
 			keys.forEach(function(k){
 				var name = k.name.toLowerCase();
 				if (!params[name])
-					throw 'No value for key.';
+					throw 'No value for key: ' + name ;
 				else
 					where += (!where ? "" : " AND ") + name + " = " + params[name];
 			});
@@ -160,7 +134,6 @@ module.exports.RecordPrototype = function(){
 				sql += " ";
 			}
 			sql += "FROM " + this.resource + " WHERE " + where;
-
 			global.db_conn.get(function(err, db){
 				db.query(sql, "", function(error, rows, fields){
 					db.detach();
@@ -197,17 +170,15 @@ module.exports.RecordPrototype = function(){
 			if (!rec)
 				throw "You need to pass a valid record.";
 			if (action.toLowerCase() == "update" || action.toLowerCase() == "delete"){
-				var keys = fields.filter(function(f){ return !!f.inWhere; });
+				var keys = fields.filter(function(f){ return f.isKey });
 				if (!keys || !Array.isArray(keys) || keys.length == 0)
 					throw 'No key fields.';
-
 				keys.forEach(function(k){
 					var name = k.name.toLowerCase();
 					if (!rec[name])
 						throw 'No value for key.';
 				});
-			}
-			else if (action.toLowerCase() == "insert"){
+			} else if (action.toLowerCase() == "insert"){
 				var f = fields.filter(function(f){ return !!f.isKey; });
 				if (f.length > 1)
 					throw "Model has more than one key field.";
@@ -279,9 +250,8 @@ module.exports.RecordPrototype = function(){
 					});
 				};
 
-				if (!!global.config.use_autoinc && !!autoIncField){
+				if (!!global.config.use_autoinc && !!autoIncField)
 					autoInc(execIns)
-				}
 				else
 					execIns();
 			};
@@ -372,8 +342,7 @@ module.exports.RecordPrototype = function(){
 					}catch(err){
 						callback({type: 1, error: err})
 					}
-				}
-				else
+				} else
 					exec();
 			};
 
@@ -382,17 +351,13 @@ module.exports.RecordPrototype = function(){
 					execCallback(err, req.body)
 				else{
 					if (err) {
-						if (!!err.type && err.type == 1){
+						if (!!err.type && err.type == 1)
 							res.status(500).json(err);
-						}
-						else if (!!err.type && err.type != 1){
+						else if (!!err.type && err.type != 1)
 							res.status(500).json({type: 0, error: "" + err});
-						}
-						else{
+						else
 							throw err;
-						}
-					}
-					else
+					} else
 						res.status(204).send();
 				}
 			};
@@ -421,21 +386,17 @@ module.exports.RecordPrototype = function(){
 			var responses = [];
 			if (!recs || recs.length == 0 || typeof recs !== 'object' || Object.keys(recs).length === 0)
 				throw "Invalid request for DELETE.";
-
 			for(var i = 0; i < recs.length; i++) {
 				req.body = recs[i];
 				this.execute("delete", req, res, before, after, function(err, rec){
 					if (err){
 						responses.push({Id: rec.Id, success: false});
 						console.log(err);
-					}
-					else
+					} else
 						responses.push({Id: rec.Id, success: true});
 
 					if (responses.length == recs.length){
-						var hasError = responses.some(function(r){
-							return !r.success;
-						});
+						var hasError = responses.some(function(r){ return !r.success; });
 						res.status(hasError ? 500 : 200).send(responses);
 					}
 				});

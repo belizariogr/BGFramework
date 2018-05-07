@@ -23,8 +23,7 @@ module.exports.ListPrototype = function(){
 			if (!!error) {
 				console.log('' + error);
 				res.status(500).send('Cannot GET.');
-			}
-			else {
+			} else {
 				list.dataset = {rows: rows};
 				res.json(list.dataset);
 			}
@@ -50,8 +49,7 @@ module.exports.ListPrototype = function(){
 							if (!f || !f.searchable){
 								res.status(500).send('Cannot GET.');
 								return
-							}
-							else {
+							} else {
 								c++;
 								var cond = {
 									field: fields[i],
@@ -88,9 +86,8 @@ module.exports.ListPrototype = function(){
 										if (!(new Set('F', 'T', 'F|T', 'T|F')).has(value))
 											throw "Invalid bool.";
 										cond.value = value;
-									} else if (cond.isOptions){
+									} else if (cond.isOptions)
 										cond.values = value;
-									}
 									conditions.push(cond);
 								}catch(err){
 									res.status(500).send('Cannot GET.');
@@ -121,12 +118,9 @@ module.exports.ListPrototype = function(){
 			var list = this;
 			where = "";
 
-			if (!!global.account_check){
+			if (!!global.account_check)
 				where += global.account_check('list', this.resource, req.token_obj, req) || "";
-			}
-
 			var orBlock = false;
-
 			if (!!conditions.length > 0){
 				conditions.forEach(function(c){
 					if (c.dataType == "date"){
@@ -140,8 +134,7 @@ module.exports.ListPrototype = function(){
 							where += ")";
 							orBlock = false;
 						}
-					}
-					else if (c.dataType == "integer" || c.dataType == "numeric"){
+					} else if (c.dataType == "integer" || c.dataType == "numeric"){
 						if (c.valueEnd)
 							where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + c.field + " BETWEEN " + c.value + " AND " + c.valueEnd;
 						else
@@ -152,16 +145,14 @@ module.exports.ListPrototype = function(){
 							where += ")";
 							orBlock = false;
 						}
-					}
-					else if (c.isOptions || c.dataType == "bool"){
+					} else if (c.isOptions || c.dataType == "bool"){
 						where += (!where ? "" : " AND ") + c.field + " IN (";
 						var ins = '';
 						c.values.forEach(function(v){
 							ins += (ins ? ', ' : '') + firebird.escape(v)
 						});
 						where += ins + ")";
-					}
-					else if (c.contains){
+					} else if (c.contains){
 						c.value = "%" + c.value.replace(" ", "%") + "%";
 						where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + "LOWER(" + c.field + ") LIKE LOWER(" + firebird.escape(c.value) + ")";
 						if (c.startOr)
@@ -170,8 +161,7 @@ module.exports.ListPrototype = function(){
 							where += ")";
 							orBlock = false;
 						}
-					}
-					else {
+					} else {
 						where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + c.field + " = " + firebird.escape(c.value);
 						if (c.startOr)
 							orBlock = true;
@@ -206,13 +196,11 @@ module.exports.ListPrototype = function(){
 						if (!!error) {
 							console.log('' + error);
 							res.status(500).send('Cannot GET.');
-						}
-						else {
+						} else {
 							if (page){
 								c = c - 1;
 								list.dataset = {page: page, pagecount: Math.floor(c / global.config.page_records) + 1, iat: new Date().getTime(), rows: result};
-							}
-							else
+							} else
 								list.dataset = {iat: new Date().getTime(), rows: result};
 							res.json(list.dataset);
 						}
@@ -232,8 +220,7 @@ module.exports.ListPrototype = function(){
 						var recCount = results[0].count;
 						exec(recCount);
 					})
-				}
-				else
+				} else
 					exec();
 			});
 		} catch(err){

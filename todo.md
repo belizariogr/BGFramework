@@ -11,8 +11,8 @@
 - [x] Add language for filters
 - [x] Fix error messages
 - [x] Create Numeric Edit component
-- [ ] Create Checkbox component
-- [ ] Create Lookup ComboBox with completation component
+- [x] Create Checkbox component
+- [x] Create Lookup ComboBox with completation component
 - [ ] Create Grid component to be used in Master/Detail
 - [ ] Create Page Control for edit page
 - [ ] Create client-side validation of data
@@ -29,8 +29,8 @@
 
 - [x] Create contexts (versions) for rest API
 - [x] Create a implementation for fields Auto Increment that gonna take the Id from a table.
-- [ ] Implement MongoDB connection interface
 - [ ] Implement MySQL connection interface
+- [ ] Implement MongoDB connection interface
 - [ ] Create a dynamic login system (independent of database)
 
 
