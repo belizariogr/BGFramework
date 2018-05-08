@@ -19,10 +19,10 @@ module.exports.route = function(){
 				var sql = "SELECT ";
 				sql += " (SELECT COUNT(*) FROM Costumers WHERE AccountId = " + AccountId + ") costumersCount,";
 				sql += " (SELECT COUNT(*) FROM Products WHERE AccountId = "  + AccountId + ") productsCount";
-				if (global.config.database_type == "firebird")
+				if (config.database_type == "firebird")
 					sql += " FROM RDB$DATABASE";
 
-				global.db_conn.query(sql, function(error, result, fields){
+				db_conn.query(sql, function(error, result, fields){
 					if (!!error) {
 						console.log('' + error);
 						res.status(500).send('Cannot GET.');

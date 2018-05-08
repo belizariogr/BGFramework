@@ -14,7 +14,7 @@ module.exports.route = function() {
             error(4, "Field \"Email\" is required.");
         if (!!rec.Gender && rec.Gender != 'M' && rec.Gender != 'F')
             error(5, "Invalid gender.")
-    }
+    };
 
     return {
         name: 'costumers',

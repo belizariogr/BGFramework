@@ -48,23 +48,23 @@ module.exports.setup = function(config){
 		return firebird.escape(str);
 	};
 
-	connection.getSelectSQL = function(tableName, select, where, groupBy, orderBy, page){
+	connection.getSelectSQL = function(tableName, fields, where, groupBy, orderBy, page){
 		var pagination = "";
 		if (!!page){
 			var limitNumber = (page - 1) * config.page_records;
 			if (limitNumber != NaN)
 				pagination = "FIRST " + config.page_records + " SKIP " + limitNumber;
 		}
-		return "SELECT " + pagination + " " + select + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy;
+		return "SELECT " + pagination + " " + fields + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy;
 	};
 
 	connection.getAutoIncId = function(account, tableName, callback){
 		var sql = "EXECUTE BLOCK RETURNS (ID INTEGER) AS BEGIN " +
-						" UPDATE OR INSERT INTO " + config.autoinc_table + " (" + config.account_field + ", " + config.autoinc_table_field + ", " +
-						config.autoinc_id_field + ") " + " VALUES (" + account + ", '" + tableName.toUpperCase() + "', COALESCE((SELECT MAX(" + config.autoinc_id_field +
-						") + 1 FROM " + config.autoinc_table + " WHERE " +  config.account_field + " = " + account + " AND " + config.autoinc_table_field +
-						" = '" + tableName.toUpperCase() + "'), 1)) " +	" MATCHING(" + config.account_field + ", " + config.autoinc_table_field + ") RETURNING " +
-						config.autoinc_id_field + " INTO :ID; SUSPEND; END";
+					" UPDATE OR INSERT INTO " + config.autoinc_table + " (" + config.account_field + ", " + config.autoinc_table_field + ", " +
+					config.autoinc_id_field + ") " + " VALUES (" + account + ", '" + tableName.toUpperCase() + "', COALESCE((SELECT MAX(" + config.autoinc_id_field +
+					") + 1 FROM " + config.autoinc_table + " WHERE " +  config.account_field + " = " + account + " AND " + config.autoinc_table_field +
+					" = '" + tableName.toUpperCase() + "'), 1)) " +	" MATCHING(" + config.account_field + ", " + config.autoinc_table_field + ") RETURNING " +
+					config.autoinc_id_field + " INTO :ID; SUSPEND; END";
 		connection.query(sql, function(err, rows, fields){
 			callback(err, utils.getPropValue(rows[0], config.autoinc_id_field))
 		});

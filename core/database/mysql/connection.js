@@ -42,14 +42,14 @@ module.exports.setup = function(config){
 		return sync.await(connection.query(sql, sync.defer()));
 	};
 
-	connection.getSelectSQL = function(tableName, select, where, groupBy, orderBy, page){
+	connection.getSelectSQL = function(tableName, fields, where, groupBy, orderBy, page){
 		var pagination = "";
 		if (!!page){
 			var limitNumber = (page - 1) * global.config.page_records;
 			if (limitNumber != NaN)
 				pagination = " LIMIT " + limitNumber + ", " + global.config.page_records;
 		};
-		return "SELECT " + select + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy + pagination;
+		return "SELECT " + fields + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy + pagination;
 	};
 
 	connection.getAutoIncId = function(account, tableName, callback){

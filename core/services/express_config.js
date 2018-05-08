@@ -34,7 +34,7 @@ module.exports.express_config = function(config, routes, express, httpServer, se
 						req.body.forEach(function(b){ b[config.account_field] = req.token_obj.Account; });
 					else if (typeof req.body == "object")
 						req.body[config.account_field] = req.token_obj.Account;
-				} else if (!!req.query && Object.keys(req.query).length !== 0)
+				} else
 					req.query[config.account_field] = req.token_obj.Account;
 				next();
 			}

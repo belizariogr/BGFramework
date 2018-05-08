@@ -12,4 +12,12 @@ module.exports.instance = function(){
 		{name: "Gender", 		dataType: "string", searchable: true, options: true},
 		{name: "Is_Married", 	dataType: "bool", searchable: true, options: true},
 	];
+
+	this.joins = [
+		{resource: "unities", alias: "u", condition: "u.id = p.unitid"}
+	];
+
+	this.conditions = [
+
+	];
 }

@@ -96,20 +96,14 @@ module.exports.RecordPrototype = function(){
 			var params = {};
 			var query;
 
-			if (!!req.query && Object.keys(req.query).length !== 0){
-				query = req.query;
-				for (var q in query)
-					params[q.toLowerCase()] = query[q];
-			} else {
-				var k = this.fields.filter(function(f){ return f.key });
-				if (!k || !Array.isArray(k) || k.length == 0)
-					throw 'No key fields.';
-				if (req.params) {
-					k.forEach(function(key){
-						params[key.name.toLowerCase()] = req.params[key.name.toLowerCase()];
-					});
-				}
-			};
+			var k = this.fields.filter(function(f){ return f.key });
+			if (!k || !Array.isArray(k) || k.length == 0)
+				throw 'No key fields.';
+			if (req.params) {
+				k.forEach(function(key){
+					params[key.name.toLowerCase()] = req.params[key.name.toLowerCase()];
+				});
+			}
 			params[config.account_field.toLowerCase()] = req.$account;
 
 			var keys = this.fields.filter(function(f){ return f.key });
