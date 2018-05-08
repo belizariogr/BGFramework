@@ -154,13 +154,15 @@ app.directive("uiInputCombo", ['$timeout', function($timeout){
 
 			$scope.onExit = function(){
 				if (!$scope.isItemClick && !$scope.isButtonClick){
-					var o = $scope.options.filter(function(f){return f.text.toLowerCase() == $scope.text.toLowerCase()});
-					if (o.length > 0)
-						$scope.setValue(o[0]);
-					else {
-						o = $scope.options.filter(function(f){return f.value == $scope.value});
+					if (!!$scope.text){
+						var o = $scope.options.filter(function(f){return f.text.toLowerCase() == $scope.text.toLowerCase()});
 						if (o.length > 0)
 							$scope.setValue(o[0]);
+						else {
+							o = $scope.options.filter(function(f){return f.value == $scope.value});
+							if (o.length > 0)
+								$scope.setValue(o[0]);
+						}
 					}
 					$scope.closeMenu();
 				}
@@ -208,10 +210,12 @@ app.directive("uiInputCombo", ['$timeout', function($timeout){
 						if (c < $scope.changeCount)
 							return;
 						$scope.changeCount = 0;
-						$scope.items = $scope.options.filter(function(i){ return i.text.toLowerCase().indexOf($scope.text.toLowerCase()) !== -1 });
+						$scope.items = $scope.options;
+						if (!!$scope.text)
+							$scope.items = $scope.options.filter(function(i){ return i.text.toLowerCase().indexOf($scope.text.toLowerCase()) !== -1 });
 						if ($scope.items.length > 0)
 							$scope.setSelected($scope.items[0]);
-					}, 250)
+					}, 250);
 			};
 
 			$scope.textChange = function(){
