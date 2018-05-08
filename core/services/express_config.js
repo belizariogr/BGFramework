@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports.express_config = function(config, routes, express, httpServer, secureRoutes){
 
 	var bodyParser = require('body-parser');
@@ -24,22 +22,21 @@ module.exports.express_config = function(config, routes, express, httpServer, se
 		if (!auth.startsWith("Bearer ")){
 			res.status(401).json({error: 'You need a valid token to acess the server.'});
 			return
-		}
-
+		};
 		try{
 			req.token_obj = token_service.verify(token);
-			if (!req.token_obj) {
+			if (!req.token_obj)
 				res.status(401).json({error: 'You need a valid token to acess the server.'})
-			}
 			else {
-				if (req.method == "POST" || req.method == "PUT" || req.method == "DELETE") {
-					if (req.body && req.body.Account && req.body.Account !== req.token_obj.Account)
-						res.status(401).json({error: 'You need a valid token to acess the server.'})
-					else
-						next();
-				}
-				else
-					next();
+				req.$account = req.token_obj.Account;
+				if (req.method == "POST" || req.method == "PUT" || req.method == "DELETE"){
+					if (Array.isArray(req.body))
+						req.body.forEach(function(b){ b[config.account_field] = req.token_obj.Account; });
+					else if (typeof req.body == "object")
+						req.body[config.account_field] = req.token_obj.Account;
+				} else if (!!req.query && Object.keys(req.query).length !== 0)
+					req.query[config.account_field] = req.token_obj.Account;
+				next();
 			}
 		} catch(err){
 			res.status(401).json({error: 'You need a valid token to acess the server.'})

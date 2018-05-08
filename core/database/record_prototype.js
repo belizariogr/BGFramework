@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports.RecordPrototype = function(){
 	this.resource = "";
 	this.fields = [];
@@ -97,12 +95,13 @@ module.exports.RecordPrototype = function(){
 			var table = this.resource;
 			var params = {};
 			var query;
+
 			if (!!req.query && Object.keys(req.query).length !== 0){
 				query = req.query;
 				for (var q in query)
 					params[q.toLowerCase()] = query[q];
 			} else {
-				var k = this.fields.filter(function(f){ return f.isKey });
+				var k = this.fields.filter(function(f){ return f.key });
 				if (!k || !Array.isArray(k) || k.length == 0)
 					throw 'No key fields.';
 				if (req.params) {
@@ -110,14 +109,12 @@ module.exports.RecordPrototype = function(){
 						params[key.name.toLowerCase()] = req.params[key.name.toLowerCase()];
 					});
 				}
-			}
+			};
+			params[config.account_field.toLowerCase()] = req.$account;
 
-			var keys = this.fields.filter(function(f){ return f.isKey });
+			var keys = this.fields.filter(function(f){ return f.key });
 			if (!keys || !Array.isArray(keys) || keys.length == 0)
 				throw 'No key fields.';
-			if (!!global.account_check)
-				where += account_check('list', table, req.token_obj, req, params) || "";
-
 			keys.forEach(function(k){
 				var name = k.name.toLowerCase();
 				if (!params[name])
@@ -128,27 +125,25 @@ module.exports.RecordPrototype = function(){
 
 			var sql = "SELECT ";
 			for (var i = 0; i < this.fields.length; i++){
-				sql += (this.fields[i].sqlField || this.fields[i].name) + ' "' + this.fields[i].name + '"';
-				if (i !== this.fields.length - 1)
-					sql += ",";
-				sql += " ";
+				if (!this.fields[i].hidden){
+					sql += (this.fields[i].sqlField || this.fields[i].name) + ' "' + this.fields[i].name + '"';
+					if (i !== this.fields.length - 1)
+						sql += ",";
+					sql += " ";
+				}
 			}
 			sql += "FROM " + this.resource + " WHERE " + where;
-			global.db_conn.get(function(err, db){
-				db.query(sql, "", function(error, rows, fields){
-					db.detach();
-					try{
-						if (error)
-							throw error;
-						else
-							res.send(rows[0]);
-					}catch(err){
-						console.log("" + err);
-						res.status(500).send('Cannot GET.');
-					}
-				});
+			global.db_conn.query(sql, "", function(error, rows, fields){
+				try{
+					if (error)
+						throw error;
+					else
+						res.send(rows[0]);
+				}catch(err){
+					console.log("" + err);
+					res.status(500).send('Cannot GET.');
+				}
 			});
-
 		}catch(err){
 			console.log(err);
 			res.status(500).send('Cannot GET: ' + err);
@@ -158,9 +153,8 @@ module.exports.RecordPrototype = function(){
 	this.execute = function(action, req, res, before, after, execCallback){
 		var table = this.resource;
 		var fields = this.fields;
-		var keyid = req.token_obj.id;
 		var autoIncField = "";
-		try{
+		try {
 			var rec;
 			for (var r in req.body){
 				if (!rec)
@@ -170,18 +164,19 @@ module.exports.RecordPrototype = function(){
 			if (!rec)
 				throw "You need to pass a valid record.";
 			if (action.toLowerCase() == "update" || action.toLowerCase() == "delete"){
-				var keys = fields.filter(function(f){ return f.isKey });
+				var keys = fields.filter(function(f){ return f.key });
 				if (!keys || !Array.isArray(keys) || keys.length == 0)
 					throw 'No key fields.';
+
 				keys.forEach(function(k){
 					var name = k.name.toLowerCase();
 					if (!rec[name])
 						throw 'No value for key.';
 				});
 			} else if (action.toLowerCase() == "insert"){
-				var f = fields.filter(function(f){ return !!f.isKey; });
+				var f = fields.filter(function(f){ return !!f.autoInc; });
 				if (f.length > 1)
-					throw "Model has more than one key field.";
+					throw "Model has more than one auto incremet field.";
 				else if (f.length == 1)
 					autoIncField = f[0].name;
 			}
@@ -194,64 +189,41 @@ module.exports.RecordPrototype = function(){
 
 			var executeInsert = function(){
 
-				var autoInc = function(callback){
-					var block = "EXECUTE BLOCK RETURNS (ID INTEGER) AS BEGIN " +
-						" UPDATE OR INSERT INTO " + global.config.autoinc_table + " (" + global.config.autoinc_accountField + ", " + global.config.autoinc_tableField + ", " + global.config.autoinc_IdField + ") " +
-						" VALUES (" + req.token_obj.Account + ", '" + table.toUpperCase() + "', COALESCE((SELECT MAX(" + global.config.autoinc_IdField + ") + 1 FROM " + global.config.autoinc_table + " WHERE " +  global.config.autoinc_accountField + " = " + req.token_obj.Account +
-						" AND " + global.config.autoinc_tableField + " = '" + table.toUpperCase() + "'), 1)) " +
-						" MATCHING(" + global.config.autoinc_accountField + ", " + global.config.autoinc_tableField + ") RETURNING " + global.config.autoinc_IdField + " INTO :ID;" +
-						" SUSPEND; END";
-
-					global.db_conn.get(function(err, db){
-						db.query(block, "", function(err, rows, fields){
-							db.detach();
-							try{
-								if (err)
-									throw err;
-								dataSet.setValue(autoIncField, rows[0].ID);
-								callback();
-							}catch(err){
-								console.log(err);
-								console.log('SQL = ' + sql);
-								finalizeTransaction({type: 2, error: "Cannot INSERT."});
-							}
-
-						});
-					});
-				}
-
-				var execIns = function(){
+				var execIns = function(err, autoIncValue){
+					if (err){
+						console.log(err);
+						console.log('SQL = ' + sql);
+						finalizeTransaction({type: 2, error: "Cannot INSERT."});
+						return
+					}
+					if (!!autoIncValue)
+						dataSet.setValue(autoIncField, autoIncValue);
 					var sql = "INSERT INTO " + table + " (";
 					var ins = "";
 					var vals = "";
-
 					dataSet.fields.forEach(function(f){
 						ins += (!ins ? "" : ", ") + f;
 						vals += (!vals ? "" : ", ") + '?';
 					});
 					sql += ins + ") VALUES (" + vals + ")";
-
-					global.db_conn.get(function(err, db){
-						db.query(sql, dataSet.values, function(err){
-							db.detach();
-							try{
-								if (err)
-									throw err;
-								if (after)
-									after(req.body, finalizeTransaction)
-								else
-									finalizeTransaction();
-							}catch(err){
-								console.log(err);
-								console.log('SQL = ' + sql);
-								finalizeTransaction({type: 2, error: "Cannot INSERT."});
-							}
-						});
+					global.db_conn.query(sql, dataSet.values, function(err){
+						try{
+							if (err)
+								throw err;
+							if (after)
+								after(req.body, finalizeTransaction)
+							else
+								finalizeTransaction();
+						} catch(err) {
+							console.log(err);
+							console.log('SQL = ' + sql);
+							finalizeTransaction({type: 2, error: "Cannot INSERT."});
+						}
 					});
 				};
 
 				if (!!global.config.use_autoinc && !!autoIncField)
-					autoInc(execIns)
+					global.db_conn.getAutoIncId(req.token_obj.Account, table, execIns);
 				else
 					execIns();
 			};
@@ -270,28 +242,20 @@ module.exports.RecordPrototype = function(){
 					vals.push(rec[k.name.toLowerCase()]);
 				});
 
-				if (!!global.account_check){
-					var ac = account_check('update', table, req.token_obj, req) || "";
-					if (!!ac)
-						whr += (!whr ? "" : "AND ") + '(' + ac + ')';
-				}
 				sql += whr;
-				global.db_conn.get(function(err, db){
-					db.query(sql, vals, function(err){
-						db.detach();
-						try{
-							if (err)
-								throw err;
-							if (after)
-								after(req.body, finalizeTransaction)
-							else
-								finalizeTransaction();
-						}catch(err){
-							console.log(err);
-							console.log('SQL = ' + sql);
-							finalizeTransaction({type: 2, error: "Cannot UPDATE."});
-						}
-					});
+				global.db_conn.query(sql, vals, function(err){
+					try{
+						if (err)
+							throw err;
+						if (after)
+							after(req.body, finalizeTransaction)
+						else
+							finalizeTransaction();
+					}catch(err){
+						console.log(err);
+						console.log('SQL = ' + sql);
+						finalizeTransaction({type: 2, error: "Cannot UPDATE."});
+					}
 				});
 			};
 
@@ -304,28 +268,21 @@ module.exports.RecordPrototype = function(){
 					vals.push(rec[k.name.toLowerCase()]);
 				});
 
-				if (!!global.account_check){
-					var ac = account_check('delete', table, req.token_obj, req) || "";
-					if (!!ac)
-						whr +=  (!whr ? "" : "AND ") + '(' + ac + ')';
-				}
 				sql += " WHERE " + whr;
-				global.db_conn.get(function(err, db){
-					db.query(sql, vals, function(err){
-						db.detach();
-						try{
-							if (err)
-								throw err;
-							if (after)
-								after(req.body, finalizeTransaction)
-							else
-								finalizeTransaction();
-						}catch(err){
-							console.log(err);
-							console.log('SQL = ' + sql);
-							finalizeTransaction({type: 2, error: "Cannot DELETE."});
-						}
-					});
+
+				global.db_conn.query(sql, vals, function(err){
+					try{
+						if (err)
+							throw err;
+						if (after)
+							after(req.body, finalizeTransaction)
+						else
+							finalizeTransaction();
+					}catch(err){
+						console.log(err);
+						console.log('SQL = ' + sql);
+						finalizeTransaction({type: 2, error: "Cannot DELETE."});
+					}
 				});
 			};
 
@@ -369,8 +326,6 @@ module.exports.RecordPrototype = function(){
 	};
 
 	this.insert = function(req, res, before, after){
-		if (!!global.account_check)
-			account_check('insert', this.resource, req.token_obj, req);
 		this.execute("insert", req, res, before, after);
 	};
 

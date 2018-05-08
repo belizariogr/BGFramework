@@ -1,7 +1,4 @@
-'use strict'
-
 module.exports = {
-
 	encrypt: function(str){
 		var r = "";
 		for(var i = 0; i < str.length; i++){

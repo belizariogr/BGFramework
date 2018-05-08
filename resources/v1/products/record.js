@@ -1,10 +1,9 @@
-'use strict'
-
 module.exports.instance = function(){
 	this.__proto__ = new recordPrototype();
 	this.resource = "products";
 	this.fields = [
-		{name: "Id", 			dataType: "integer", isKey: true},
+		{name: "AccountId",		dataType: "integer", key: true, hidden: true},
+		{name: "Id", 			dataType: "integer", key: true, autoInc: true},
 		{name: "Name",			dataType: "string"},
 		{name: "Description",	dataType: "string"},
 		{name: "Price",			dataType: "float"},

@@ -29,9 +29,10 @@
 
 - [x] Create contexts (versions) for rest API
 - [x] Create a implementation for fields Auto Increment that gonna take the Id from a table.
-- [ ] Implement MySQL connection interface
+- [x] Implement MySQL connection interface
+- [x] Create a dynamic login system (independent of database)
 - [ ] Implement MongoDB connection interface
-- [ ] Create a dynamic login system (independent of database)
+- [ ] Implement a register route
 
 
 ## Implementations and Modules

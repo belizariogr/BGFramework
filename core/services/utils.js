@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
 
 	setPropValue: function(obj, prop, value) {
@@ -12,6 +10,13 @@ module.exports = {
 	    } else
 	        obj[prop[0]] = value;
 	},
+
+	getPropValue: function(obj, prop){
+		var k = Object.keys(obj);
+		var p = k.filter(function(f){ return f.toLowerCase() == prop.toLowerCase() });
+		if (Array.isArray(p) && p.length > 0)
+			return obj[p[0]];
+	}
 }
 
 

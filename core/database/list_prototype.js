@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports.ListPrototype = function(){
 	this.resource = "";
 	this.fields = [];
@@ -18,25 +16,13 @@ module.exports.ListPrototype = function(){
 			return field;
 	}
 
-	this.query = function(req, res, sql){
-		global.db_conn.query(sql, function(error, rows){
-			if (!!error) {
-				console.log('' + error);
-				res.status(500).send('Cannot GET.');
-			} else {
-				list.dataset = {rows: rows};
-				res.json(list.dataset);
-			}
-		});
-	};
-
 	this.get = function(req, res){
 		try{
 			var where = "";
 			var tableName = this.resource;
 			if (!!req.query)
 				var params = req.query;
-			var select_sql = "SELECT ";
+			var select = "";
 			var conditions = [];
 			var pageSql = "";
 			if (!!params){
@@ -46,7 +32,11 @@ module.exports.ListPrototype = function(){
 						var c = 0;
 						for (var i = 0; i < fields.length; i++){
 							var f = this.fieldByName(fields[i]);
+							if (fields[i].toLowerCase() == config.account_field.toLowerCase()){
+								f = {dataType: "integer", searchable: true};
+							};
 							if (!f || !f.searchable){
+								console.log("No field found.")
 								res.status(500).send('Cannot GET.');
 								return
 							} else {
@@ -54,14 +44,18 @@ module.exports.ListPrototype = function(){
 								var cond = {
 									field: fields[i],
 									dataType: f.dataType,
-									isOptions: f.isOptions,
+									options: f.options,
 									contains: f.contains,
 									startOr: (fields.length > 1 && i == 0),
 									endOr: (fields.length > 1 && i == fields.length - 1)
 								};
 								try{
-									var value = params[prop].split("|");
-									cond.value = value[0];
+									var value = [];
+									if (typeof params[prop] == "string"){
+										var value = params[prop].split("|");
+										cond.value = value[0];
+									} else
+									  cond.value= params[prop];
 									if (value.length == 2)
 										cond.valueEnd = value[1];
 
@@ -86,10 +80,11 @@ module.exports.ListPrototype = function(){
 										if (!(new Set('F', 'T', 'F|T', 'T|F')).has(value))
 											throw "Invalid bool.";
 										cond.value = value;
-									} else if (cond.isOptions)
+									} else if (cond.options)
 										cond.values = value;
 									conditions.push(cond);
 								}catch(err){
+									console.log(err)
 									res.status(500).send('Cannot GET.');
 									return
 								}
@@ -99,35 +94,25 @@ module.exports.ListPrototype = function(){
 							conditions[conditions.length - 1].endOr = conditions[conditions.length - 1].startOr;
 					}
 				}
-				if (params.page){
-					var page = parseInt(params.page);
-					var limitNumber = (page - 1) * global.config.page_records;
-					if (limitNumber != NaN)
-						select_sql += "FIRST " + global.config.page_records + " SKIP " + limitNumber + " ";
-				}
-
 			}
 
 			for (var i = 0; i < this.fields.length; i++){
-				select_sql += this.fields[i].name + ' "' + this.fields[i].name + '"';
+				select += this.fields[i].name + ' "' + this.fields[i].name + '"';
 				if (i !== this.fields.length - 1)
-					select_sql += ",";
-				select_sql += " ";
+					select += ",";
+				select += " ";
 			}
-			select_sql += "FROM " + this.resource;
+
 			var list = this;
 			where = "";
-
-			if (!!global.account_check)
-				where += global.account_check('list', this.resource, req.token_obj, req) || "";
 			var orBlock = false;
 			if (!!conditions.length > 0){
 				conditions.forEach(function(c){
 					if (c.dataType == "date"){
 						if (c.valueEnd)
-							where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + "CAST(" + c.field + " AS DATE) BETWEEN " + firebird.escape(c.value) + " AND " + firebird.escape(c.valueEnd);
+							where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + "CAST(" + c.field + " AS DATE) BETWEEN " + db_conn.escape(c.value) + " AND " + db_conn.escape(c.valueEnd);
 						else
-							where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + "CAST(" + c.field + " AS DATE) = " + firebird.escape(c.value);
+							where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + "CAST(" + c.field + " AS DATE) = " + db_conn.escape(c.value);
 						if (c.startOr)
 							orBlock = true;
 						if(c.endOr){
@@ -145,16 +130,16 @@ module.exports.ListPrototype = function(){
 							where += ")";
 							orBlock = false;
 						}
-					} else if (c.isOptions || c.dataType == "bool"){
+					} else if (c.options || c.dataType == "bool"){
 						where += (!where ? "" : " AND ") + c.field + " IN (";
 						var ins = '';
 						c.values.forEach(function(v){
-							ins += (ins ? ', ' : '') + firebird.escape(v)
+							ins += (ins ? ', ' : '') + db_conn.escape(v)
 						});
 						where += ins + ")";
 					} else if (c.contains){
 						c.value = "%" + c.value.replace(" ", "%") + "%";
-						where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + "LOWER(" + c.field + ") LIKE LOWER(" + firebird.escape(c.value) + ")";
+						where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + "LOWER(" + c.field + ") LIKE LOWER(" + db_conn.escape(c.value) + ")";
 						if (c.startOr)
 							orBlock = true;
 						if(c.endOr){
@@ -162,7 +147,7 @@ module.exports.ListPrototype = function(){
 							orBlock = false;
 						}
 					} else {
-						where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + c.field + " = " + firebird.escape(c.value);
+						where += (!where ? "" : (orBlock ? " OR " : " AND ")) + (c.startOr ? "(" : "") + c.field + " = " + db_conn.escape(c.value);
 						if (c.startOr)
 							orBlock = true;
 						if(c.endOr){
@@ -173,56 +158,51 @@ module.exports.ListPrototype = function(){
 				});
 			}
 
-			if (where)
-				where = 'WHERE ' + where;
-
 			var orderby = "";
 			if (!!params && !!params.order){
 				if (!!params.sort && params.sort.toLowerCase() === "desc")
 					orderby = " desc";
 				orderby = " ORDER BY " + params.order + orderby;
 			}
+			if (where)
+				where = 'WHERE ' + where;
+			var page = 0;
+			if (params.page)
+				page = parseInt(params.page);
 
-			global.db_conn.get(function(err, db){
-				if (err){
-					console.log(err)
-					res.status(500).send('Cannot GET: ' + err);
-					return
-				}
+			var sql = db_conn.getSelectSQL(tableName, select, where, "", orderby, page);
+			var exec = function(c){
+				db_conn.query(sql, function(error, result, fields){
+					if (!!error) {
+						console.log('' + error);
+						res.status(500).send('Cannot GET.');
+					} else {
+						if (page){
+							c = c - 1;
+							list.dataset = {page: page, pagecount: Math.floor(c / config.page_records) + 1, iat: new Date().getTime(), rows: result};
+						} else
+							list.dataset = {iat: new Date().getTime(), rows: result};
+						res.json(list.dataset);
+					}
+				});
+			}
 
-				var exec = function(c){
-					db.query(select_sql + " " + where + " " + orderby, function(error, result, fields){
-						db.detach();
-						if (!!error) {
-							console.log('' + error);
-							res.status(500).send('Cannot GET.');
-						} else {
-							if (page){
-								c = c - 1;
-								list.dataset = {page: page, pagecount: Math.floor(c / global.config.page_records) + 1, iat: new Date().getTime(), rows: result};
-							} else
-								list.dataset = {iat: new Date().getTime(), rows: result};
-							res.json(list.dataset);
-						}
-					});
-				}
+			var countSQL = "";
+			if (!!params && !!params.page){
+				countSQL = "SELECT count(*) \"count\" FROM " + tableName + " " + where;
+				db_conn.query(countSQL, function(err, results){
+					if (err){
+						console.log('Error on SQL: ' + countSQL)
+						console.log(err)
+						res.status(500).send('Cannot GET: ' + err);
+						return
+					}
+					var recCount = results[0].count;
+					exec(recCount);
+				})
+			} else
+				exec();
 
-				var countSQL = "";
-				if (!!params && !!params.page){
-					countSQL = "SELECT count(*) \"count\" FROM " + tableName + " " + where;
-					db.query(countSQL, function(err, results){
-						if (err){
-							console.log('Error on SQL: ' + countSQL)
-							console.log(err)
-							res.status(500).send('Cannot GET: ' + err);
-							return
-						}
-						var recCount = results[0].count;
-						exec(recCount);
-					})
-				} else
-					exec();
-			});
 		} catch(err){
 			console.log(err);
 			res.status(500).send('Cannot GET: ' + err);

@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports.route = function(){
 	return {
 		name: 'validatetoken',
@@ -10,14 +8,14 @@ module.exports.route = function(){
 			try{
 				var token_obj = token_service.verify(req.body.token);
 				var offset = new Date().getTimezoneOffset() * 60;
-				
+
 				var d = new Date();
 				d.setTime((token_obj.iat - offset) * 1000);
 				d.setHours(0,0,0,0);
 
 				var now = new Date();
-				now.setTime(now.getTime() - offset * 1000);	
-				now.setHours(0,0,0,0);	
+				now.setTime(now.getTime() - offset * 1000);
+				now.setHours(0,0,0,0);
 				if (!token_obj || d.getTime() != now.getTime()) {
 					res.status(401).json({error: 'You need a valid token to acess the server.'})
 				}

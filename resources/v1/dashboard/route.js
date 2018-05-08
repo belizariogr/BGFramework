@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports.route = function(){
 	return {
 		name: 'dashboard',
@@ -17,22 +15,19 @@ module.exports.route = function(){
 				var AccountId = -1;
 				if (!!req.token_obj)
 					AccountId = req.token_obj.Account;
+
 				var sql = "SELECT ";
 				sql += " (SELECT COUNT(*) FROM Costumers WHERE AccountId = " + AccountId + ") costumersCount,";
 				sql += " (SELECT COUNT(*) FROM Products WHERE AccountId = "  + AccountId + ") productsCount";
-				sql += " FROM RDB$DATABASE";
+				if (global.config.database_type == "firebird")
+					sql += " FROM RDB$DATABASE";
 
-				global.db_conn.get(function(err, db){
-					if (err)
-						throw err;
-					db.query(sql, function(error, result, fields){
-						db.detach();
-						if (!!error) {
-							console.log('' + error);
-							res.status(500).send('Cannot GET.');
-						} else
-							res.send(result);
-					});
+				global.db_conn.query(sql, function(error, result, fields){
+					if (!!error) {
+						console.log('' + error);
+						res.status(500).send('Cannot GET.');
+					} else
+						res.send(result);
 				});
 
 			} catch(err){

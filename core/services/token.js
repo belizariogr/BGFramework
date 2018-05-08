@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
 
 	setup: function(config){
@@ -26,7 +24,7 @@ module.exports = {
 	},
 
 	login: function(id, account, accountType, userRights) {
-		return { 
+		return {
 			acess_token: token_service.get({
 				Id: id,
 				Account: account,

@@ -67,7 +67,7 @@
 
 		"res_dashboard":{
 			"name": 				"Visão Geral",
-			"costumerCount":		"Contagem de Clientes",
+			"costumersCount":		"Contagem de Clientes",
 			"seeCostumers":			"Veja os clientes",
 			"productsCount":		"Contagem de Produtos",
 			"seeProducts":			"Veja os produtos"

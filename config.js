@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
 
 	// HTTP Information
@@ -9,11 +7,14 @@ module.exports = {
 	// Public HTML
 	use_public_html: true,
 
+	//Cluster
+	use_cluster: false,
+	workers_count: 0, // 0 = automatic; 1+ = fixed count
+
 	// List of Resources
 	resources: {
 		public: [
-			'login',
-			'validatetoken',
+
 		],
 		v1: [
 			'dashboard',
@@ -27,15 +28,14 @@ module.exports = {
 	],
 
 	// Database Information
-
 	database_type: 'firebird',
 
-	/* mysql_connectionLimit: 50,
 	mysql_host: 'localhost',
 	mysql_port: 3306,
 	mysql_user: 'root',
-	mysql_pass: '',
-	mysql_database: '', */
+	mysql_pass: '12345',
+	mysql_database: 'bgframework',
+	mysql_connectionLimit: 50,
 
 	fb_host: 'localhost',
 	fb_user: 'SYSDBA',
@@ -43,14 +43,22 @@ module.exports = {
 	fb_database: 'D:/Desenvolvimento/Projetos/BGFramework/DATABASE.FDB',
 	fb_connectionLimit: 50,
 
+	// Accounting
+	account_table: 'accounts',
+	account_id_field: 'Id',
+	account_username: 'Username',
+	account_password: 'Password',
+	encrypt_password: false,
+	allow_register: true,
 
-
+	// Auto increment
 	use_autoinc: true,
-	autoinc_table: 'Accounts_AutoInc',
-	autoinc_accountField: 'AccountId',
-	autoinc_tableField: 'TableName',
-	autoinc_IdField: 'Id',
+	autoinc_table: 'accounts_autoinc',
+	autoinc_table_field: 'TableName',
+	autoinc_id_field: 'Id',
 
+	// Account Field on Tables
+	account_field: 'AccountId',
 
 	// Records Information
 	page_records: 20,

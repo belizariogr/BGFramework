@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports.route = function(){
 	return {
 		name: 'products',

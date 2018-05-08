@@ -1,3 +1,1 @@
-'use strict'
-
-require('./core/main.js').run();
+require('./core/loader.js').execute();

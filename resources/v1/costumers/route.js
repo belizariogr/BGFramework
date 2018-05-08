@@ -1,11 +1,9 @@
-'use strict'
-
 module.exports.route = function() {
 
     // This file has all implementations of the actions to be used as an example, however, it's not necessary to implement that way. See products file for a simple example.
 
     var validateCostumer = function(rec) {
-        // Errors Code 0 and 1 are systems erros. Please, use 2 or more.		
+        // Errors Code 0 and 1 are systems erros. Please, use 2 or more.
         if (!rec.Name)
             error(1, "Field \"Name\" is required.");
         if (!rec.Address)
