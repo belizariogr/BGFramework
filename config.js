@@ -1,5 +1,8 @@
 module.exports = {
 
+	// Debug
+	debug: true,
+
 	// HTTP Information
 	http_port: 80,
 	https_port: 443,
@@ -10,23 +13,7 @@ module.exports = {
 	//Cluster
 	use_cluster: false,
 	workers_count: 0, // 0 = automatic; 1+ = fixed count
-
-	// List of Resources
-	resources: {
-		public: [
-
-		],
-		v1: [
-			'dashboard',
-			'costumers',
-			'products',
-		],
-	},
-
-	extras: [
-		'simple_encrypt',
-	],
-
+	
 	// Database Information
 	database_type: 'firebird',
 

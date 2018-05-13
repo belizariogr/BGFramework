@@ -49,7 +49,7 @@ You can run the backend with an html server. This will run both frontend and bac
 
 ### Backend Implementation
 
-In backend, you must create resources by creating a directory: "./resources/:CONTEXT:/:NAME_OF_RESOURCE:" that will contain at least one file called "route.js" that will contain implementation of controller and the calls for the model or any other functions that you need for the resource. If you want to use models, you must create 2 more files called "list.js" and "record.js" that contains the models implementation.
+In backend, you must create resources by creating a directory: "./resources/:CONTEXT:/:NAME_OF_RESOURCE:" that will contain at least one file called "controller.js" that will contain implementation of controller and the calls for the model or any other functions that you need for the resource. If you want to use models, you must create a file called "model.js" that contains the model implementation.
 
 For an example of this files, see the folder "./resources/v1/products"
 

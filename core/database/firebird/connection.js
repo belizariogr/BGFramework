@@ -1,6 +1,5 @@
 module.exports.setup = function(config){
-	global.listPrototype = require('../../database/list_prototype.js').ListPrototype;
-	global.recordPrototype = require('../../database/record_prototype.js').RecordPrototype;
+	global.modelPrototype = require('../../database/model_prototype.js');
 	global.firebird = require('node-firebird');
 	var conn_options = {
 		host: config.fb_host || 'localhost',
@@ -11,6 +10,7 @@ module.exports.setup = function(config){
 	};
 
 	var connection = firebird.pool(config.fb_connectionLimit, conn_options);
+	connection.sqlHelper = require('../sqlhelper.js');
 	connection.get(function (err, conn) {
 		if (!err){
 			console.log("Firebird database is connected...");
@@ -40,10 +40,6 @@ module.exports.setup = function(config){
 		})
 	};
 
-	connection.syncQuery = function(sql){
-		return sync.await(connection.query(sql, sync.defer()));
-	};
-
 	connection.escape = function(str) {
 		return firebird.escape(str);
 	};
@@ -58,16 +54,34 @@ module.exports.setup = function(config){
 		return "SELECT " + pagination + " " + fields + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy;
 	};
 
-	connection.getAutoIncId = function(account, tableName, callback){
-		var sql = "EXECUTE BLOCK RETURNS (ID INTEGER) AS BEGIN " +
+	connection.getAutoIncSQL = function(account, tableName){
+		return "EXECUTE BLOCK RETURNS (ID INTEGER) AS BEGIN " +
 					" UPDATE OR INSERT INTO " + config.autoinc_table + " (" + config.account_field + ", " + config.autoinc_table_field + ", " +
 					config.autoinc_id_field + ") " + " VALUES (" + account + ", '" + tableName.toUpperCase() + "', COALESCE((SELECT MAX(" + config.autoinc_id_field +
 					") + 1 FROM " + config.autoinc_table + " WHERE " +  config.account_field + " = " + account + " AND " + config.autoinc_table_field +
 					" = '" + tableName.toUpperCase() + "'), 1)) " +	" MATCHING(" + config.account_field + ", " + config.autoinc_table_field + ") RETURNING " +
 					config.autoinc_id_field + " INTO :ID; SUSPEND; END";
-		connection.query(sql, function(err, rows, fields){
-			callback(err, utils.getPropValue(rows[0], config.autoinc_id_field))
-		});
 	};
+
+	connection.list = function(model, conditions, orders, page){
+		return connection.sqlHelper.get(connection, model, conditions, orders, page);
+	};
+
+	connection.record = function(model, conditions){
+		return connection.sqlHelper.get(connection, model, conditions);
+	};
+
+	connection.insert = function(model, dataset){
+		return connection.sqlHelper.insert(connection, model, dataset);
+	};
+
+	connection.update = function(model, dataset){
+		return connection.sqlHelper.update(connection, model, dataset);
+	};
+
+	connection.delete = function(model, dataset){
+		return connection.sqlHelper.delete(connection, model, dataset);
+	};
+
 	return connection;
 };

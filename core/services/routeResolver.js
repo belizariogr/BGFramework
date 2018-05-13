@@ -1,27 +1,23 @@
 module.exports.routeResolver = function(config, routes, httpServer, secureRoutes){
 	if (!!config.allow_register)
-		routes.add(require('../resources/register.js').route());
-	routes.add(require('../resources/login.js').route());
-	routes.add(require('../resources/validatoken.js').route());
+		routes.add(require('../resources/register.js'));
+	routes.add(require('../resources/login.js'));
+	routes.add(require('../resources/validatoken.js'));
 	var contexts = Object.keys(config.resources);
-	contexts.forEach(function(context){
-		config.resources[context].forEach(function(r){
-			var route = require('../../resources/' + context  + '/' + r + '/route.js').route();
+	contexts.forEach(function(context){		
+		config.resources[context].forEach(function(r){			
+			var route = require('../../resources/' + context  + '/' + r + '/controller.js');			
 			route.filepath = '../resources/' + context  + '/' + r + '/';
 			routes.add(route);
 			if (!!route.canGetList && !route.list){
-				route.list = function(req, res){
-					getList(route.filepath).get(req, res);
-				}
+				route.list = function(req, res){ getModel(route.filepath).get(req, res); }
 			};
 			if (!!route.canGetRecord && !route.record){
-				route.record = function(req, res){
-					getRecord(route.filepath).get(req, res);
-				}
+				route.record = function(req, res){ getModel(route.filepath).get(req, res); }
 			};
 			if (!!route.canInsert && !route.insert){
 				route.insert = function(req, res){
-					var record = getRecord(route.filepath);
+					var record = getModel(route.filepath);
 					var before = function(rec, callback){
 						if (record.validateRecord)
 							record.validateRecord(rec);
@@ -35,7 +31,7 @@ module.exports.routeResolver = function(config, routes, httpServer, secureRoutes
 			};
 			if (!!route.canUpdate && !route.update){
 				route.update = function(req, res){
-					var record = getRecord(route.filepath);
+					var record = getModel(route.filepath);
 					var before = function(rec, callback){
 						if (record.validateRecord)
 							record.validateRecord(rec);
@@ -48,10 +44,7 @@ module.exports.routeResolver = function(config, routes, httpServer, secureRoutes
 				}
 			};
 			if (!!route.canDelete && !route.delete){
-				route.delete = function(req, res){
-					var record = getRecord(route.filepath);
-					record.delete(req, res, record.beforeDelete, record.afterDelete);
-				}
+				route.delete = function(req, res){ getModel(route.filepath).delete(req, res, record.beforeDelete, record.afterDelete); }
 			}
 		});
 

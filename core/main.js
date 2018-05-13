@@ -1,9 +1,9 @@
 module.exports.run = function(){
-	var routes = require('./services/routes.js');
-	var express = require('express');
-	var secureRouter = express.Router();
-	var cors = require('cors');
-	var httpServer = express();
+	const routes = require('./services/routes.js');
+	const express = require('express');
+	const secureRouter = express.Router();
+	const cors = require('cors');
+	const httpServer = express();
 	httpServer.use(cors());
 	global.error = function(code, message){
 		throw {code: code, message: message}

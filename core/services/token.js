@@ -3,7 +3,6 @@ module.exports = {
 	setup: function(config){
 		this.SECRET_KEY = config.jwt_password;
 		this.expiration = config.jwt_expiration;
-
 		this.jwt = require('jsonwebtoken');
 	},
 
@@ -13,9 +12,8 @@ module.exports = {
 
 	verify: function(token){
 		var d = this.jwt.verify(token, this.SECRET_KEY);
-		if (!d.Account || !d.Id) {
+		if (!d.Account || !d.Id) 
 			return false;
-		}
 		return d;
 	},
 
@@ -25,7 +23,7 @@ module.exports = {
 
 	login: function(id, account, accountType, userRights) {
 		return {
-			acess_token: token_service.get({
+			token: token_service.get({
 				Id: id,
 				Account: account,
 				AccountType: accountType,

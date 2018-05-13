@@ -9,10 +9,12 @@
     "cluster": "^0.7.7",
     "cors": "^2.8.1",
     "express": "^4.16.3",
+    "fs": "0.0.1-security",
     "jsonwebtoken": "^7.3.0",
     "mysql": "^2.15.0",
     "node-firebird": "^0.8.1",
-    "npm": "^5.8.0"
+    "npm": "^5.8.0",
+    "q": "^1.5.1"
   },
   "keywords": [],
   "author": "Belizário Gonçalves Ribeiro Filho.",

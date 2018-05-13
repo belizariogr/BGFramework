@@ -31,7 +31,9 @@
 - [x] Create a implementation for fields Auto Increment that gonna take the Id from a table.
 - [x] Implement MySQL connection interface
 - [x] Create a dynamic login system (independent of database)
+- [x] Implement default values for fields
 - [ ] Implement Joins and Conditions for resources
+- [ ] Implement relations for multiple resources
 - [ ] Implement MongoDB connection interface
 - [ ] Implement a register route
 
