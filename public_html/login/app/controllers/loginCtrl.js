@@ -33,16 +33,15 @@ app.controller('loginCtrl', ['$scope', '$http', '$window', function($scope, $htt
 			$scope.invalidLogin = true;
 			$scope.login_button_disabled = false;
 			clearData();
-		}
-		else {
+		} else {
 			$scope.login_button_disabled = true;
 			$http.post(app.appConfig.backend_addr + '/api/login/', $scope.userData).then(
 				function successCallback(res){
-					if (res.data.acess_token) {
+					if (res.data.token) {
 		    			$scope.invalidLogin = false;
 		    			$scope.message = '';
 		    			clearData();
-		    			saveToken(res.data.acess_token, res.data.expiration);
+		    			saveToken(res.data.token, res.data.expiration);
 		    			$window.open('/', '_self');
 					}
 					else {

@@ -11,6 +11,8 @@ module.exports.setup = function(config){
 
 	var connection = firebird.pool(config.fb_connectionLimit, conn_options);
 	connection.sqlHelper = require('../sqlhelper.js');
+	connection.escape = firebird.escape;
+
 	connection.get(function (err, conn) {
 		if (!err){
 			console.log("Firebird database is connected...");
@@ -40,8 +42,17 @@ module.exports.setup = function(config){
 		})
 	};
 
-	connection.escape = function(str) {
-		return firebird.escape(str);
+	connection.asyncQuery = function(sql, params){
+		return new Promise(function(resolve, reject){
+			if (!!params)
+				connection.query(sql, params, function(error, result, fields){
+					resolve({error: error, rows: result, fields: fields})
+				});
+			else
+				connection.query(sql, function(error, result, fields){
+					resolve({error: error, rows: result, fields: fields});
+				});
+		})
 	};
 
 	connection.getSelectSQL = function(tableName, fields, where, groupBy, orderBy, page){
@@ -54,13 +65,17 @@ module.exports.setup = function(config){
 		return "SELECT " + pagination + " " + fields + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy;
 	};
 
-	connection.getAutoIncSQL = function(account, tableName){
-		return "EXECUTE BLOCK RETURNS (ID INTEGER) AS BEGIN " +
+	connection.getAutoInc = async function(account, tableName){
+		var sql = "EXECUTE BLOCK RETURNS (ID INTEGER) AS BEGIN " +
 					" UPDATE OR INSERT INTO " + config.autoinc_table + " (" + config.account_field + ", " + config.autoinc_table_field + ", " +
 					config.autoinc_id_field + ") " + " VALUES (" + account + ", '" + tableName.toUpperCase() + "', COALESCE((SELECT MAX(" + config.autoinc_id_field +
 					") + 1 FROM " + config.autoinc_table + " WHERE " +  config.account_field + " = " + account + " AND " + config.autoinc_table_field +
 					" = '" + tableName.toUpperCase() + "'), 1)) " +	" MATCHING(" + config.account_field + ", " + config.autoinc_table_field + ") RETURNING " +
 					config.autoinc_id_field + " INTO :ID; SUSPEND; END";
+		var result = await connection.asyncQuery(sql);
+		if (result.error)
+			return result;
+		return dbutils.normatizeObject(result.rows[0])["id"];
 	};
 
 	connection.list = function(model, conditions, orders, page){

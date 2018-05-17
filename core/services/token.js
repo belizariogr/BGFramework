@@ -12,7 +12,7 @@ module.exports = {
 
 	verify: function(token){
 		var d = this.jwt.verify(token, this.SECRET_KEY);
-		if (!d.Account || !d.Id) 
+		if (!d.Account || !d.Id)
 			return false;
 		return d;
 	},
@@ -23,6 +23,7 @@ module.exports = {
 
 	login: function(id, account, accountType, userRights) {
 		return {
+			iat: new Date().getTime(),
 			token: token_service.get({
 				Id: id,
 				Account: account,

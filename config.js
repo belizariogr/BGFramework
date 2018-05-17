@@ -1,5 +1,4 @@
 module.exports = {
-
 	// Debug
 	debug: true,
 
@@ -13,9 +12,9 @@ module.exports = {
 	//Cluster
 	use_cluster: false,
 	workers_count: 0, // 0 = automatic; 1+ = fixed count
-	
+
 	// Database Information
-	database_type: 'firebird',
+	database_type: 'mysql',
 
 	mysql_host: 'localhost',
 	mysql_port: 3306,
@@ -32,20 +31,23 @@ module.exports = {
 
 	// Accounting
 	account_table: 'accounts',
-	account_id_field: 'Id',
-	account_username: 'Username',
-	account_password: 'Password',
+	account_id_field: 'id',
+	account_username: 'username',
+	account_password: 'password',
 	encrypt_password: false,
 	allow_register: true,
 
 	// Auto increment
 	use_autoinc: true,
-	autoinc_table: 'accounts_autoinc',
-	autoinc_table_field: 'TableName',
-	autoinc_id_field: 'Id',
+	autoinc_table: 'autoinc',
+	autoinc_table_field: 'tablename',
+	autoinc_id_field: 'id',
 
-	// Account Field on Tables
-	account_field: 'AccountId',
+	// system fields on Tables
+	account_field: 'account',
+	creation_field: '',
+	modification_field: '',
+	deletion_field: '',
 
 	// Records Information
 	page_records: 20,

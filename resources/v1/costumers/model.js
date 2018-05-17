@@ -1,7 +1,6 @@
-module.exports = {	
+module.exports = {
 	resource: "costumers",
 	fields: [
-		{name: "AccountId",		dataType: "integer", 	list: false, key: true, hidden: true},
 		{name: "Id",			dataType: "integer", 	list: true, key: true, searchable: true, autoInc: true},
 		{name: "Name", 			dataType: "string",		list: true, searchable: true, contains: true},
 		{name: "Address", 		dataType: "string",		list: false},

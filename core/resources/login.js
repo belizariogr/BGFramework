@@ -2,33 +2,42 @@ module.exports = {
 	name: 'login',
 	path: '/login',
 	isPublic: true,
-	post: function(req, res){
-		if (!req.body || !req.body.username || !req.body.password)			
+	post: async function(req, res){
+		if (!req.body || !req.body.username || !req.body.password)
 			return res.json({ error: 'Invalid username or password.' });
-		db_conn.query("SELECT " + config.account_id_field + ", " + config.account_username + ", " + config.account_password + " FROM " + config.account_table + " WHERE " + config.account_username + " = ?", [req.body.username], function(err, rows){
-			if (!!err)
-				return res.send(err);
+		try {
+			var rec = dbutils.normatizeObject(req.body);
+			var sql = "SELECT " + config.account_id_field + ", " + config.account_username + ", " + config.account_password + " FROM " + config.account_table + " WHERE " + config.account_username + " = ?";
+			result = await db_conn.asyncQuery(sql, [rec.username]);
+			if (!!result.err)
+				throw result.err;
+			if (result.rows.length == 0)
+				return res.json({error: 'Invalid username or password.'});
 			var id, username, password;
-			if (!!rows[0]) {
-				id = utils.getPropValue(rows[0], config.account_id_field);
-				username = utils.getPropValue(rows[0], config.account_username);
-				password = utils.getPropValue(rows[0], config.account_password);
+			if (!!result.rows[0]) {
+				id = utils.getPropValue(result.rows[0], config.account_id_field);
+				username = utils.getPropValue(result.rows[0], config.account_username);
+				password = utils.getPropValue(result.rows[0], config.account_password);
 			};
-			if (!username)				
+			if (!username)
 				return res.json({error: 'Invalid username or password.'});
 			if (config.encrypt_password) {
-				bcrypt.compare(req.body.username + '||'+ req.body.password, password, function(err, valid) {
+				bcrypt.compare(rec.username + '||'+ rec.password, password, function(err, valid) {
 				    if (valid)
 				    	res.json(token_service.login(id, id));
 				    else
 				    	res.json({error: 'Invalid username or password.'});
 				});
 			} else {
-				if (password === req.body.password)
+				if (password === rec.password)
 					res.json(token_service.login(id, id));
 				else
 					res.json({error: 'Invalid username or password.'});
 			}
-		});
+		} catch(err) {
+			if (config.debug)
+				console.log(err)
+			res.json({error: "Error on login."});
+		}
 	}
 }

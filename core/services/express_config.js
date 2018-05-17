@@ -17,7 +17,7 @@ module.exports.express_config = function(config, routes, express, httpServer, se
 		try{
 			req.token_obj = token_service.verify(token);
 			if (!req.token_obj)
-				return res.status(401).json({error: 'You need a valid token to acess the server.'})			
+				return res.status(401).json({error: 'You need a valid token to acess the server.'})
 			req.$account = req.token_obj.Account;
 			if (req.method == "POST" || req.method == "PUT" || req.method == "DELETE"){
 				if (Array.isArray(req.body))
@@ -26,7 +26,7 @@ module.exports.express_config = function(config, routes, express, httpServer, se
 					req.body[config.account_field] = req.token_obj.Account;
 			} else
 				req.query[config.account_field] = req.token_obj.Account;
-			next();			
+			next();
 		} catch(err){
 			res.status(401).json({error: 'You need a valid token to acess the server.'})
 		}

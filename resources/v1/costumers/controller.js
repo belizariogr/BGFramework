@@ -1,7 +1,14 @@
-module.exports = function(){
-    const validateCostumer = function(rec) {        
-        // Errors Code 0 and 1 are systems erros. Please, use 2 or more.
-        if (!rec.name)
+module.exports =  {
+    name: 'costumers',
+    path: '/costumers',
+    list: true,
+    record: true,
+    insert: true,
+    update: true,
+    delete: true,
+
+    validateRecord: function(rec){
+       if (!rec.name)
             error(1, "Field \"Name\" is required.");
         if (!rec.address)
             error(2, "Field \"Address\" is required.");
@@ -11,47 +18,29 @@ module.exports = function(){
             error(4, "Field \"Email\" is required.");
         if (!!rec.gender && rec.gender != 'M' && rec.gender != 'F')
             error(5, "Invalid gender.")
-    };
-    const model = getModel(__dirname);
-    return {
-        name: 'costumers',
-        path: '/costumers',
+    },
 
-        list: function(req, res) {             
-            model.get(req, res);
-        },
+    beforeInsert: async function(rec){
 
-        record: function(req, res) {
-            model.get(req, res);
-        },
+    },
 
-        insert: function(req, res) {            
-            var before = function(rec) {
-                validateCostumer(rec);                
-            };
-            var after = function(rec) {
-                
-            };
-            model.insert(req, res, before, after);
-        },
+    afterInsert: async function(rec){
 
-        update: function(req, res) {
-            var before = function(rec) {
-                validateCostumer(rec);                
-            };
-            var after = function(rec) {
+    },
 
-            };
-            model.update(req, res, before, after);
-        },
+    beforeUpdate: async function(rec){
 
-        delete: function(req, res) {
-            var before = function(rec) {
-               
-            };
-            var after = function(rec) {
-            };
-            model.delete(req, res, before, after);
-        },
-    }
-}();
+    },
+
+    afterUpdate: async function(rec){
+
+    },
+
+    beforeDelete: async function(rec){
+
+    },
+
+    afterDelete: async function(rec){
+
+    },
+}

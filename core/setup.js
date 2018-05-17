@@ -8,13 +8,24 @@ module.exports.setup = function(){
 		global.saltRounds = 10;
 	};
 	global.extras = {};
-	const extras = require('./services/resources.js').getExtras();	
+	const extras = require('./services/resources.js').getExtras();
 	extras.forEach(function(r){
 		global.utils.setPropValue(global.extras, r, require('../extras/' + r + '.js'));
 	});
-	global.db_conn = require('./database/' + global.config.database_type + '/connection.js').setup(global.config);
+	global.db_conn = require('./database/' + global.config.database_type + '/connection.js').setup(config);
 	global.getModel = function(dir){
-		return Object.assign(new modelPrototype(), require(dir + '/model.js'));
+		var model = Object.assign(new modelPrototype(), require(dir + '/model.js'));
+		if (!!model.fields){
+			if (config.account_field)
+				model.fields.unshift({name: config.account_field, dataType: "integer", key: true, hidden: true});
+			if (config.creation_field)
+				model.fields.unshift({name: config.creation_field, dataType: "datetime"});
+			if (config.modification_field)
+				model.fields.unshift({name: config.modification_field, dataType: "datetime"});
+			if (config.deletion_field)
+				model.fields.unshift({name: config.deletion_field, dataType: "datetime"});
+		}
+		return model;
 	};
 }
 

@@ -1,10 +1,15 @@
 module.exports = {
 	name: 'products',
 	path: '/products',
-	canGetList: true,
-	canGetRecord: true,
-	canInsert: true,
-	canUpdate: true,
-	canDelete: true
+	list: true,
+	record: true,
+	insert: true,
+	update: true,
+	delete: true,
+
+	validateRecord: function(rec){
+		if (!rec.Name)
+			error(1, "Field \"Name\" is required.");
+	},
 }
 

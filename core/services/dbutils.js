@@ -127,36 +127,54 @@ module.exports = {
 		var f = model.fields.filter(function(f){ return !!f.autoInc; });
 		return f[0].name;
 	},
-	
+
 	getValueByIndex: function(row, index){
 		return row[Object.keys(row)[index]];
 	},
 
-	validateRecord: function(action, model, record){
-		var rec;
-		for (var r in record){
-			if (!rec)
-				rec = {};
-			rec[r.toLowerCase()] = record[r];
+	normatizeObject: function(obj){
+		var buf = {};
+		for (var p in obj){
+			buf[p.toLowerCase()] = obj[p];
 		};
+		return buf;
+	},
+
+	validateRecord: function(action, model, record, params){
+		if (!!params) {
+			var buf = Object.assign(record, params);
+			var rec = this.normatizeObject(buf);
+		} else
+			var rec = record;
 		if (!rec)
 			throw 'You need to pass a valid record.';
-		if (action.toLowerCase() == 'update' || action.toLowerCase() == 'delete'){
-			var keys = this.getKeys(model);
-			if (!keys || !Array.isArray(keys) || keys.length == 0)
-				throw 'No key fields.';
-			keys.forEach(function(k){
-				var name = k.name.toLowerCase();
-				if (!rec[name])
-					throw 'No value for key.';
-			});
-		} else if (action.toLowerCase() == 'insert'){
-			var f = model.fields.filter(function(f){ return !!f.autoInc; });
-			if (f.length > 1)
-				throw 'Model has more than one auto incremet field.';
+		var keys = this.getKeys(model);
+		var validate = function(rec){
+			if (action.toLowerCase() == 'update' || action.toLowerCase() == 'delete'){
+				if (!keys || !Array.isArray(keys) || keys.length == 0)
+					throw 'No key fields.';
+				keys.forEach(function(k){
+					var name = k.name.toLowerCase();
+					if (!rec[name])
+						throw 'No value for key.';
+				});
+			} else if (action.toLowerCase() == 'insert'){
+				var f = model.fields.filter(function(f){ return !!f.autoInc; });
+				if (f.length > 1)
+					throw 'Model has more than one auto incremet field.';
+			}
+		};
+		if (Array.isArray(rec)){
+			rec.forEach(function(r){
+				r = dbutils.normatizeObject(r);
+				validate(r);
+			})
+		} else{
+			rec = dbutils.normatizeObject(rec);
+			validate(rec);
 		}
 		return rec;
-	},	
+	},
 
 	getKeys: function(model){
 		return model.fields.filter(function(f){ return f.key });
@@ -164,13 +182,13 @@ module.exports = {
 
 	getDataset: function(fields, rec, useDefaults){
 		var dataset = {fields:[], values: []};
-		var keys = Object.keys(rec);		
+		var keys = Object.keys(rec);
 		fields.forEach(function(f){
 			k = keys.filter(function(k){ return k.toLowerCase() == (f.name + "").toLowerCase()});
 			if (k.length == 0 && !f.readOnly){
 				dataset.fields.push(f.name);
 				if (useDefaults && f.default !== undefined){
-					if (f.dataType == "bool" && typeof f.default == "boolean")						
+					if (f.dataType == "bool" && typeof f.default == "boolean")
 						f.default = f.default ? 'T' : 'F';
 					dataset.values.push(f.default);
 				} else
@@ -220,10 +238,8 @@ module.exports = {
 						throw 'Field "' + f.name + '" has an invalid data type.';
 				}
 				dataset.fields.push(f.name);
-				dataset.values.push(value);									
+				dataset.values.push(value);
 			}
-					
-			
 		});
 		var notFound = keys.filter(function(k){
 			return fields.filter(function(f){ return f.name.toLowerCase() == k.toLowerCase() }).length == 0;
@@ -233,7 +249,7 @@ module.exports = {
 			var err = "";
 			notFound.forEach(function(n){
 				err += (err ? ", " : "") + "'" + n + "'";
-			});			
+			});
 			throw "Field(s) not found in model: " + err;
 		}
 
@@ -252,7 +268,7 @@ module.exports = {
 			}
 		};
 
-		dataset.getValue = function(field){	
+		dataset.getValue = function(field){
 			if (!field)	throw 'Invalid field.';
 			for (var i = 0; i < this.fields.length; i++) {
 				if (this.fields[i].toLowerCase() == field.toLowerCase())
@@ -260,9 +276,9 @@ module.exports = {
 			}
 		};
 
-		dataset.getRecord = function(fields){		
+		dataset.getRecord = function(fields){
 			var dataset = this;
-			var record = {};			
+			var record = {};
 			if (!!fields){
 				fields.forEach(function(f){
 					if (f.name.toLowerCase() != config.account_field.toLowerCase())

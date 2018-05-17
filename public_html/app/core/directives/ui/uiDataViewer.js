@@ -213,8 +213,8 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 				$scope.config.api.get($scope.config.editResource + '/' + $scope.editId, $scope.config.publicResource).then(
 					function(res){
 						$scope.dataLoading = false;
-						if (!!res.data) {
-							$scope.rec = res.data;
+						if (!!res.data && !!res.data.rows && !!res.data.rows[0]) {
+							$scope.rec = res.data.rows[0];
 							var dataset = {rows: []};
 							dataset.rows.push($scope.rec);
 							prepareRecords(dataset, $scope,'edit');
@@ -551,8 +551,8 @@ app.directive("uiDataViewer", ['$timeout', '$location', '$routeParams', '$compil
 							var Id = r.Id;
 						$scope.config.api.get($scope.config.editResource + '/' + Id, $scope.config.publicResource).then(
 							function(res){
-								if (!!res.data) {
-									$scope.rec = res.data;
+								if (!!res.data && !!res.data.rows && !!res.data.rows[0]) {
+									$scope.rec = res.data.rows[0];
 									var dataset = {rows: []};
 									dataset.rows.push($scope.rec);
 									prepareRecords(dataset, $scope, 'edit');

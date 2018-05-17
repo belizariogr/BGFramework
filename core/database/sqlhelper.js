@@ -81,9 +81,8 @@ module.exports = {
 		return orderby;
 	},
 
-	getCount: function(conn, table, where){
-		countSQL = "SELECT count(*) \"count\" FROM " + table + " " + where;
-		return conn.syncQuery(countSQL)
+	getCount: function(table, where){
+		return "SELECT count(*) \"count\" FROM " + table + " " + where;
 	},
 
 	getInsert: function(dataset, model){
@@ -109,7 +108,7 @@ module.exports = {
 		sql += upd + " WHERE";
 		var keys = dbutils.getKeys(model);
 		keys.forEach(function(k){
-			whr += (!whr ? " (" : " AND (") + k.name + " = " + conn.escape(dataset.getValue(k.name)) + ")";		
+			whr += (!whr ? " (" : " AND (") + k.name + " = " + conn.escape(dataset.getValue(k.name)) + ")";
 		});
 		sql += whr;
 		return sql;
@@ -124,67 +123,56 @@ module.exports = {
 			whr += (!whr ? " (" : " AND (") + k.name + " = " + conn.escape(dataset.getValue(k.name)) + ")";
 		});
 		sql += " WHERE " + whr;
-		return sql;		
-	},
-
-	asyncQuery: function(conn, sql, params){
-		return new Promise(function(resolve, reject){
-			if (!!params)
-				conn.query(sql, params, function(error, result, fields){
-					resolve({error: error, rows: result, fields: fields})
-				});
-			else
-				conn.query(sql, function(error, result, fields){					
-					resolve({error: error, rows: result, fields: fields});
-				});
-		})
+		return sql;
 	},
 
 	get: async function(conn, model, conditions, orders, page){
 		var fields = this.getFields(model);
-		var where = this.getWhere(conditions);		
+		var where = this.getWhere(conditions);
 		var orderby = this.getOrderBy(orders);
-		var sql = conn.getSelectSQL(model.resource, fields, where, "", orderby, page);		
+		var sql = conn.getSelectSQL(model.resource, fields, where, "", orderby, page);
 		var recCount;
-		if (typeof page == "number" && page > 0)
-			 recCount = conn.getCount(conn, model.resource, where);					
-		var result = await this.asyncQuery(conn, sql);
+		if (typeof page == "number" && page > 0){
+			recCount = await conn.asyncQuery(this.getCount(model.resource, where));
+			if (recCount.error)
+				throw recCount.error;
+			recCount = recCount.rows[0].count;
+		};
+		var result = await conn.asyncQuery(sql);
 		if (result.error)
 			throw result.error;
-		if (page){
-			c = c - 1;
-			var dataset = {page: page, pagecount: Math.floor(recCount / config.page_records) + 1, iat: new Date().getTime(), rows: result.rows};
-		} else
+		if (page)
+			var dataset = {iat: new Date().getTime(), page: page, pagecount: Math.floor(recCount / config.page_records) + 1, rows: result.rows};
+		else
 			var dataset = {iat: new Date().getTime(), rows: result.rows};
 		return dataset;
 	},
 
 	insert: async function(conn, model, dataset){
-		var autoIncField = dbutils.getAutoIncFieldName(model, dataset);		
+		var autoIncField = dbutils.getAutoIncFieldName(model, dataset);
 		if (!!autoIncField){
-			var r = await this.asyncQuery(conn, conn.getAutoIncSQL(dataset.getValue(config.account_field), model.resource));
+			var r = await conn.getAutoInc(dataset.getValue(config.account_field), model.resource);
 			if (r.error)
 				throw r.error;
-			var autoIncValue = dbutils.getValueByIndex(r.rows[0], 0);
-			dataset.setValue(autoIncField, autoIncValue);
-		}		
-		var res = await this.asyncQuery(conn, this.getInsert(dataset, model), dataset.values);
+			dataset.setValue(autoIncField, r);
+		}
+		var res = await conn.asyncQuery(this.getInsert(dataset, model), dataset.values);
 		if (res.error)
 			throw res.error;
-		return {iat: new Date().getTime(), rows: dataset.getRecord(model.fields)};
+		return {iat: new Date().getTime(), id: r};
 	},
 
 	update: async function(conn, model, dataset){
-		var res = await this.asyncQuery(conn, this.getUpdate(conn, dataset, model), dataset.values);
-		if (res.error)
-			throw res.error;
-		return {iat: new Date().getTime(), rows: dataset.getRecord(model.fields)};
-	},
-
-	delete: async function(conn, model, dataset){
-		var res = await this.asyncQuery(conn, this.getDelete(conn, dataset, model), dataset.values);
+		var res = await conn.asyncQuery(this.getUpdate(conn, dataset, model), dataset.values);
 		if (res.error)
 			throw res.error;
 		return {iat: new Date().getTime()};
-	}		
+	},
+
+	delete: async function(conn, model, dataset){
+		var res = await conn.asyncQuery(this.getDelete(conn, dataset, model), dataset.values);
+		if (res.error)
+			throw res.error;
+		return {iat: new Date().getTime()};
+	}
 }

@@ -9,9 +9,9 @@ app.register.controller('dashboardCtrl', ['$scope', function($scope){
 
 		app.restAPI.get('dashboard', false).then(
 			function(res){
-				if (!!res.data){
-					$scope.costumersCount = res.data[0].costumersCount || res.data[0].COSTUMERSCOUNT || 0;
-					$scope.productsCount = res.data[0].productsCount || res.data[0].PRODUCTSCOUNT || 0;
+				if (!!res.data && res.data.rows[0]){
+					$scope.costumersCount = res.data.rows[0].costumersCount || res.data.rows[0].COSTUMERSCOUNT || 0;
+					$scope.productsCount = res.data.rows[0].productsCount || res.data.rows[0].PRODUCTSCOUNT || 0;
 				} else {
 					resetData();
 				}
