@@ -26,7 +26,7 @@ module.exports = {
 	fb_host: 'localhost',
 	fb_user: 'SYSDBA',
 	fb_pass: 'masterkey',
-	fb_database: 'D:/Desenvolvimento/Projetos/BGFramework/DATABASE.FDB',
+	fb_database: 'D:/Desenvolvimento/Projetos/BGFramework AngularJS/DATABASE.FDB',
 	fb_connectionLimit: 50,
 
 	// Accounting
