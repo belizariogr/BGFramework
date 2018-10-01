@@ -14,7 +14,7 @@ module.exports = {
 	workers_count: 0, // 0 = automatic; 1+ = fixed count
 
 	// Database Information
-	database_type: 'mysql',
+	database_type: 'firebird',
 
 	mysql_host: 'localhost',
 	mysql_port: 3306,

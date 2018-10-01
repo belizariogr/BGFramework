@@ -109,6 +109,15 @@
 				"2": 			"Campo 'Descrição' é obrigatório."
 			}
 		},
+		"res_employees": {
+			"name": 				"Funcionários",
+			"fields": {
+				"Name":				"Nome"
+			},
+			"errors": {
+				"1": 			"Campo 'Nome' é obrigatório."
+			}
+		},
 		"errors": {
 			"0": "Erro interno."
 		}

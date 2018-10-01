@@ -9,7 +9,7 @@ angular.module('tokenValidationService', []).provider('tokenValidation', functio
 	this.validate = function(restAPI, callback){
 		var token = localStorage.getItem("token", token);
 		var expiration = localStorage.getItem("expiration", expiration);
-		var curTime = new Date().getTime();
+		var curTime = Math.trunc(new Date().getTime() / 1000);
 		if (!token || !expiration || curTime > expiration){
 			if (!!callback)
 				callback('Not logged in.');
