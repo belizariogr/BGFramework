@@ -2,6 +2,6 @@
 
 :START
 cls
-node index
+node server
 pause
 GOTO START

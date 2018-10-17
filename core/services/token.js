@@ -1,41 +1,39 @@
-'use strict';
+module.exports = {
 
-class TokenService {
-
-	constructor(config) {
-		this.SECRET_KEY = config.jwtPassword;
-		this.expiration = config.jwtExpiration;
+	setup: function(config){
+		this.SECRET_KEY = config.jwt_password;
+		this.expiration = config.jwt_expiration;
 		this.jwt = require('jsonwebtoken');
-	}
+	},
 
-	get(object) {
+	get: function(object){
 		return this.jwt.sign(object, this.SECRET_KEY, { expiresIn: this.expiration * 60 });
-	}
+	},
 
-	verify(token) {				
-		let d = this.jwt.verify(token, this.SECRET_KEY);				
+	verify: function(token){
+		var d = this.jwt.verify(token, this.SECRET_KEY);
 		if (!d.Account || !d.Id)
 			return false;
 		return d;
-	}
+	},
 
-	decode(token) {
+	decode: function(token){
 		return this.jwt.decode(token);
-	}
+	},
 
-	login(id, account, accountType, userRights) {
+	login: function(id, account, accountType, userRights) {
 		return {
 			iat: new Date().getTime(),
-			token: this.get({
+			token: token_service.get({
 				Id: id,
 				Account: account,
 				AccountType: accountType,
 				UserRights: userRights
 			}),
-			expiration: new Date().getTime() + this.expiration * 60 * 1000
+			expiration: new Date().getTime() + token_service.expiration * 60 * 1000
 		};
-	}
-
+	},
 }
- 
-global.TokenService = TokenService;
+
+
+

@@ -1,20 +1,5 @@
-"use strict";
-
-class DBUtils {
-	
-	static fieldByName(model, fieldName) {
-		var field;
-		model.fields.forEach(f => {
-			if (f.name.toLowerCase() == fieldName.toLowerCase()){
-				field = f;
-				return;
-			}
-		});
-		if (!!field)
-			return field;
-	};
-
-	static getConditions(config, model, q, p) {
+module.exports = {
+	getConditions: function(model, q, p) {
 		var conditions = [];
 		var params = {};
 		if (!!p && !!q)
@@ -30,8 +15,8 @@ class DBUtils {
 				var c = 0;
 				for (var i = 0; i < fields.length; i++){
 					var f = this.fieldByName(model, fields[i]);
-					if (fields[i].toLowerCase() == config.accountField.toLowerCase()){
-						f = {name: config.accountField, dataType: "integer", key: true};
+					if (fields[i].toLowerCase() == config.account_field.toLowerCase()){
+						f = {name: config.account_field, dataType: "integer", key: true};
 					};
 					if (!f)
 						throw 'No field found for condition.';
@@ -91,9 +76,9 @@ class DBUtils {
 			}
 		};
 		return conditions;
-	};
+	},
 
-	static getOrders(config, model, params) {
+	getOrders: function(model, params){
 		var orders = [];
 		if (!!params && !!params.order && typeof params.order == "string"){
 			var fields = params.order.split("|");
@@ -103,7 +88,7 @@ class DBUtils {
 			var c = 0;
 			for (var i = 0; i < fields.length; i++){
 				var f = this.fieldByName(model, fields[i]);
-				if (fields[i].toLowerCase() == config.accountField.toLowerCase()){
+				if (fields[i].toLowerCase() == config.account_field.toLowerCase()){
 					f = {};
 				};
 				if (!f)
@@ -117,33 +102,45 @@ class DBUtils {
 			}
 		};
 		return orders;
-	};
+	},
 
-	static getPage(p) {
+	getPage: function(p){
 		var page = 0;
 		if (!!p && !!p.page)
 			page = parseInt(p.page);
 		return page;
-	};
+	},
 
-	static getAutoIncFieldName(model) {
-		var f = model.fields.filter(f => !!f.autoInc);
+	fieldByName: function(model, fieldName){
+		var field;
+		model.fields.forEach(function(f){
+			if (f.name.toLowerCase() == fieldName.toLowerCase()){
+				field = f;
+				return;
+			}
+		});
+		if (!!field)
+			return field;
+	},
+
+	getAutoIncFieldName: function(model){
+		var f = model.fields.filter(function(f){ return !!f.autoInc; });
 		return f[0].name;
-	};
+	},
 
-	static getValueByIndex(row, index) {
+	getValueByIndex: function(row, index){
 		return row[Object.keys(row)[index]];
-	}
+	},
 
-	static normatizeObject(obj) {
+	normatizeObject: function(obj){
 		var buf = {};
 		for (var p in obj){
 			buf[p.toLowerCase()] = obj[p];
 		};
 		return buf;
-	};
+	},
 
-	static validateRecord(action, model, record, params) {
+	validateRecord: function(action, model, record, params){
 		if (!!params) {
 			var buf = Object.assign(record, params);
 			var rec = this.normatizeObject(buf);
@@ -152,110 +149,152 @@ class DBUtils {
 		if (!rec)
 			throw 'You need to pass a valid record.';
 		var keys = this.getKeys(model);
-		var validate = rec => {
+		var validate = function(rec){
 			if (action.toLowerCase() == 'update' || action.toLowerCase() == 'delete'){
 				if (!keys || !Array.isArray(keys) || keys.length == 0)
 					throw 'No key fields.';
-				keys.forEach(k => {
+				keys.forEach(function(k){
 					var name = k.name.toLowerCase();
 					if (!rec[name])
 						throw 'No value for key.';
 				});
 			} else if (action.toLowerCase() == 'insert'){
-				var f = model.fields.filter(f => !!f.autoInc);
+				var f = model.fields.filter(function(f){ return !!f.autoInc; });
 				if (f.length > 1)
 					throw 'Model has more than one auto incremet field.';
 			}
 		};
 		if (Array.isArray(rec)){
-			rec.forEach(r => {
-				r = this.normatizeObject(r);
+			rec.forEach(function(r){
+				r = dbutils.normatizeObject(r);
 				validate(r);
 			})
 		} else{
-			rec = this.normatizeObject(rec);
+			rec = dbutils.normatizeObject(rec);
 			validate(rec);
 		}
 		return rec;
-	};
+	},
 
-	static getKeys(model) {
-		return model.fields.filter(f => f.key);
-	}
+	getKeys: function(model){
+		return model.fields.filter(function(f){ return f.key });
+	},
 
-	static getDataSet(config, fields, rec, useDefaults) {
-		var dataSet = new DataSet(config);
+	getDataset: function(fields, rec, useDefaults){
+		var dataset = {fields:[], values: []};
 		var keys = Object.keys(rec);
-		fields.forEach(f => {
-			let k = keys.filter(k => k.toLowerCase() == (f.name + "").toLowerCase());
+		fields.forEach(function(f){
+			k = keys.filter(function(k){ return k.toLowerCase() == (f.name + "").toLowerCase()});
 			if (k.length == 0 && !f.readOnly){
-				dataSet.fields.push(f.name);
+				dataset.fields.push(f.name);
 				if (useDefaults && f.default !== undefined){
 					if (f.dataType == "bool" && typeof f.default == "boolean")
 						f.default = f.default ? 'T' : 'F';
-					dataSet.values.push(f.default);
+					dataset.values.push(f.default);
 				} else
-					dataSet.values.push(null);
+					dataset.values.push(null);
 			} else if (!f.readOnly) {
 				var value = rec[k[0]];
-				if (f.required && (value === null || value === undefined)){					
-					return dataSet.errorMsg = 'Field "' + f.name + '" is required.';
+				if (f.required && (value === null || value === undefined)){
+					dataset.errorMsg = 'Field "' + f.name + '" is required.';
+					return
 				} else if (!(value === null || value === undefined)){
 					if (f.dataType == "integer"){
 						if (isNaN(value) || !Number.isInteger(Number(value))){
-							dataSet.errorMsg = 'Invalid integer value (' + value + ') for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
+							dataset.errorMsg = 'Invalid integer value (' + value + ') for field "' + f.name + '."';
+							dataset.errorField = f.name;
+							dataset.errorDataType = f.dataType;
+							dataset.errorValue = value;
 							return
 						}
 					} else if (f.dataType == "float") {
 						if (isNaN(value)){
-							dataSet.errorMsg = 'Invalid float value (' + value + ') for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
+							dataset.errorMsg = 'Invalid float value (' + value + ') for field "' + f.name + '."';
+							dataset.errorField = f.name;
+							dataset.errorDataType = f.dataType;
+							dataset.errorValue = value;
 							return
 						}
 					} else if (f.dataType == "date" || f.dataType == "time" || f.dataType == "datetime") {
 						var d = new Date(value);
 						if (isNaN(d.getTime())){
-							dataSet.errorMsg =  'Invalid datetime value for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
+							dataset.errorMsg =  'Invalid datetime value for field "' + f.name + '."';
+							dataset.errorField = f.name;
+							dataset.errorDataType = f.dataType;
+							dataset.errorValue = value;
 							return
 						}
 					} else if (f.dataType == "bool") {
 						if (typeof(value) == "boolean"){
 							value = value ? 'T' : 'F';
 						} else if (value != "T" && value != "F"){
-							dataSet.errorMsg = 'Invalid bool value (' + value + ') for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
+							dataset.errorMsg = 'Invalid bool value (' + value + ') for field "' + f.name + '."';
+							dataset.errorField = f.name;
+							dataset.errorDataType = f.dataType;
+							dataset.errorValue = value;
 							return
 						}
 					} else if (f.dataType != "string")
 						throw 'Field "' + f.name + '" has an invalid data type.';
 				}
-				dataSet.fields.push(f.name);
-				dataSet.values.push(value);
+				dataset.fields.push(f.name);
+				dataset.values.push(value);
 			}
 		});
-		var notFound = keys.filter(k => fields.filter(f => f.name.toLowerCase() == k.toLowerCase()).length == 0);
+		var notFound = keys.filter(function(k){
+			return fields.filter(function(f){ return f.name.toLowerCase() == k.toLowerCase() }).length == 0;
+		});
 
-		if (!dataSet.errorMsg && notFound.length > 0){
+		if (!dataset.errorMsg && notFound.length > 0){
 			var err = "";
-			notFound.forEach(n => {
+			notFound.forEach(function(n){
 				err += (err ? ", " : "") + "'" + n + "'";
 			});
 			throw "Field(s) not found in model: " + err;
-		}		
-		
-		return dataSet;
-	};
+		}
+
+		dataset.setValue = function(field, value){
+			if (!field)	throw 'Invalid field.';
+			var found = false;
+			for (var i = 0; i < this.fields.length; i++) {
+				if (this.fields[i].toLowerCase() == field.toLowerCase()){
+					this.values[i] = value;
+					found = true;
+				}
+			}
+			if (!found){
+				this.fields.push(field);
+				this.values.push(value);
+			}
+		};
+
+		dataset.getValue = function(field){
+			if (!field)	throw 'Invalid field.';
+			for (var i = 0; i < this.fields.length; i++) {
+				if (this.fields[i].toLowerCase() == field.toLowerCase())
+					return this.values[i];
+			}
+		};
+
+		dataset.getRecord = function(fields){
+			var dataset = this;
+			var record = {};
+			if (!!fields){
+				fields.forEach(function(f){
+					if (f.name.toLowerCase() != config.account_field.toLowerCase())
+						var v = dataset.getValue(f.name);
+						if (v !== null && v !== undefined)
+							record[f.name] = v;
+				})
+			} else
+				for (var i = 0; i < this.fields.length; i++)
+					record[this.fields[i]] = this.values[i];
+			return record;
+		};
+		return dataset;
+	},
+
 
 }
 
-module.exports = DBUtils;
+

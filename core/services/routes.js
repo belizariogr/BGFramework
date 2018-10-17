@@ -1,33 +1,25 @@
-"use strict";
+module.exports = {
 
-class Routes {
+	items: [],
 
-	constructor(server) {
-		this.server = server;
-		this.items = [];
-	}
-
-	add(route) {
+	add: function(route){
 		this.items.push(route);
-	}
+	},
 
-	remove(path) {
+	remove: function(path){
 		for(var i = this.items.length - 1; i--;){
 			if (this.items[i].path === path) {
 				this.items.splice(i, 1);
 				return
 			}
 		}
-	}
+	},
 
-	findByPath(path) {
+	findByPath: function(path){
 		for(var i = this.items.length - 1; i--;){
 			if (this.items[i].path === path) {
 				return this.items[i];
 			}
 		}
 	}
-
 }
-
-module.exports = Routes;

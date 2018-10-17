@@ -1,11 +1,9 @@
-"use strict";
+module.exports = {
 
-class Resources {
-
-	static getResources() {
+	getResources: function(){
 		const fs = require('fs');
-		let getDirectories = (path, out) => {
-			fs.readdirSync(path).forEach(d => { 
+		var getDirectories = function(path, out){
+			fs.readdirSync(path).forEach(function(d){ 
 				if (fs.lstatSync(path + '\\' + d).isDirectory()) 
 					out.push(d)
 			});	
@@ -13,24 +11,21 @@ class Resources {
 		const resources = {};
 		const contexts = [];
 		getDirectories('./resources', contexts);
-		contexts.forEach(c => {		
+		contexts.forEach(function(c){		
 			resources[c] = [];
 			getDirectories('./resources/' + c, resources[c]);		
 		});
 		return resources;
-	}
+	},
 
-	static getExtras() {
+	getExtras: function(){
 		const fs = require('fs');	
 		const extras = [];	
-		fs.readdirSync('./extras').forEach(d => { 			
+		fs.readdirSync('./extras').forEach(function(d){ 			
 			if (fs.lstatSync('./extras/' + d).isFile() && ((/(?:\.([^.]+))?$/.exec(d)[0] + '').toLowerCase() === '.js')) 
 				d = d.replace(/(?:\.([^.]+))?$/, '');
 				extras.push(d)
 		});			
 		return extras;
 	}
-
-}
-
-module.exports = Resources;
+};

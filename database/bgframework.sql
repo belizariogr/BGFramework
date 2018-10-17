@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : Local
+ Source Server         : localhost_3306
  Source Server Type    : MySQL
  Source Server Version : 100126
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 100126
  File Encoding         : 65001
 
- Date: 17/10/2018 09:10:49
+ Date: 07/05/2018 15:38:08
 */
 
 SET NAMES utf8mb4;
@@ -24,14 +24,8 @@ DROP TABLE IF EXISTS `accounts`;
 CREATE TABLE `accounts`  (
   `Id` int(11) NOT NULL,
   `UserName` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `Password` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`Id`) USING BTREE
+  `Password` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL
 ) ENGINE = InnoDB CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of accounts
--- ----------------------------
-INSERT INTO `accounts` VALUES (1, 'test', 'test');
 
 -- ----------------------------
 -- Table structure for accounts_autoinc
@@ -40,15 +34,8 @@ DROP TABLE IF EXISTS `accounts_autoinc`;
 CREATE TABLE `accounts_autoinc`  (
   `AccountId` int(11) NOT NULL,
   `TableName` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `Id` int(11) NULL DEFAULT NULL,
-  PRIMARY KEY (`AccountId`, `TableName`) USING BTREE
+  `Id` int(11) NULL DEFAULT NULL
 ) ENGINE = InnoDB CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of accounts_autoinc
--- ----------------------------
-INSERT INTO `accounts_autoinc` VALUES (1, 'costumers', 4);
-INSERT INTO `accounts_autoinc` VALUES (1, 'products', 1);
 
 -- ----------------------------
 -- Table structure for costumers
@@ -66,14 +53,8 @@ CREATE TABLE `costumers`  (
   `Add_Time` time(0) NULL DEFAULT NULL,
   `Add_TimeStamp` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0),
   `Gender` varchar(1) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  `Is_Married` varchar(1) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`AccountId`, `Id`) USING BTREE
+  `Is_Married` varchar(1) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL
 ) ENGINE = InnoDB CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of costumers
--- ----------------------------
-INSERT INTO `costumers` VALUES (1, 3, 'Belizario', 'asdfasdfasf', '123123123', 'asdfasdfasdf', NULL, NULL, NULL, '2018-10-17 09:08:39', 'F', 'F');
 
 -- ----------------------------
 -- Table structure for products
@@ -86,13 +67,7 @@ CREATE TABLE `products`  (
   `Description` varchar(1000) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   `Price` double NULL DEFAULT NULL,
   `Stock` double NULL DEFAULT NULL,
-  `Is_Service` varchar(1) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`AccountId`, `Id`) USING BTREE
+  `Is_Service` varchar(1) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL
 ) ENGINE = InnoDB CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of products
--- ----------------------------
-INSERT INTO `products` VALUES (1, 1, 'Modem', 'Modem', NULL, NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

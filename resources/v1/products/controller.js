@@ -1,21 +1,15 @@
-"use strict";
+module.exports = {
+	name: 'products',
+	path: '/products',
+	list: true,
+	record: true,
+	insert: true,
+	update: true,
+	delete: true,
 
-class ProductsController extends Controller {
-
-	constructor() {
-		super('products' ,'/products');
-        this.list = true;
-        this.record = true;
-        this.insert = true;
-        this.update = true;
-        this.delete = true;
-    }
-
-    validateRecord(rec) {
-		if (!rec.name)
+	validateRecord: function(rec){
+		if (!rec.Name)
 			error(1, "Field \"Name\" is required.");
-	}
-
+	},
 }
 
-module.exports = ProductsController;
