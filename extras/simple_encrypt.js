@@ -1,5 +1,8 @@
-module.exports = {
-	encrypt: function(str){
+"use strict";
+
+class SimpleEncrypt {
+
+	static encrypt(str) {
 		var r = "";
 		for(var i = 0; i < str.length; i++){
 			var l = str.charCodeAt(i);
@@ -9,9 +12,9 @@ module.exports = {
 			r += String.fromCharCode(l);
 		}
 		return r;
-	},
+	}
 
-	decrypt: function(str){
+	static decrypt(str) {
 		var r = "";
 		for(var i = 0; i < str.length; i++){
 			var l = str.charCodeAt(i);
@@ -22,4 +25,7 @@ module.exports = {
 		}
 		return r;
 	}
+
 }
+
+module.exports = SimpleEncrypt;

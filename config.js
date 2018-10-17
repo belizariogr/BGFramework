@@ -1,59 +1,61 @@
+"use strict";
+
 module.exports = {
 	// Debug
 	debug: true,
 
 	// HTTP Information
-	http_port: 80,
-	https_port: 443,
+	httpPort: 80,
+	httpsPort: 443,
 
 	// Public HTML
-	use_public_html: true,
+	usePublicHtml: true,
 
 	//Cluster
-	use_cluster: false,
-	workers_count: 0, // 0 = automatic; 1+ = fixed count
+	useCluster: false,
+	workersCount: 0, // 0 = automatic; 1+ = fixed count
 
 	// Database Information
-	database_type: 'firebird',
+	databaseType: 'firebird',
 
-	mysql_host: 'localhost',
-	mysql_port: 3306,
-	mysql_user: 'root',
-	mysql_pass: '12345',
-	mysql_database: 'bgframework',
-	mysql_connectionLimit: 50,
+	mysqlHost: 'localhost',
+	mysqlPort: 3306,
+	mysqlUser: 'root',
+	mysqlPass: '12345',
+	mysqlDatabase: 'bgframework',
+	mysqlConnectionLimit: 50,
 
-	fb_host: 'localhost',
-	fb_user: 'SYSDBA',
-	fb_pass: 'masterkey',
-	fb_database: 'D:/Desenvolvimento/Projetos/BGFramework AngularJS/DATABASE.FDB',
-	fb_connectionLimit: 50,
+	fbHost: 'localhost',
+	fbUser: 'SYSDBA',
+	fbPass: 'masterkey',
+	fbDatabase: 'D:/Desenvolvimento/Projetos/BGFramework/DATABASE.FDB',
+	fbConnectionLimit: 50,
 
 	// Accounting
-	account_table: 'accounts',
-	account_id_field: 'id',
-	account_username: 'username',
-	account_password: 'password',
-	encrypt_password: false,
-	allow_register: true,
+	accountTable: 'accounts',
+	accountIdField: 'id',
+	accountUsername: 'username',
+	accountPassword: 'password',
+	encryptPassword: false,
+	allowRegister: true,
 
 	// Auto increment
-	use_autoinc: true,
-	autoinc_table: 'autoinc',
-	autoinc_table_field: 'tablename',
-	autoinc_id_field: 'id',
+	useAutoinc: true,
+	autoincTable: 'accounts_autoinc',
+	autoincTableField: 'tablename',
+	autoincIdField: 'id',
 
 	// system fields on Tables
-	account_field: 'account',
-	creation_field: '',
-	modification_field: '',
-	deletion_field: '',
+	accountField: 'accountid',
+	creationField: '',
+	modificationField: '',
+	deletionField: '',
 
 	// Records Information
-	page_records: 20,
+	pageRecords: 20,
 
 	// Token
-	jwt_password: '123456', // Dont forget to change this property.
-	jwt_expiration: 60 * 24, // expiration time in minutes
+	jwtPassword: '123456', // Dont forget to change this property.
+	jwtExpiration: 60 * 24, // expiration time in minutes
 
 }

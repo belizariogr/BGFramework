@@ -1,7 +1,8 @@
-module.exports = {
+"use strict";
 
-	setPropValue: function(obj, prop, value) {
-	    if (typeof prop === "string")
+class Utils {
+	static setPropValue(obj, prop, value) {
+		if (typeof prop === "string")
 	        prop = prop.split(".");
 
 	    if (prop.length > 1) {
@@ -9,14 +10,14 @@ module.exports = {
 	        setPropValue(obj[e] = Object.prototype.toString.call(obj[e]) === "[object Object]" ? obj[e] : {}, prop, value);
 	    } else
 	        obj[prop[0]] = value;
-	},
+	}
 
-	getPropValue: function(obj, prop){
+	static getPropValue(obj, prop){
 		var k = Object.keys(obj);
-		var p = k.filter(function(f){ return f.toLowerCase() == prop.toLowerCase() });
+		var p = k.filter(f => f.toLowerCase() == prop.toLowerCase());
 		if (Array.isArray(p) && p.length > 0)
 			return obj[p[0]];
 	}
 }
 
-
+module.exports = Utils;
