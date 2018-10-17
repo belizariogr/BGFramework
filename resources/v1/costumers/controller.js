@@ -1,14 +1,19 @@
-module.exports =  {
-    name: 'costumers',
-    path: '/costumers',
-    list: true,
-    record: true,
-    insert: true,
-    update: true,
-    delete: true,
+"use strict";
 
-    validateRecord: function(rec){
-       if (!rec.name)
+class CostumersController extends Controller {
+
+    constructor() {
+        super('costumers' ,'/costumers');
+        this.list = true;
+        this.record = true;
+        this.insert = true;
+        this.update = true;
+        this.delete = true;
+    }
+
+    validateRecord(rec) {
+        /* All properties of rec will be in lower case. */
+        if (!rec.name)
             error(1, "Field \"Name\" is required.");
         if (!rec.address)
             error(2, "Field \"Address\" is required.");
@@ -18,29 +23,32 @@ module.exports =  {
             error(4, "Field \"Email\" is required.");
         if (!!rec.gender && rec.gender != 'M' && rec.gender != 'F')
             error(5, "Invalid gender.")
-    },
+    }
 
-    beforeInsert: async function(rec){
+    async beforeInsert(rec) {
 
-    },
+    }
 
-    afterInsert: async function(rec){
+    async afterInsert(rec) {
 
-    },
+    }
 
-    beforeUpdate: async function(rec){
+    async beforeUpdate(rec) {
 
-    },
+    }
 
-    afterUpdate: async function(rec){
+    async afterUpdate(rec) {
 
-    },
+    }
 
-    beforeDelete: async function(rec){
+    async beforeDelete(rec) {
 
-    },
+    }
 
-    afterDelete: async function(rec){
+    async afterDelete(rec) {
 
-    },
+    }
+
 }
+
+module.exports = CostumersController;
