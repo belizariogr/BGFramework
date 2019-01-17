@@ -16,11 +16,10 @@ class TokenService {
 		if (!token)
 			return false;
 		try {			
-			let d = this.jwt.verify(token, this.SECRET_KEY);									
+			return this.jwt.verify(token, this.SECRET_KEY);									
 		} catch(err) {
 			return false;
 		}
-		return d;
 	}
 
 	decode(token) {
