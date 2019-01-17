@@ -12,13 +12,23 @@ class TokenService {
 		return this.jwt.sign(object, this.SECRET_KEY, { expiresIn: this.expiration * 60 });
 	}
 
-	verify(token) {					
-		let d = this.jwt.verify(token, this.SECRET_KEY);						
+	verify(token) {		
+		if (!token)
+			return false;
+		try {			
+			let d = this.jwt.verify(token, this.SECRET_KEY);									
+		} catch(err) {
+			return false;
+		}
 		return d;
 	}
 
 	decode(token) {
-		return this.jwt.decode(token);
+		try {
+			return this.jwt.decode(token);
+		} catch(err) {
+			return false;
+		}
 	}
 
 	login(id, user, userType, userRights) {
