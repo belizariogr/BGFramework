@@ -56,8 +56,8 @@ class Model {
 
 	async update(req, res, before, after) {
 		try{
-			if (!!req.params && Object.keys(req.params).length > 0 && !!this.server.config.accountField)
-				req.params[this.server.config.accountField] = req.token_obj.Account;
+			if (!!req.params && Object.keys(req.params).length > 0 && !!this.server.config.systemUserField)
+				req.params[this.server.config.systemUserField] = req.token_obj.Id;
 			var rec = DBUtils.validateRecord('update', this, req.body, req.params);
 			var dataset = DBUtils.getDataSet(this.server.config, this.fields, rec);
 			if (dataset.errorMsg)
@@ -83,8 +83,8 @@ class Model {
 	async delete(req, res, before, after) {
 		try{
 			if (!!req.params && Object.keys(req.params).length > 0){
-				if (!!this.server.config.accountField)
-					req.params[this.server.config.accountField] = req.token_obj.Account;
+				if (!!this.server.config.systemUserField)
+					req.params[this.server.config.systemUserField] = req.token_obj.Id;
 				var rec = DBUtils.validateRecord('delete', this, req.params);
 			} else if (req.body)
 				var rec = DBUtils.validateRecord('delete', this, req.body);

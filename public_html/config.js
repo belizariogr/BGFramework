@@ -23,7 +23,7 @@ angular.module('appConfigService', []).provider('appConfig', function(){
 
 	this.notifications = false;
 	this.invoices = false;
-	this.myaccount = false;
+	this.profile = false;
 
 	// Backend Address
 	this.backend_addr = 'http://192.168.5.1';

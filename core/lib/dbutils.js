@@ -22,16 +22,15 @@ class DBUtils {
 		else if (!!p)
 			params = p
 		else if (!!q)
-			params = q;
-
+			params = q;				
 		for (var prop in params){
 			if (prop != 'order' && prop != 'page' && prop != 'sort'){
 				var fields = prop.split("|");
 				var c = 0;
-				for (var i = 0; i < fields.length; i++){
+				for (var i = 0; i < fields.length; i++){					
 					var f = this.fieldByName(model, fields[i]);
-					if (fields[i].toLowerCase() == config.accountField.toLowerCase()){
-						f = {name: config.accountField, dataType: "integer", key: true};
+					if (fields[i].toLowerCase() == config.systemUserField.toLowerCase()){
+						f = {name: config.systemUserField, dataType: "integer", key: true};
 					};
 					if (!f)
 						throw 'No field found for condition.';
@@ -60,23 +59,23 @@ class DBUtils {
 							if (cond.dataType == "date"){
 								var d = new Date(cond.value);
 								if (isNaN(d.getTime()))
-									throw 'Invalid Date';
+									throw 'Invalid date (' + cond.value + ') for condition: ' + cond.field;
 								cond.value = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate();
 								if (cond.valueEnd){
 									d = new Date(cond.valueEnd);
 									if (isNaN(d.getTime()))
-										throw 'Invalid Date';
+										throw 'Invalid date for condition: ' +  cond.field;
 									cond.valueEnd = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate();
 								}
-							} else if (cond.dataType == "integer" || cond.dataType == "numeric") {
+							} else if (cond.dataType == "integer" || cond.dataType == "numeric") {								
 								if (isNaN(cond.value))
-									throw 'Invalid Number';
+									throw 'Invalid number (' + cond.value + ') for condition: ' + cond.field;
 								if (cond.valueEnd)
 									if (isNaN(cond.valueEnd))
-										throw 'Invalid Number';
+										throw 'Invalid end number (' + cond.endValue + ') for condition: ' + cond.field;
 							} else if (cond.dataType == "bool") {
 								if (!(new Set('F', 'T', 'F|T', 'T|F')).has(value))
-									throw "Invalid bool.";
+									throw 'Invalid bool (' + value + ') for condition: ' + cond.field;
 								cond.value = value;
 							} else if (cond.options)
 								cond.values = value;
@@ -103,7 +102,7 @@ class DBUtils {
 			var c = 0;
 			for (var i = 0; i < fields.length; i++){
 				var f = this.fieldByName(model, fields[i]);
-				if (fields[i].toLowerCase() == config.accountField.toLowerCase()){
+				if (fields[i].toLowerCase() == config.systemUserField.toLowerCase()){
 					f = {};
 				};
 				if (!f)

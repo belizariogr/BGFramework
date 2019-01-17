@@ -16,7 +16,7 @@ module.exports = {
 	workersCount: 0, // 0 = automatic; 1+ = fixed count
 
 	// Database Information
-	databaseType: 'firebird',
+	databaseType: 'mysql',
 
 	mysqlHost: 'localhost',
 	mysqlPort: 3306,
@@ -31,25 +31,25 @@ module.exports = {
 	fbDatabase: 'D:/Desenvolvimento/Projetos/BGFramework/DATABASE.FDB',
 	fbConnectionLimit: 50,
 
-	// Accounting
-	accountTable: 'accounts',
-	accountIdField: 'id',
-	accountUsername: 'username',
-	accountPassword: 'password',
+	// System Users
+	systemUserTable: '_users',
+	systemUserIdField: 'Id',
+	systemUsername: 'Username',
+	systemPassword: 'Password',
 	encryptPassword: false,
 	allowRegister: true,
 
 	// Auto increment
 	useAutoinc: true,
-	autoincTable: 'accounts_autoinc',
-	autoincTableField: 'tablename',
-	autoincIdField: 'id',
+	autoincTable: '_autoinc',
+	autoincTableField: 'TableName',
+	autoincIdField: 'Id',
 
 	// system fields on Tables
-	accountField: 'accountid',
-	creationField: '',
-	modificationField: '',
-	deletionField: '',
+	systemUserField: '_userId',
+	creationField: '_createdAt',
+	modificationField: '_modifiedAt',
+	deletionField: '_deletedAt',
 
 	// Records Information
 	pageRecords: 20,

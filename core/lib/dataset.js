@@ -38,7 +38,7 @@ class DataSet {
 		var record = {};
 		if (!!fields){
 			fields.forEach(f => {
-				if (f.name.toLowerCase() != this.config.accountField.toLowerCase())
+				if (f.name.toLowerCase() != this.config.systemUserField.toLowerCase())
 					var v = this.getValue(f.name);
 					if (v !== null && v !== undefined)
 						record[f.name] = v;

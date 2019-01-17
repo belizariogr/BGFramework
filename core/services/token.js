@@ -12,10 +12,8 @@ class TokenService {
 		return this.jwt.sign(object, this.SECRET_KEY, { expiresIn: this.expiration * 60 });
 	}
 
-	verify(token) {				
-		let d = this.jwt.verify(token, this.SECRET_KEY);				
-		if (!d.Account || !d.Id)
-			return false;
+	verify(token) {					
+		let d = this.jwt.verify(token, this.SECRET_KEY);						
 		return d;
 	}
 
@@ -23,13 +21,13 @@ class TokenService {
 		return this.jwt.decode(token);
 	}
 
-	login(id, account, accountType, userRights) {
+	login(id, user, userType, userRights) {
 		return {
 			iat: new Date().getTime(),
 			token: this.get({
 				Id: id,
-				Account: account,
-				AccountType: accountType,
+				User: user,
+				UserType: userType,
 				UserRights: userRights
 			}),
 			expiration: new Date().getTime() + this.expiration * 60 * 1000

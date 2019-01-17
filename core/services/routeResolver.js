@@ -6,14 +6,14 @@ class RouteResolver {
 		let modelClass = require(dir + '/model');
 		let model = new modelClass(server);	
 		if (!!model.fields){
-			if (server.config.accountField)
-				model.fields.unshift({name: server.config.accountField, dataType: "integer", key: true, hidden: true});
-			if (server.config.creationField)
-				model.fields.unshift({name: server.config.creation_field, dataType: "datetime"});
-			if (server.config.modificationField)
-				model.fields.unshift({name: server.config.modification_field, dataType: "datetime"});
 			if (server.config.deletionField)
-				model.fields.unshift({name: server.config.deletion_field, dataType: "datetime"});
+				model.fields.unshift({name: server.config.deletionField, dataType: "datetime"});
+			if (server.config.modificationField)
+				model.fields.unshift({name: server.config.modificationField, dataType: "datetime"});
+			if (server.config.creationField)
+				model.fields.unshift({name: server.config.creationField, dataType: "datetime"});
+			if (server.config.systemUserField)
+				model.fields.unshift({name: server.config.systemUserField, dataType: "integer", key: true, hidden: true});
 		}		
 		return model; 
 	}

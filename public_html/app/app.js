@@ -81,8 +81,8 @@ app.run(['$window', '$rootScope', '$http', function($window, $rootScope, $http){
 	var t = token.split('.');
 	try{
 		var d = JSON.parse(atob(t[1]));
-		$rootScope.Account = d.Account;
-		$rootScope.AccountType = d.AccountType;
+		$rootScope.User = d.user;
+		$rootScope.UserType = d.UserType;
 		$rootScope.LoginDate = new Date(d.iat * 1000);
 	}catch(err){
 		$window.open('/login/', '_self');

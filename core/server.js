@@ -18,7 +18,7 @@ global.SQLHelper = require('./lib/sqlhelper');
 
 class Server {
 
-	constructor(config, worker){		
+	constructor(config, worker) {		
 		this.config = config;	
 		this.worker = worker;		
 		this.initHttpServer();
@@ -27,7 +27,7 @@ class Server {
 		this.initDatabase();
 	}
 
-	initHttpServer(){		
+	initHttpServer() {		
 		this.express = require('express');
 		this.secureRouter = this.express.Router();
 		this.cors = require('cors');
@@ -35,7 +35,7 @@ class Server {
 		this.httpServer.use(this.cors());
 	}
 
-	initServices(){
+	initServices() {
 		this.bcrypt = require('bcrypt');
 		this.saltRounds = 10;
 		this.routes = new Routes(this);
@@ -68,14 +68,14 @@ class Server {
 				req.token_obj = this.tokenService.verify(token);				
 				if (!req.token_obj)
 					return res.status(401).json({error: 'You need a valid token to acess the server.'})
-				req.$account = req.token_obj.Account;				
+				req.$systemUser = req.token_obj.SystemUser;
 				if (req.method == "POST" || req.method == "PUT" || req.method == "DELETE"){										
 					if (Array.isArray(req.body))
-						req.body.forEach(b => b[req.server.config.accountField] = req.token_obj.Account);
+						req.body.forEach(b => b[req.server.config.systemUserField] = req.token_obj.Id);
 					else if (typeof req.body == "object")
-						req.body[req.server.config.accountField] = req.token_obj.Account;
+						req.body[req.server.config.systemUserField] = req.token_obj.Id;
 				} else 
-					req.query[req.server.config.accountField] = req.token_obj.Account;
+					req.query[req.server.config.systemUserField] = req.token_obj.Id;
 				next();
 			} catch(err){
 				res.status(401).json({error: 'You need a valid token to acess the server.'})
@@ -91,7 +91,7 @@ class Server {
 		this.db = new dbClass(this);
 	}
 
-	start(){
+	start() {
 		this.httpServer.listen(this.config.httpPort);
 		if (this.config.useCluster)
 			console.log('Worker ' + this.worker.id + ' is running...');

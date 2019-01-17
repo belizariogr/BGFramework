@@ -12,17 +12,17 @@ class Login extends Controller {
 			return res.json({ error: 'Invalid username or password.' });
 		try {						
 			let rec = DBUtils.normatizeObject(req.body);
-			let sql = "SELECT " + server.config.accountIdField + ", " + server.config.accountUsername + ", " + server.config.accountPassword + " FROM " + server.config.accountTable + " WHERE " + server.config.accountUsername + " = ?";
-			let result = await server.db.query(sql, [rec.username]);
+			let sql = "SELECT " + server.config.systemUserIdField + ", " + server.config.systemUsername + ", " + server.config.systemPassword + " FROM " + server.config.systemUserTable + " WHERE " + server.config.systemUsername + " = ?";			
+			let result = await server.db.query(sql, [rec.username]);			
 			if (!!result.err)
 				throw result.err;
-			if (result.rows.length == 0)
+			if (!result.rows || result.rows.length == 0)
 				return res.json({error: 'Invalid username or password.'});
 			let id, username, password;
 			if (!!result.rows[0]) {
-				id = Utils.getPropValue(result.rows[0], server.config.accountIdField);
-				username = Utils.getPropValue(result.rows[0], server.config.accountUsername);
-				password = Utils.getPropValue(result.rows[0], server.config.accountPassword);
+				id = Utils.getPropValue(result.rows[0], server.config.systemUserIdField);
+				username = Utils.getPropValue(result.rows[0], server.config.systemUsername);
+				password = Utils.getPropValue(result.rows[0], server.config.systemPassword);
 			};
 			if (!username)
 				return res.json({error: 'Invalid username or password.'});
@@ -35,7 +35,7 @@ class Login extends Controller {
 				});
 			} else {
 				if (password === rec.password)
-					res.json(server.tokenService.login(id, id));
+					res.json(server.tokenService.login(id, username));
 				else
 					res.json({error: 'Invalid username or password.'});
 			}

@@ -27,7 +27,7 @@
 		},
 		"btnNotifications": 	"Notifications",
 		"btnLang":				"Language",
-		"menuMyAccount":		"My Account",
+		"menuProfile":			"Profile",
 		"menuInvoices":			"Invoices",
 		"menuSignOut":			"Sign Out",
 		"msgSelectLanguage":	"Please select your language",

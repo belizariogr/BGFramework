@@ -58,9 +58,9 @@ class MySQL extends DB {
 		return "SELECT " + fields + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy + pagination;
 	}
 
-	async getAutoInc(account, tableName) {
-		let sql = "INSERT INTO " + this.server.config.autoincTable + " (" + this.server.config.accountField + ", " + this.server.config.autoincTableField + ", " + this.server.config.autoincIdField;
-			sql += ") VALUES (" + this.escape(account) + ", " + this.escape(tableName) + ", @id := 1) ON DUPLICATE KEY UPDATE " + this.server.config.autoincIdField + " = @id := " + this.server.config.autoincIdField + " + 1;";
+	async getAutoInc(systemUser, tableName) {
+		let sql = "INSERT INTO " + this.server.config.autoincTable + " (" + this.server.config.systemUserField + ", " + this.server.config.autoincTableField + ", " + this.server.config.autoincIdField;
+			sql += ") VALUES (" + this.escape(systemUser) + ", " + this.escape(tableName) + ", @id := 1) ON DUPLICATE KEY UPDATE " + this.server.config.autoincIdField + " = @id := " + this.server.config.autoincIdField + " + 1;";
 			sql += "SELECT @id as id;";
 		let result = await this.query(sql);
 		if (result.error)

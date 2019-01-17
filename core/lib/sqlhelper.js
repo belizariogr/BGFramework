@@ -144,7 +144,7 @@ class SQLHelper {
 	static async insert(db, model, dataset){
 		var autoIncField = DBUtils.getAutoIncFieldName(model, dataset);
 		if (!!autoIncField){
-			var r = await db.getAutoInc(dataset.getValue(db.server.config.accountField), model.resource);
+			var r = await db.getAutoInc(dataset.getValue(db.server.config.systemUserField), model.resource);
 			if (r.error)
 				throw r.error;
 			dataset.setValue(autoIncField, r);

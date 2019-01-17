@@ -18,12 +18,12 @@ class DashboardController extends Controller {
 				for (var q in query)
 					params[q.toLowerCase()] = query[q];
 			}
-			var AccountId = -1;
+			var UserId = -1;
 			if (!!req.token_obj)
-				AccountId = req.token_obj.Account;
+				UserId = req.token_obj.Id;
 			var sql = "SELECT ";
-			sql += " (SELECT COUNT(*) FROM Costumers WHERE " + req.server.config.accountField + " = " + AccountId + ") costumersCount,";
-			sql += " (SELECT COUNT(*) FROM Products WHERE " + req.server.config.accountField + " = "  + AccountId + ") productsCount";
+			sql += " (SELECT COUNT(*) FROM Costumers WHERE " + req.server.config.systemUserField + " = " + UserId + ") costumersCount,";
+			sql += " (SELECT COUNT(*) FROM Products WHERE " + req.server.config.systemUserField + " = "  + UserId + ") productsCount";
 			if (req.server.config.databaseType == "firebird")
 				sql += " FROM RDB$DATABASE";
 			var result = await req.server.db.query(sql);

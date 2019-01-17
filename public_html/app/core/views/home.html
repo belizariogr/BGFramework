@@ -50,11 +50,11 @@
 								<i class="nav-icon fa fa-user"></i>
 							</button>
 							<ul class="dropdown-menu" id="main-menu-right">
-								<li ng-if="::appConfig.myaccount">
-									<a href="#!/account"><i class="fa fa-user"></i>{{::lang.l.menuMyAccount}}</a>
+								<li ng-if="::appConfig.myprofile">
+									<a href="#!/profile"><i class="fa fa-user"></i>{{::lang.l.menuMyProfile}}</a>
 								</li>
 								<li ng-if="::appConfig.invoices">
-									<a href="#!/account/invoices"><i class="fa fa-file-text-o"></i>{{::lang.l.menuInvoices}}</a>
+									<a href="#!/profile/invoices"><i class="fa fa-file-text-o"></i>{{::lang.l.menuInvoices}}</a>
 								</li>
 								<li class="hidden-xs">
 									<a href="#!/logout" class="">
@@ -72,12 +72,12 @@
 							<a data-toggle="modal"  data-target="#langModal"><i class="fa fa-globe"></i> {{::lang.l.btnLang}}</a>
 						</li>
 
-						<li class="hidden-sm hidden-md hidden-lg" ng-if="::appConfig.myaccount">
-							<a href="#!/account"><i class="fa fa-user"></i> {{::lang.l.menuMyAccount}}</a>
+						<li class="hidden-sm hidden-md hidden-lg" ng-if="::appConfig.myprofile">
+							<a href="#!/profile"><i class="fa fa-user"></i> {{::lang.l.menuMyProfile}}</a>
 						</li>
 
 						<li class="hidden-sm hidden-md hidden-lg" ng-if="::appConfig.invoices">
-							<a href="#!/account/invoices"><i class="fa fa-file-text-o"></i> {{::lang.l.menuInvoices}}</a>
+							<a href="#!/profile/invoices"><i class="fa fa-file-text-o"></i> {{::lang.l.menuInvoices}}</a>
 						</li>
 
 						<app-plugin ng-repeat="m in plugins.menuButtons track by $index" template="{{'app/plugins/' + m + '/small.html'}}">
