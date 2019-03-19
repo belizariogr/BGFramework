@@ -58,7 +58,7 @@
 								</li>
 								<li class="hidden-xs">
 									<a href="#!/logout" class="">
-										<i class="fa fa-sign-out"></i>{{::lang.l.menuSignOut}}
+										<i class="fa fa-sign-out-alt"></i>{{::lang.l.menuSignOut}}
 									</a>
 								</li>
 							</ul>
@@ -104,12 +104,12 @@
 				<ul class="sidebar-nav nav-pills nav-stacked" id="menu">
 					<li ng-repeat="m in menu" class="{{m.active ? 'active ' : ''}} {{::m.isOpen ? 'menu-open' : ''}}">
 						<a href="{{::(m.isGroup ? '#' : '#!/' + m.name)}}" class="{{::(m.isGroup ? 'nav-group' : '')}}" onclick="return false">
-						<span class="fa-stack fa-lg pull-left"><i class="fa fa-{{::m.icon}} fa-stack-1x"></i></span>
+						<span class="fa-stack fa-lg pull-left"><i class="{{::m.iconClass || 'fa'}} fa-{{::m.icon}} fa-stack-1x"></i></span>
 						{{::(m.isGroup || lang.l['group_' + m.name] ? (!lang.l['group_' + m.name] ? m.caption : lang.l['group_' + m.name].name || m.caption ) : (lang.l['res_' + m.name].name || m.caption))}}</a>
 						<ul ng-if="::m.isGroup" class="nav-pills nav-stacked nav-subitem {{::(m.isOpen ? 'nav-subitem-open' : '')}}">
 						  <li ng-repeat="s in m.items" class="{{s.active ? 'active' : ''}}">
 							<a href="#!/{{::s.name}}" onclick="return false"><span class="fa-stack fa-lg pull-left">
-							<i class="fa fa-{{::s.icon}} fa-stack-1x"></i></span>
+							<i class="{{::s.iconClass || 'fa'}} fa-{{::s.icon}} fa-stack-1x"></i></span>
 							{{::(!lang.l['res_' + s.name] ? s.caption : lang.l['res_' + s.name].name || s.caption)}}</a>
 						  </li>
 						</ul>
@@ -123,7 +123,7 @@
 				<div class="container-fluid xyz">
 					<div class="row">
 						<div class="page-header">
-						<h1><i class="nav-icon fa fa-{{currentResource.icon}}"></i>{{(!lang.l['res_' + currentResource.name] ? currentResource.caption : lang.l['res_' + currentResource.name].name || currentResource.caption)}}</h1>
+						<h1><i class="nav-icon {{currentResource.iconClass || 'fa'}} fa-{{currentResource.icon}}"></i>{{(!lang.l['res_' + currentResource.name] ? currentResource.caption : lang.l['res_' + currentResource.name].name || currentResource.caption)}}</h1>
 					</div>
 					</div>
 				</div>

@@ -1,23 +1,26 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive("uiInputPhone", ['$timeout', function($timeout){
+app.directive("uiInputPhone", ['$timeout', $timeout => {
 	return {
 		restrict: "E",
-		template: '<div class="edit-row"><div class="col-md-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input col-md-{{::editSize}}"><input class="form-control" ng-model="value" type="tel" id="{{::fieldId}}" placeholder="{{::placeholder}}" mask="(99)9?9999-9999" clean="true" ng-readonly="readOnly"></div></div>',
+		template: '<div class="edit-row {{errors[fieldName] ? \'has-error\': \'\'}}"><div class="edit-row-label-{{::labelSize}}"><label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label></div><div class="edit-row-input"><input class="form-control" ng-model="value" type="tel" id="{{::fieldId}}" placeholder="{{::placeholder}}" mask="{{mask || \'9\'}}" clean="true" ng-readonly="readOnly"></div></div>',
 		replace: true,
 		scope: {
 			fieldId: '@',
-			field: '@',
+			fieldName: '@',
 			value: '=',
-			size: '@',
+			labelSize: '@',
 			readOnly: '@'
 		},
-		link: function($scope, element, attrs){
+		link: ($scope, element, attrs) => {
+			$scope.number = $scope.value;
 			$scope.labelSize = $scope.labelSize || 3;
-			$scope.editSize = $scope.size || 12 - $scope.labelSize;
-			$scope.label = $scope.field;
-			$scope.f = $scope.$parent.config.findField($scope.field);
+			$scope.label = $scope.fieldName;
+			$scope.fieldId = $scope.fieldId || ("input_" + $scope.fieldName);
+			$scope.f = $scope.$parent.config.findField($scope.fieldName);
+			$scope.errors = $scope.$parent.errors;
+			$scope.mask = app.lang.l.masks.phone || '(99)9?9999-9999';
 			if (!$scope.f) return;
 			try{
 				$scope.placeholder = app.lang.l["res_" + $scope.$parent.config.path].fields[$scope.f.name] || $scope.f.displayLabel || $scope.f.name;
@@ -25,15 +28,12 @@ app.directive("uiInputPhone", ['$timeout', function($timeout){
 				$scope.placeholder = $scope.f.displayLabel || $scope.f.name;
 			};
 			$scope.label = $scope.placeholder + ($scope.f.required ? '*' : '');
-			$scope.$watch('value', function(newValue, oldValue) {
-				if (newValue == "") {
-					$timeout(function(){
-						$scope.$apply(function(){
-							$scope.value = null;
-						})
-					})
-				}
+			$scope.$watch(scope => scope.value, (newValue, oldValue) => {
+				if (newValue == "")
+					$timeout(() => $scope.$apply(() => $scope.value = null));
 			});
+			if ($scope.number)
+				$timeout(() => $scope.value = $scope.number, 0)
 		}
 	}
 }]);

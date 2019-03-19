@@ -1,38 +1,54 @@
 <!DOCTYPE html>
 <html ng-app="mainApp" ng-controller="homeCtrl">
 <head>
+	<script type="text/javascript">
+		if (navigator.appName.indexOf("Internet Explorer") != -1 || navigator.userAgent.match(/Trident.*rv[ :]*11\./))
+		   window.location = "/error.html";
+	</script>
+	<noscript>
+	  <style>html{display:none;}</style>
+	  <meta http-equiv="refresh" content="0.0;url=/error.html">
+	</noscript>
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="mobile-web-app-capable" content="yes">
-
-	<link href="./fonts/font-awesome.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="./lib/bootstrap/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="./lib/bootstrap/bootstrap-datetimepicker.min.css">
-
-	<link href="./css/style.css" rel="stylesheet">
-	<link href="./css/ui.css" rel="stylesheet">
-	<script src="./lib/util-functions.min.js"></script>
-	<script src="./lib/date-functions.min.js"></script>
-	<script src="./lib/format-functions.min.js"></script>
-
-	<script src="./lib/require.js"></script>
+	<link rel="stylesheet" type="text/css" href="./lib/bg/datetimepicker.min.css">
 	<script src="./lib/jquery/jquery-3.3.1.min.js"></script>
 	<script src="./lib/bootstrap/bootstrap.min.js"></script>
-	<script src="./lib/bootstrap/bootstrap-datetimepicker.min.js"></script>
 
-	<script src="./lib/angular/angular.min.js"></script>
-	<script src="./lib/angular/angular-mask.min.js"></script>
-	<script src="./lib/angular/angular-route.min.js"></script>
 
-	<script src="./lib/slide-menu.js"></script>
-	<script src="./lib/modal-helper.js"></script>
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+	<link rel="stylesheet" type="text/css" href="./css/ui.css" >
+
+
+
+	<script src="./lib/bg/require.js"></script>
+	<script src="./lib/bg/util-functions.min.js"></script>
+	<script src="./lib/bg/date-functions.min.js"></script>
+	<script src="./lib/bg/format-functions.min.js"></script>
+	<script src="./lib/bg/datetimepicker.min.js"></script>
+	<script src="./lib/bg/slide-menu.js"></script>
+	<script src="./lib/bg/modal-helper.js"></script>
+
+	<script src="./lib/angular/angular.js"></script>
+	<script src="./lib/angular/angular-sanitize.min.js"></script>
+	<script src="./lib/angular/angular-mask.js"></script>
+	<script src="./lib/angular/angular-route.js"></script>
+	<script src="./lib/angular/angular-css.min.js"></script>
+	<script src="./lib/angular/matchMedia.js"></script>
+
+
 	<script src="./config.js"></script>
 	<script src="./app/core/services/restAPI.js"></script>
 	<script src="./app/core/services/routeResolver.js"></script>
 	<script src="./app/core/services/tokenValidation.js"></script>
 	<script src="./app/core/services/language.js"></script>
+	<script src="./app/core/services/colorList.js"></script>
 
 	<script src="./app/app.js"></script>
 	<script src="./app/core/directives/includeReplace.js"></script>
@@ -53,6 +69,8 @@
 	<script src="./app/core/directives/ui/input/uiInputNumber.js"></script>
 	<script src="./app/core/directives/ui/input/uiInputDateTime.js"></script>
 	<script src="./app/core/directives/ui/input/uiInputCheck.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputColorPicker.js"></script>
+	<script src="./app/core/directives/ui/input/uiInputIconPicker.js"></script>
 
 	<script src="./app/core/controllers/home.js"></script>
 	<title ng-bind="appTitle"></title>

@@ -1,16 +1,16 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive("uiFilterColumn", function($compile){
+app.directive("uiFilterColumn", $compile => {
 	return {
 		restrict: "E",
 		template: "",
 		scope: {
 			filters: '='
 		},
-		link: function($scope, element, attrs){
+		link: ($scope, element, attrs) => {
 			var i = -1;
-			$scope.filters.forEach(function(f){
+			$scope.filters.forEach(f => {
 				i++;
 				switch(f.type){
 					case "month":

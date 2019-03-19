@@ -2,11 +2,8 @@
 
 angular.module('tokenValidationService', []).provider('tokenValidation', function(){
 
-	this.$get = function() {
-		return this;
-	};
-
-	this.validate = function(restAPI, callback){
+	this.$get = () => this;
+	this.validate = (restAPI, callback) => {
 		var token = localStorage.getItem("token", token);
 		var expiration = localStorage.getItem("expiration", expiration);
 		var curTime = Math.trunc(new Date().getTime() / 1000);
@@ -18,16 +15,14 @@ angular.module('tokenValidationService', []).provider('tokenValidation', functio
 
 		if (!!restAPI){
 			restAPI.post('validatetoken', true, {token: token}).then(
-				function(res){
+				res => {
 					if (!!res.data.error)
 						callback(res.data.error);
 					else
 						callback();
 				},
-				function(err){
-					callback(err);
-				}
-			)
+				err => 	callback(err)				
+			);
 		}
 		if (!callback)
 		 	return true;

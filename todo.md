@@ -15,10 +15,10 @@
 - [x] Create Lookup ComboBox with completation component
 - [ ] Create Grid component to be used in Master/Detail
 - [ ] Create Page Control for edit page
-- [ ] Create client-side validation of data
-- [ ] Create recovery password interface
+- [x] Create client-side validation of data
 - [ ] Create registry interface
-- [ ] Implement regional settings
+- [ ] Create recovery password interface
+- [x] Implement regional settings
 - [ ] Implement themes interface
 - [ ] Create multi-language on login screen
 - [ ] Create graph components
@@ -32,7 +32,7 @@
 - [x] Implement MySQL connection interface
 - [x] Create a dynamic login system (independent of database)
 - [x] Implement default values for fields
-- [ ] Implement Joins and Conditions for resources
+- [x] Implement Joins and Conditions for resources
 - [ ] Implement relations for multiple resources
 - [ ] Implement MongoDB connection interface
 - [ ] Implement a register route

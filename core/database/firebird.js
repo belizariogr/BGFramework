@@ -26,7 +26,7 @@ class Firebird extends DB {
 		this.escape = this.engine.escape;
 	}
 
-	async query(sql, params) {		
+	async query(sql, params) {
 		let pool = this.pool;
 		return new Promise((resolve, reject) => {
 			pool.get((err, conn) => {
@@ -47,22 +47,24 @@ class Firebird extends DB {
 		});
 	}
 
-	getSelectSQL(tableName, fields, where, groupBy, orderBy, page) {
+	getSelectSQL(tableName, alias, joins, fields, where, groupBy, orderBy, page, pageRecords) {
 		let pagination = "";
+		if (pageRecords === undefined)
+			pageRecords = this.server.config.pageRecords;
 		if (!!page){1
-			let limitNumber = (page - 1) * this.server.config.pageRecords;
+			let limitNumber = (page - 1) * pageRecords;
 			if (limitNumber != NaN)
-				pagination = "FIRST " + this.server.config.pageRecords + " SKIP " + limitNumber;
+				pagination = "FIRST " + pageRecords + " SKIP " + limitNumber;
 		}
-		return "SELECT " + pagination + " " + fields + " FROM " + tableName + " " + where + " "  + groupBy + " " + orderBy;
+		return "SELECT " + pagination + " " + fields + " FROM " + this.escapeTable(tableName, alias) + " " + joins + " " + where + " "  + groupBy + " " + orderBy;
 	}
 
-	async getAutoInc(systemUser, tableName) {		
+	async getAutoInc(systemUser, tableName) {
 		let sql = "EXECUTE BLOCK RETURNS (ID INTEGER) AS BEGIN " +
 					" UPDATE OR INSERT INTO " + this.server.config.autoincTable + " (" + this.server.config.systemUserField + ", " + this.server.config.autoincTableField + ", " +
 					this.server.config.autoincIdField + ") " + " VALUES (" + systemUser + ", '" + tableName.toUpperCase() + "', COALESCE((SELECT MAX(" + this.server.config.autoincIdField +
 					") + 1 FROM " + this.server.config.autoincTable + " WHERE " +  this.server.config.systemUserField + " = " + systemUser + " AND " + this.server.config.autoincTableField +
-					" = '" + tableName.toUpperCase() + "'), 1)) " +	" MATCHING(" + this.server.config.systemUserField + ", " + this.server.config.autoincTableField + ") RETURNING " +
+					" = '" + tableName.toUpperCase() + "'), 1)) " +	" MATCHING (" + this.server.config.systemUserField + ", " + this.server.config.autoincTableField + ") RETURNING " +
 					this.server.config.autoincIdField + " INTO :ID; SUSPEND; END";
 		let result = await this.query(sql);
 		if (result.error)
@@ -70,6 +72,15 @@ class Firebird extends DB {
 		return DBUtils.normatizeObject(result.rows[0])["id"];
 	}
 
+	escapeField(fieldName, resource) {
+		if (fieldName !== undefined)
+			return '"' + fieldName + '"';
+	}
+
+	escapeTable(tableName, alias) {
+		if (tableName !== undefined)
+			return '"' + tableName + '"' + (alias ? " " + alias : "") ;
+	}
 }
 
 module.exports = Firebird;

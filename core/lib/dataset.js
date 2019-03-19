@@ -6,11 +6,10 @@ class DataSet {
 		this.config = config;
 		this.fields = [];
 		this.values = [];
-
 	};
 
 	setValue(field, value) {
-		if (!field)	
+		if (!field)
 			throw 'Invalid field.';
 		var found = false;
 		for (var i = 0; i < this.fields.length; i++) {
@@ -26,11 +25,23 @@ class DataSet {
 	};
 
 	getValue(field) {
-		if (!field)	
+		if (!field)
 			throw 'Invalid field.';
 		for (var i = 0; i < this.fields.length; i++) {
 			if (this.fields[i].toLowerCase() == field.toLowerCase())
 				return this.values[i];
+		}
+	};
+
+	deleteValue(field) {
+		if (!field)
+			throw 'Invalid field.';
+		for (var i = 0; i < this.fields.length; i++) {
+			if (this.fields[i].toLowerCase() == field.toLowerCase()){
+				this.fields.splice(i, 1);
+				this.values.splice(i, 1);
+				break;
+			}
 		}
 	};
 

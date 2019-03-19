@@ -1,7 +1,7 @@
 "use strict";
 
 class DBUtils {
-	
+
 	static fieldByName(model, fieldName) {
 		var field;
 		model.fields.forEach(f => {
@@ -22,15 +22,15 @@ class DBUtils {
 		else if (!!p)
 			params = p
 		else if (!!q)
-			params = q;				
+			params = q;
 		for (var prop in params){
 			if (prop != 'order' && prop != 'page' && prop != 'sort'){
 				var fields = prop.split("|");
 				var c = 0;
-				for (var i = 0; i < fields.length; i++){					
+				for (var i = 0; i < fields.length; i++){
 					var f = this.fieldByName(model, fields[i]);
 					if (fields[i].toLowerCase() == config.systemUserField.toLowerCase()){
-						f = {name: config.systemUserField, dataType: "integer", key: true};
+						f = {name: config.systemUserField, dataType: "integer", key: true, alias: model.alias || model.resource};
 					};
 					if (!f)
 						throw 'No field found for condition.';
@@ -39,6 +39,7 @@ class DBUtils {
 					else {
 						c++;
 						var cond = {
+							resource: f.alias || model.alias || model.resource,
 							field: f.name,
 							dataType: f.dataType,
 							options: f.options,
@@ -52,7 +53,7 @@ class DBUtils {
 								var value = params[prop].split("|");
 								cond.value = value[0];
 							} else
-							  cond.value= params[prop];
+							  	cond.value = params[prop];
 							if (value.length == 2)
 								cond.valueEnd = value[1];
 
@@ -67,14 +68,14 @@ class DBUtils {
 										throw 'Invalid date for condition: ' +  cond.field;
 									cond.valueEnd = d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate();
 								}
-							} else if (cond.dataType == "integer" || cond.dataType == "numeric") {								
+							} else if (cond.dataType == "integer" || cond.dataType == "numeric") {
 								if (isNaN(cond.value))
 									throw 'Invalid number (' + cond.value + ') for condition: ' + cond.field;
 								if (cond.valueEnd)
 									if (isNaN(cond.valueEnd))
 										throw 'Invalid end number (' + cond.endValue + ') for condition: ' + cond.field;
 							} else if (cond.dataType == "bool") {
-								if (!(new Set('F', 'T', 'F|T', 'T|F')).has(value))
+								if (!(cond.value == '0' || cond.value == '1' || cond.value == '1|0' || cond.value == '0|1'))
 									throw 'Invalid bool (' + value + ') for condition: ' + cond.field;
 								cond.value = value;
 							} else if (cond.options)
@@ -119,27 +120,55 @@ class DBUtils {
 	};
 
 	static getPage(p) {
-		var page = 0;
+		let page = 0;
 		if (!!p && !!p.page)
 			page = parseInt(p.page);
 		return page;
 	};
 
 	static getAutoIncFieldName(model) {
-		var f = model.fields.filter(f => !!f.autoInc);
-		return f[0].name;
+		let f = model.fields.filter(f => !!f.autoInc);
+		if (f.length > 0)
+			return f[0].name;
+	};
+
+	static getCreationField(model){
+		let f = model.fields.filter(f => !!f.isCreationField);
+		if (f.length > 0)
+			return f[0];
+	}
+
+	static getModificationField(model){
+		let f = model.fields.filter(f => !!f.isModificationField);
+		if (f.length > 0)
+			return f[0];
+	}
+
+	static getDeletionField(model){
+		let f = model.fields.filter(f => !!f.isDeletionField);
+		if (f.length > 0)
+			return f[0];
 	};
 
 	static getValueByIndex(row, index) {
 		return row[Object.keys(row)[index]];
-	}
+	};
 
 	static normatizeObject(obj) {
-		var buf = {};
-		for (var p in obj){
-			buf[p.toLowerCase()] = obj[p];
+		let normatize = o => {
+			let buf = {};
+			for (var p in o)
+				buf[p.toLowerCase()] = o[p];
+			return buf;
 		};
-		return buf;
+		if (Array.isArray(obj)) {
+			let arr = [];
+			obj.forEach(o => arr.push(normatize(o)));
+			return arr;
+		};
+		if (typeof obj == "object")
+			return normatize(obj);
+		return obj;
 	};
 
 	static validateRecord(action, model, record, params) {
@@ -147,7 +176,7 @@ class DBUtils {
 			var buf = Object.assign(record, params);
 			var rec = this.normatizeObject(buf);
 		} else
-			var rec = record;
+			var rec =  this.normatizeObject(record);
 		if (!rec)
 			throw 'You need to pass a valid record.';
 		var keys = this.getKeys(model);
@@ -171,7 +200,7 @@ class DBUtils {
 				r = this.normatizeObject(r);
 				validate(r);
 			})
-		} else{
+		} else {
 			rec = this.normatizeObject(rec);
 			validate(rec);
 		}
@@ -180,81 +209,77 @@ class DBUtils {
 
 	static getKeys(model) {
 		return model.fields.filter(f => f.key);
-	}
+	};
 
-	static getDataSet(config, fields, rec, useDefaults) {
+	static getDataSet(model, config, rec, useDefaults, deletion) {
 		var dataSet = new DataSet(config);
 		var keys = Object.keys(rec);
-		fields.forEach(f => {
+		var errorCode = 0;
+		model.fields.forEach(f => {
 			let k = keys.filter(k => k.toLowerCase() == (f.name + "").toLowerCase());
-			if (k.length == 0 && !f.readOnly){
+			if (f.required)
+				errorCode += 1;
+			if (k.length == 0 && !f.readOnly && f.code === undefined && !deletion){
+				if (f.required)
+					error(1, {code: errorCode, message: 'Field "' + f.name + '" is required.'});
 				dataSet.fields.push(f.name);
 				if (useDefaults && f.default !== undefined){
 					if (f.dataType == "bool" && typeof f.default == "boolean")
-						f.default = f.default ? 'T' : 'F';
+						f.default = f.default ? 1 : 0;
 					dataSet.values.push(f.default);
 				} else
 					dataSet.values.push(null);
-			} else if (!f.readOnly) {
+			} else if (!f.readOnly && f.code === undefined) {
 				var value = rec[k[0]];
-				if (f.required && (value === null || value === undefined)){					
-					return dataSet.errorMsg = 'Field "' + f.name + '" is required.';
+				if (f.required && (value === null || value === undefined) && !deletion){
+					error(1, {code: errorCode, message: 'Field "' + f.name + '" is required.'});
 				} else if (!(value === null || value === undefined)){
 					if (f.dataType == "integer"){
-						if (isNaN(value) || !Number.isInteger(Number(value))){
-							dataSet.errorMsg = 'Invalid integer value (' + value + ') for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
-							return
-						}
+						if (isNaN(value) || !Number.isInteger(Number(value)))
+							error(2, {message: 'Invalid integer value ("' + value + '") for field "' + f.name + '."'});
 					} else if (f.dataType == "float") {
-						if (isNaN(value)){
-							dataSet.errorMsg = 'Invalid float value (' + value + ') for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
-							return
-						}
+						if (isNaN(value))
+						error(2, {message: 'Invalid float value ("' + value + '") for field "' + f.name + '."'});
 					} else if (f.dataType == "date" || f.dataType == "time" || f.dataType == "datetime") {
-						var d = new Date(value);
-						if (isNaN(d.getTime())){
-							dataSet.errorMsg =  'Invalid datetime value for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
-							return
-						}
+						if (!Utils.validateDate(value, f.dataType))
+							error(2, {message: 'Invalid datetime value for field "' + f.name + '."'});
+						if (f.dataType == "date")
+							value = Utils.getISODate(value)
+						else if (f.datatype == "time")
+							value = Utils.getISOTime(value)
+						else
+							value = Utils.getISODateTime(value)
+						rec[k[0]] = value;
 					} else if (f.dataType == "bool") {
-						if (typeof(value) == "boolean"){
-							value = value ? 'T' : 'F';
-						} else if (value != "T" && value != "F"){
-							dataSet.errorMsg = 'Invalid bool value (' + value + ') for field "' + f.name + '."';
-							dataSet.errorField = f.name;
-							dataSet.errorDataType = f.dataType;
-							dataSet.errorValue = value;
-							return
-						}
-					} else if (f.dataType != "string")
-						throw 'Field "' + f.name + '" has an invalid data type.';
+						if (value != 0 && value != 1)
+							error(2, {message: 'Invalid bool value ("' + value + '") for field "' + f.name + '."'});
+					} else if (f.dataType == "string"){
+						value = value + "";
+						if (f.size > 0 && value.length > f.size){
+							if (config.fieldOverflowAction == "trim")
+								value = value.substring(0, f.size);
+							else
+								error(1, {code: errorCode, message: 'Field "' + f.name + '" is too large.'});
+						} else if (f.required && value.length == 0)
+							error(1, {code: errorCode, message: 'Field "' + f.name + '" is required.'});
+					} else
+						error(1, {code: errorCode, message: 'Field "' + f.name + '" has an invalid data type.'});
 				}
 				dataSet.fields.push(f.name);
 				dataSet.values.push(value);
 			}
 		});
-		var notFound = keys.filter(k => fields.filter(f => f.name.toLowerCase() == k.toLowerCase()).length == 0);
 
+		let notFound = keys.filter(k => model.fields.filter(f => f.name.toLowerCase() == k.toLowerCase()).length == 0);
 		if (!dataSet.errorMsg && notFound.length > 0){
 			var err = "";
 			notFound.forEach(n => {
 				err += (err ? ", " : "") + "'" + n + "'";
 			});
-			throw "Field(s) not found in model: " + err;
-		}		
-		
+			error(2, "Field(s) not found in model: " + err);
+		}
 		return dataSet;
 	};
-
 }
 
 module.exports = DBUtils;

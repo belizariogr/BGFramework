@@ -2,25 +2,15 @@
 
 angular.module('routeResolverService', []).provider('routeResolver', function(){
 
-	this.$get = function(){
-		return this;
-	};
+	this.$get = () => this;
 
 	this.routeConfig = function() {
 		var resDirectory            = 'resources/',
 			coreControllersDirectory = 'app/core/controllers/',
 
-		setResDirectory = function(resDir){
-			resDirectory = resDir;
-		},
-
-		getResDirectory = function(){
-			return resDirectory;
-		},
-
-		getCoreControllersDirectory = function(){
-			return coreControllersDirectory;
-		}
+		setResDirectory = resDir => resDirectory = resDir, 
+		getResDirectory = () => resDirectory,
+		getCoreControllersDirectory = () => coreControllersDirectory;
 
 		return {
 			setResDirectory: setResDirectory,
@@ -31,7 +21,7 @@ angular.module('routeResolverService', []).provider('routeResolver', function(){
 	}();
 
 	this.route = function(routeConfig){
-		var resolve = function(name, secure, isCore, res, load, check){
+		var resolve = (name, secure, isCore, res, load, check) => {
 			var routeDef = {};
 			var resControllerFullPath = '';
 			var resPath = '';
@@ -48,7 +38,7 @@ angular.module('routeResolverService', []).provider('routeResolver', function(){
 			}
 
 			routeDef.resolve = {
-				load: function($location, $q, $rootScope){
+				load: ($location, $q, $rootScope) => {
 					$('.bootstrap-datetimepicker-widget').remove();
 					load($location);
 					var dependencies = [resControllerFullPath];
@@ -59,7 +49,7 @@ angular.module('routeResolverService', []).provider('routeResolver', function(){
 			return routeDef;
 		},
 
-		resolveDependencies = function($q, $rootScope, dependences){
+		resolveDependencies = ($q, $rootScope, dependences) => {
 			var defer = $q.defer();
 			requires(dependences, function(){
 				defer.resolve();

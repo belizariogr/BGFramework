@@ -35,7 +35,7 @@ app.controller('loginCtrl', ['$scope', '$http', '$window', function($scope, $htt
 			clearData();
 		} else {
 			$scope.login_button_disabled = true;
-			$http.post(app.appConfig.backend_addr + '/api/login/', $scope.userData).then(
+			$http.post(app.appConfig.apiAddress + '/api/login/', $scope.userData).then(
 				function successCallback(res){
 					if (res.data.token) {
 		    			$scope.invalidLogin = false;

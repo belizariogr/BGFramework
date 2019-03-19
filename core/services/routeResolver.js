@@ -4,18 +4,33 @@ class RouteResolver {
 
 	static getModel(server, dir) {
 		let modelClass = require(dir + '/model');
-		let model = new modelClass(server);	
+		let model = new modelClass(server);
 		if (!!model.fields){
-			if (server.config.deletionField)
-				model.fields.unshift({name: server.config.deletionField, dataType: "datetime"});
-			if (server.config.modificationField)
-				model.fields.unshift({name: server.config.modificationField, dataType: "datetime"});
-			if (server.config.creationField)
-				model.fields.unshift({name: server.config.creationField, dataType: "datetime"});
 			if (server.config.systemUserField)
 				model.fields.unshift({name: server.config.systemUserField, dataType: "integer", key: true, hidden: true});
-		}		
-		return model; 
+
+			let c = model.fields.filter(f => f.name == server.config.creationField);
+			if (c.length > 0){
+				c[0].isCreationField = true;
+				c[0].readOnly = true;
+				c[0].alias = model.alias || model.resource;
+			}
+			c = model.fields.filter(f => f.name == server.config.modificationField);
+			if (c.length > 0){
+				c[0].isModificationField = true;
+				c[0].readOnly = true;
+				c[0].alias = model.alias || model.resource;
+			}
+
+			c = model.fields.filter(f => f.name == server.config.deletionField);
+			if (c.length > 0){
+				c[0].isDeletionField = true;
+				c[0].readOnly = true;
+				c[0].hidden = true;
+				c[0].alias = model.alias || model.resource;
+			}
+		}
+		return model;
 	}
 
 	static getRoutes(server) {
@@ -25,50 +40,77 @@ class RouteResolver {
 			let route = new routeClass(server);
 			route.filepath = path;
 			server.routes.add(route);
-			return route;			
+			return route;
 		}
 
-		if (!!server.config.allowRegister) 
+		if (!!server.config.allowRegister)
 			add('../resources', 'register');
 		add('../resources', 'login');
-		add('../resources', 'validatoken');		
+		add('../resources', 'validatoken');
 		let contexts = Object.keys(server.resources);
 		contexts.forEach(context => {
 			server.resources[context].forEach(r => {
-				let route = add('../../resources/' + context  + '/' + r, 'controller');				
+				let route = add('../../resources/' + context  + '/' + r, 'controller');
 				if (typeof route.get != "function" && typeof route.post != "function" &&  typeof route.put != "function" && typeof route.delete != "function")
-					route.model = this.getModel(server, route.filepath);				
+					route.model = this.getModel(server, route.filepath);
 				if (!!route.model){
-					if (!!route.list)
-						route._list = (req, res) => route.model.list(req, res);
-					if (!!route.record)
-						route._record = (req, res) => route.model.record(req, res);
+					if (!!route.list){
+						let before = async (data, db, userId, cond, req, res) => {
+							if (!!route.beforeList)
+								await route.beforeList(data, db, userId, cond, req, res);
+						}
+						route._list = (req, res) => route.model.list(req, res, before);
+					}
+					if (!!route.record){
+						let before = async (rec, db) => {
+							if (!!route.beforeRecord)
+								await route.beforeRecord(rec, db);
+						}
+						route._record = (req, res) => route.model.record(req, res, before);
+					}
 					if (!!route.insert){
 						route._insert = (req, res) => {
-							var before = (rec) => {
+							let before = async (rec, dataset, db, helper) => {
 								if (route.validateRecord)
-									route.validateRecord(rec);
+									route.validateRecord(rec, dataset, db, helper);
 								if (route.beforeInsert)
-									route.beforeInsert(rec);
+									await route.beforeInsert(rec, dataset, db, helper);
 							};
-							route.model.insert(req, res, before, route.afterInsert);
+							let after = (rec, dataset, db, helper) => {
+								if (route.afterInsert)
+									route.afterInsert(rec, dataset, db, helper)
+							}
+							route.model.insert(req, res, before, after);
 						}
 					};
 					if (!!route.update){
 						route._update = (req, res) => {
-							var before = (rec) => {
+							let before = async (rec, dataset, db, helper) => {
 								if (route.validateRecord)
-									route.validateRecord(rec);
+									route.validateRecord(rec, dataset, db, helper);
 								if (route.beforeUpdate)
-									route.beforeUpdate(rec)
+									await route.beforeUpdate(rec, dataset, db, helper)
 							};
-							route.model.update(req, res, before, route.afterUpdate);
+							let after = (rec, dataset, db, helper) => {
+								if (route.afterUpdate)
+									route.afterUpdate(rec, dataset, db, helper)
+							}
+							route.model.update(req, res, before, after);
 						}
 					};
-					if (!!route.delete)
-						route._delete = (req, res) => route.model.delete(req, res, route.beforeDelete, route.afterDelete);
+					if (!!route.delete){
+						let before = async (rec, dataset, db, helper) => {
+							if (route.beforeDelete)
+								await route.beforeDelete(rec, dataset, db, helper);
+						};
+						let after = (rec, dataset, db, helper) => {
+							if (route.afterDelete)
+								route.afterDelete(rec, dataset, db, helper)
+						}
+						route._delete = (req, res) => route.model.delete(req, res, before, after);
+					}
 				}
-			});			
+			});
 		});
 	}
 

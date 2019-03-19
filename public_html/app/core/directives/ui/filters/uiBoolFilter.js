@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive("uiBoolFilter", [function(){
+app.directive("uiBoolFilter", [() => {
 	return {
 		restrict: "E",
 		template: '<div class="filter col-md-{{filter.columnSize || 12}}"><div class=row><div class="caption col-md-12">{{::displayLabel}}</div></div><form><div class=row><div class="col-md-12 checkbox"><label><input type=checkbox ng-model=trueSelected> {{::trueText}}</label><br><label><input type=checkbox ng-model=falseSelected > {{::falseText}}</label></div></div></form></div>',
@@ -9,7 +9,7 @@ app.directive("uiBoolFilter", [function(){
 		scope: {
 			filter: '='
 		},
-		link: function($scope, element, attrs){
+		link: ($scope, element, attrs) => {
 			var f = $scope.$parent.$parent.config.findField($scope.filter.field);
 			try{
 				$scope.displayLabel = app.lang.l["res_" + $scope.$parent.$parent.config.path].fields[f.name] || f.displayLabel || f.name;
@@ -25,7 +25,7 @@ app.directive("uiBoolFilter", [function(){
 			$scope.trueSelected = false;
 			$scope.falseSelected = false;
 
-			$scope.filter.execFilter = function(){
+			$scope.filter.execFilter = () => {
 				$scope.filter.value = '';
 				if ($scope.trueSelected)
 					$scope.filter.value = $scope.filter.trueValue || 'T';
@@ -34,7 +34,7 @@ app.directive("uiBoolFilter", [function(){
 				$scope.filter.used = true;
 			}
 
-			$scope.filter.clearFilter = function(){
+			$scope.filter.clearFilter = () => {
 				$scope.filter.used = false;
 				$scope.trueSelected = false;
 				$scope.falseSelected = false;
@@ -43,7 +43,7 @@ app.directive("uiBoolFilter", [function(){
 			if ($scope.filter.used && $scope.filter.value){
 				var values = $scope.filter.value.split('|');
 				if (values){
-					values.forEach(function(v){
+					values.forEach(v => {
 						if (v == 'T')
 							$scope.trueSelected = true;
 						if (v == 'F')

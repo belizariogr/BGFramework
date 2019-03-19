@@ -2,44 +2,29 @@
     <div class="loading-dim" ng-show="showEditDim">
         <div class="loading-box"><i class="fa fa-spinner fa-pulse fa-fw fa-2x"></i></div>
     </div>
-
-    <form ng-disabled="errorLoading">
-
-           <div class="modal-body">
-                <div class="form-group">
-                        <ng-include src="editPath" />
-                </div>
-                <ui-error-message ng-show="showEditError">{{editErrorMsg}}</ui-error-message>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" data-ng-click="save()" ng-disabled="errorLoading">
-                    {{::lang.l.btnSave}}
-                </button>
-                <button type="button" class="btn btn-default" data-ng-click="cancel()">
-                    {{::lang.l.btnCancel}}
-                </button>
-            </div>
-        </form>
-
-</div>
-
-<div class="modal fade" id="gotoPage" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">{{::lang.l.msgGotoPageTitle}}</h4>
-            </div>
-            <div class="modal-body form-group">
-                {{::lang.l.msgGotoPageText}}
-                <input id="edtGoto" class="form-control" autofocus type="number" min="1" max="{{dataset.pagecount}}" ng-model="gotoPage" onkeydown="if (event.keyCode == 13) document.getElementById('btnGotoOk').click()">
-            </div>
-            <div class="modal-footer">
-                <button id="btnGotoOk" type="button" class="btn btn-primary" data-dismiss="modal" ng-disabled="!gotoPage" ng-click="goto(gotoPage)">
-                    {{::lang.l.btnOk}}
-                </button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">{{::lang.l.btnCancel}}</button>
-            </div>
-        </div>
+    <div class="loading-dim" ng-show="errorLoading">
+       <div class="dim-error">
+            <ui-error-message ng-show="showEditError">
+                <div ng-bind-html="editErrorMsg"></div>
+            </ui-error-message>
+       </div>
     </div>
+    <form ng-disabled="errorLoading">
+        <div class="modal-body">
+            <div class="form-group edit-content">
+                    <ng-include src="editPath" />
+            </div>
+            <ui-error-message ng-show="showEditError && !errorLoading">
+                <div ng-bind-html="editErrorMsg"></div>
+            </ui-error-message>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn-save btn btn-primary" data-ng-click="save()" ng-disabled="errorLoading || showEditDim || editDisable">
+                {{::lang.l.btnSave}}
+            </button>
+            <button type="button" class="btn-cancel btn btn-default" data-ng-click="cancel()">
+                {{::lang.l.btnCancel}}
+            </button>
+        </div>
+    </form>
 </div>

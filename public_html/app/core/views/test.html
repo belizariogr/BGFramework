@@ -1,0 +1,10 @@
+<div class="edit-row">
+    <div class="edit-row-label-{{::labelSize}}">
+        <label for="{{::fieldId}}" class="edit-row-label">
+            {{::label}}
+        </label>
+    </div>
+	<div class="edit-row-input">
+		<input class="form-control" ng-model="value" type="text" id="{{::fieldId}}" placeholder="{{::placeholder}}" ng-readonly="readOnly">
+	</div>
+</div>

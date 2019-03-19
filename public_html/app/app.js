@@ -1,11 +1,12 @@
 'use strict'
 
-var app = angular.module("mainApp", ['ngRoute', 'ngMask', 'appConfigService', 'routeResolverService', 'tokenValidationService', 'restAPIService', 'languageService']);
+var app = angular.module("mainApp", ['ngSanitize', 'ngRoute', 'ngMask', 'angularCSS', 'appConfigService', 'routeResolverService', 'tokenValidationService', 
+	'restAPIService', 'languageService', 'matchMedia', 'colorListService']);
 
-app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$provide', 'languageProvider',
+app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$provide', 'languageProvider', 'colorListProvider',
 			'$qProvider', '$httpProvider', '$routeProvider', 'routeResolverProvider', 'tokenValidationProvider', 'restAPIProvider', 'appConfigProvider',
-	function($compileProvider, $controllerProvider, $filterProvider, $provide, languageProvider,
-			 $qProvider, $httpProvider, $routeProvider, routeResolverProvider, tokenValidationProvider, restAPIProvider, appConfigProvider){
+			($compileProvider, $controllerProvider, $filterProvider, $provide, languageProvider, colorListProvider,
+			 $qProvider, $httpProvider, $routeProvider, routeResolverProvider, tokenValidationProvider, restAPIProvider, appConfigProvider) => {
 		app.register = {
 			controller: $controllerProvider.register,
 			directive:  $compileProvider.directive,
@@ -20,12 +21,10 @@ app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$prov
 		if (!$httpProvider.defaults.headers.get)
 			$httpProvider.defaults.headers.get = {};
 		$httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
-		$httpProvider.interceptors.push(['$q', '$location', function($q, $location){
+		$httpProvider.interceptors.push(['$q', '$location', ($q, $location) => {
 			return {
-				'response': function (response) {
-					return response;
-				},
-				'responseError': function (rejection) {
+				'response': (response) => response,
+				'responseError': (rejection) => {
 					if(rejection.status === 401)
 						$location.path('/logout');
 					return $q.reject(rejection);
@@ -39,14 +38,12 @@ app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$prov
 		app.validateToken = tokenValidationProvider.validate;
 		app.restAPI = restAPIProvider;
 		app.lang = languageProvider;
+		app.colorList = colorListProvider;
 
 		// Configure Routes
-		var routeLoad = function($location){
-			app.setCurrentResource($location.path());
-		};
-
-		var routeCheck = function(){};
-		app.appConfig.resources.forEach(function(r){
+		var routeLoad = $location => app.setCurrentResource($location.path());
+		var routeCheck = () => {};
+		app.appConfig.resources.forEach(r => {
 			$routeProvider.when('/' + r.name, route.resolve(r.name, false, false, r, routeLoad, routeCheck));
 			if (!r.modal)
 				$routeProvider.when('/' + r.name + '/:id', route.resolve(r.name, false, false, r, routeLoad, routeCheck));
@@ -61,7 +58,7 @@ app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$prov
 			appPlugins: []
 		};
 
-		app.appConfig.plugins.forEach(function(p){
+		app.appConfig.plugins.forEach(p => {
 			require('plugins/' + p.name + '/plugin.js');
 			if (p.type === 'menu-button')
 				app.plugins.menuButtons.push(p.name)
@@ -71,7 +68,7 @@ app.config(['$compileProvider', '$controllerProvider', '$filterProvider', '$prov
 	}
 ]);
 
-app.run(['$window', '$rootScope', '$http', function($window, $rootScope, $http){
+app.run(['$window', '$rootScope', '$http', ($window, $rootScope, $http) => {
 	app.restAPI.config(app.appConfig, $http);
 	if (!app.validateToken()){
 		$window.open('/login/', '_self');
@@ -91,8 +88,9 @@ app.run(['$window', '$rootScope', '$http', function($window, $rootScope, $http){
 	app.lang.http = $http;
 	var lang = $window.navigator.language || $window.navigator.userLanguage;
 	lang = lang.toLowerCase();
+	app.colorList.config(app.appConfig.colorList, app.appConfig.contrastColor, app.appConfig.borerContrastColor);
 	app.lang.config(app.appConfig.languages, localStorage.getItem("lang") || lang || app.appConfig.languages[0].code);
-	$rootScope.$on('$routeChangeStart', function(evt, next, current) {
+	$rootScope.$on('$routeChangeStart', (evt, next, current) => {
 		if ((window.innerWidth <= 768 || isMobileBrowser()) && $('.modal-backdrop').length){
 			var btnClose = $('#editModal').find(".close");
 			if (btnClose.click)

@@ -1,18 +1,26 @@
-<div class="edit-row">
-	<div class="col-md-{{::labelSize}}">
+<div class="edit-row {{errors[fieldName] ? 'has-error': ''}}">
+	<div class="edit-row-label-{{::labelSize}}">
 		<label for="{{::fieldId}}" class="edit-row-label">{{::label}}</label>
 	</div>
-	<div class="edit-row-input col-md-{{::editSize}}">
-
-
-		<div class="input-group dropdown combo-group">
-			<input class="form-control" type="text" id="{{::fieldId}}" ng-model="text" ng-focus="onFocus()" ng-blur="onExit()">
+	<div class="edit-row-input not-mobile">		
+		<div class="combo-icon" ng-if="::useIcons"><i class="{{optionSelected.icon}}"></i></div>
+		<div class="input-group addon dropdown combo-group {{useIcons ? 'with-icon' : ''}}">						
+			<input class="form-control combo-input" type="text" id="{{::fieldId}}" ng-model="text" ng-focus="onFocus()" ng-blur="onExit()">
+			
 			<ul class="dropdown-menu combo-menu">
-				<li id="combo-item-{{i.value}}" class="{{i.sel}}" ng-repeat="i in items track by i.value" ng-click="select(i)" ng-mousemove="mouseMove(i)" ng-mousedown="mouseDownItem()">{{i.text}}</li>
+				<li id="combo-item-{{i.value}}" class="{{i.sel}}" ng-repeat="i in items track by i.value" ng-click="select(i)" ng-mousemove="mouseMove(i)" ng-mousedown="mouseDownItem()">
+					<i ng-if="::useIcons" class="{{i.icon}}"></i>{{i.text}}
+				</li>
 				<li ng-show="items.length === 0"><strong>{{::lang.l.msgNoResultsFound}}</strong></li>
 			</ul>
 			<a class="btn-toggle" data-toggle="{{options.length == 0 ? '' : 'dropdown'}}"></a>
 			<a role="button" ng-click="btnClick()" ng-mousedown="mouseDownBtn()" class="btn btn-default input-group-addon add-on"><i class="fa fa-chevron-{{btnIcon}}" aria-hidden="true"></i> </a>
 		</div>
+	</div>
+	<div class="edit-row-input mobile {{useIcons ? 'with-icon' : ''}}">
+		<div class="combo-icon" ng-if="::useIcons"><i class="{{optionSelected.icon}}"></i></div>
+		<select class="form-control" ng-model="strValue">
+			<option ng-repeat="i in items track by i.value" value="{{i.value}}" ng-selected="{{value == i.value ? 'true' : 'false'}}">{{i.text}}</option>
+		</select>
 	</div>
 </div>

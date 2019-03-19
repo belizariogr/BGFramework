@@ -6,6 +6,22 @@ class DB {
 		this.server = server;
 	}
 
+	formatDateTime(datetime, miliseconds) {
+		return Utils.formatDateTime(datetime, miliseconds);
+	}
+
+	dateFormat(value) {
+		return value;
+	}
+
+	timeFormat(value) {
+		return value;
+	}
+
+	datetimeFormat(value) {
+		return value;
+	}
+
 	get(model, conditions, orders, page, listing) {
 		return SQLHelper.get(this, model, conditions, orders, page, listing);
 	};

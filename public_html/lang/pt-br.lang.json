@@ -20,7 +20,8 @@
 			"thousandSeparator": ".",
 			"24Hour" :			 "true",
 			"trueText":			 "Sim",
-			"falseText":		 "Não"
+			"falseText":		 "Não",			
+			"monthOfYear":		 "MMMM de YYYY"
 		},
 		"dates": {
 			"days": ["Domingo", "Segunda", "Terça", "Quarta-Feira", "Quinta", "Sexta", "Sábado", "Domingo"],
@@ -64,6 +65,8 @@
 		"msgInvalidPeriod":		"Período inválido.",
 		"msgDeleteError":		"Erro ao excluir o(s) registro(s).",
 		"msgNoResultsFound": 	"Sem resultados.",
+		"msgFieldRequired": 	"Campo \"%s\" é obrigatório. Por favor, informe um valor para o campo.",
+		"msgFieldInvalid": 		"O valor do campo \"%s\" é inválido. Por favor, informe um valor válido para o campo.",
 
 		"res_dashboard":{
 			"name": 				"Visão Geral",

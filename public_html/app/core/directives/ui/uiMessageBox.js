@@ -1,13 +1,13 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive("uiMessageBox", function(){
+app.directive("uiMessageBox", () => {
 	return {
 		restrict: "E",
 		templateUrl: "app/core/views/uiMessageBox.html",
 		replace: true,
-		link: function($scope, element, attrs){
-			var setButtons = function() {
+		link: ($scope, element, attrs) => {
+			var setButtons = () => {
 				var buttons = $scope.messageBoxContent.buttons.toLowerCase().split(';');
 				$scope.btnYes = buttons.indexOf('yes') >= 0;
 				$scope.btnNo = buttons.indexOf('no') >= 0;
@@ -16,7 +16,7 @@ app.directive("uiMessageBox", function(){
 				$scope.btnOk = buttons.indexOf('ok') >= 0;
 			}
 
-			$scope.$watch(attrs.visible, function(value){
+			$scope.$watch(attrs.visible, value => {
 				if(!!value) {
 					if (!!$scope.messageBoxContent){
 						setButtons();
@@ -28,17 +28,8 @@ app.directive("uiMessageBox", function(){
 				}
 			});
 
-			$(element).on('shown.bs.modal', function(){
-				$scope.$apply(function(){
-					$scope.$parent[attrs.visible] = true;
-				});
-			});
-
-			$(element).on('hidden.bs.modal', function(){
-				$scope.$apply(function(){
-					$scope.$parent[attrs.visible] = false;
-				});
-			});
+			$(element).on('shown.bs.modal', () => $scope.$apply(() => $scope.$parent[attrs.visible] = true));
+			$(element).on('hidden.bs.modal', () => $scope.$apply(() => $scope.$parent[attrs.visible] = false));
 		}
 	}
 });

@@ -76,7 +76,7 @@
                 value = value || '';
 
                 // get view value object
-                var viewValue = maskService.getViewValue(value);
+                var viewValue = maskService.getViewValue(value);                
 
                 // get mask without question marks
                 var maskWithoutOptionals = options['maskWithoutOptionals'] || '';
@@ -552,8 +552,7 @@
         function getViewValue(value) {
           try {
             var outputWithoutDivisors = removeDivisors(value);
-            var output = tryDivisorConfiguration(outputWithoutDivisors);
-
+            var output = tryDivisorConfiguration(outputWithoutDivisors);            
             return {
               withDivisors: function(capped) {
                 if (capped) {
@@ -688,7 +687,8 @@
         getOptionals: getOptionalsIndexes
       }
     }]);
-})();(function() {
+})();
+(function() {
   'use strict';
   angular.module('ngMask')
     .factory('UtilService', [function() {
@@ -764,6 +764,25 @@
         lazyProduct: lazyProduct,
         inArray: inArray,
         uniqueArray: uniqueArray
+      }
+    }]);
+})();
+
+(function() {
+  'use strict';
+  angular.module('ngMask')
+    .factory('TextMaskService', ['MaskService', function(MaskService) {
+      function formatText(value, mask) {        
+        if (value === null || value === undefined)
+          return         
+        var maskService = MaskService.create();
+        maskService.generateRegex({mask: mask});        
+        var viewValue = maskService.getViewValue(value).withDivisors(true);         
+        return viewValue;
+      }
+
+      return {
+        formatText: formatText        
       }
     }]);
 })();

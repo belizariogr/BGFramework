@@ -4,15 +4,12 @@ angular.module('languageService', []).provider('language', function(){
 
 	var $this = this;
 	this.http = null;
-
-	this.$get = function() {
-		return this;
-	};
+	this.$get = () => this;
 
 	this.l = {};
 	this.langs = [];
 
-	this.config = function(langList, currentLang){
+	this.config = (langList, currentLang) => {
 		var list = [{code: "en-US", name: 'English (United States)'}];
 		if (!!langList)
 			list = langList;
@@ -20,7 +17,7 @@ angular.module('languageService', []).provider('language', function(){
 		this.setLang(currentLang || list[0].code);
 	}
 
-	this.indexOf = function(lang){
+	this.indexOf = lang => {
 		for (var i = 0; i <= this.langs.length - 1; i++){
 			if (this.langs[i].code.toLowerCase() == lang.toLowerCase())
 				return i;
@@ -28,7 +25,7 @@ angular.module('languageService', []).provider('language', function(){
 		return -1;
 	}
 
-	this.setLang = function(lang, callback){
+	this.setLang = (lang, callback) => {
 		if(this.currentLang == lang)
 			return
 		if (this.indexOf(lang) == -1)
@@ -44,7 +41,7 @@ angular.module('languageService', []).provider('language', function(){
 			}
 
 			this.http.get('lang/' + lang.toLowerCase() + '.lang.json').then(
-				function successCallback(res){
+				res => {
 					$this.l = res.data.values;
 					$this.currentLang = res.data.code;
 
@@ -52,7 +49,7 @@ angular.module('languageService', []).provider('language', function(){
 					app.setTitle(app.currentResource);
 
 				},
-				function errorCallback(res){
+				res => {
 					console.error("Cannot load language file.")
 				}
 			);

@@ -28,8 +28,12 @@
 	<form>
 		<div class=row>
 			<div class="col-md-12 filter-dates">
-				<div class="start-date input-group {{startValueError}}"> </div>
-				<div class="end-date input-group {{endValueError}}"> </div>
+				<div class="start-date input-group {{startValueError}} row">
+					<ui-input-date-time label-size="0" field-id="filter_{{id}}_start" value="startValue" placeholder="{{::startPlaceholder}}" type="date"></ui-input-date-time>
+				</div>
+				<div class="end-date input-group {{endValueError}} row">
+					<ui-input-date-time label-size="0" field-id="filter_{{id}}_end" value="endValue" placeholder="{{::endPlaceholder}}" type="date"></ui-input-date-time>
+				</div>
 			</div>
 		</div>
 		<div class=row ng-show="startValueError || endValueError">

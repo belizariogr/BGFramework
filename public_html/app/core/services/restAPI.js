@@ -3,19 +3,16 @@
 angular.module('restAPIService', []).provider('restAPI', function(){
 
 	this.http = null;
+	this.$get = () => this;
+	this.apiAddress = '';
 
-	this.$get = function() {
-		return this;
-	};
-
-	this.backend_addr = '';
-
-	this.config = function(appConfig, $http){
-		this.backend_addr = appConfig.backend_addr;
+	this.config = (appConfig, $http) => {
+		this.appConfig = appConfig;
+		this.apiAddress = appConfig.apiAddress;
 		this.http = $http;
 	}
 
-	var composeUrl = function(backend_addr, resource, isPublic, page, orderField, sort, others){
+	var composeUrl = (apiAddress, resource, isPublic, page, orderField, sort, others) => {
 		var q = "";
 		if (page)
 			q = 'page=' + page;
@@ -23,58 +20,62 @@ angular.module('restAPIService', []).provider('restAPI', function(){
 			q += (q ? '&' : '') + 'order=' + orderField;
 		if (!!sort)
 			q += (q ? '&' : '') + 'sort=' + sort;
-		if (!!others){			
+		if (!!others){
 			q += (q ? '&' : '') + others;
 		}
 		if (q)
 			q = '?' + q;
 
-		return backend_addr + '/api/' + (isPublic ? '' : 'v1/') + resource + q;
+		return apiAddress + '/api/' + (isPublic ? '' : 'v1/') + resource + q;
 	}
 
-	var getHeaders = function(isPublic){
+	var getHeaders = isPublic => {
 		var h = {'Content-Type': 'application/json;charset=utf-8'};
 		if (!isPublic)
 			h.Authorization = 'Bearer ' + localStorage.getItem("token")
 		return h;
 	}
 
-	this.get = function(resource, isPublic, page, orderField, sort, others){
+	this.get = (resource, isPublic, page, orderField, sort, others) => {
 		return this.http({
 			method: 'GET',
-			url: composeUrl(this.backend_addr, resource, isPublic, page, orderField, sort, others),
-			headers: getHeaders(isPublic)
+			url: composeUrl(this.apiAddress, resource, isPublic, page, orderField, sort, others),
+			headers: getHeaders(isPublic),
+			timeout: this.appConfig.apiTimeout || 15000
 		});
 	};
 
-	this.post = function(resource, isPublic, data){
+	this.post = (resource, isPublic, data) => {
 		if (!isPublic) {
 			return this.http({
 				method: 'POST',
-				url: composeUrl(this.backend_addr, resource, isPublic),
+				url: composeUrl(this.apiAddress, resource, isPublic),
 				headers: getHeaders(isPublic),
+				timeout: this.appConfig.apiTimeout || 15000,
 				data: data
 			});
 		}
 		else{
-			return this.http.post(this.backend_addr + '/api/' + resource, data);
+			return this.http.post(this.apiAddress + '/api/' + resource, data);
 		}
 	};
 
-	this.put = function(resource, isPublic, data){
+	this.put = (resource, isPublic, data) => {
 		return this.http({
 			method: 'PUT',
-			url: composeUrl(this.backend_addr, resource, isPublic),
+			url: composeUrl(this.apiAddress, resource, isPublic),
 			headers: getHeaders(isPublic),
+			timeout: this.appConfig.apiTimeout || 15000,
 			data: data
 		});
 	};
 
-	this.delete = function(resource, isPublic, data){
+	this.delete = (resource, isPublic, data) => {
 		return this.http({
 			method: 'DELETE',
-			url: composeUrl(this.backend_addr, resource, isPublic),
+			url: composeUrl(this.apiAddress, resource, isPublic),
 			headers: getHeaders(isPublic),
+			timeout: this.appConfig.apiTimeout || 15000,
 			data: data
 		});
 	};

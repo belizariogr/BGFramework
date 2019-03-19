@@ -1,12 +1,10 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive('includeReplace', function () {
+app.directive('includeReplace', [() => {
     return {
         require: 'ngInclude',
-        restrict: 'A', /* optional */
-        link: function (scope, el, attrs) {
-            el.replaceWith(el.children());
-        }
+        restrict: 'A',
+        link: (scope, el, attrs) => el.replaceWith(el.children()),
     };
-});
+}]);

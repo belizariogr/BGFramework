@@ -7,91 +7,97 @@
 	</div>
 	<form>
 		<div class="input-group pull-right" id="search-div">
-			<input type="text" class="form-control" placeholder="{{::lang.l.edtSearch}}" ng-model="$parent.searchCriteria" ng-keypress="($event.which === 13) ? search($parent.searchCriteria) : 0">
+			<input type="text" class="form-control" placeholder="{{::lang.l.edtSearch}}" ng-model="$parent.searchCriteria" ng-keypress="($event.which === 13) ? search($parent.searchCriteria) : 0" ng-keydown="($event.which === 27) ? clearSearch() : 0">
+			<div class="filter-active" ng-show="filtered"></div>
 			<div class="input-group-btn">
+				<a role="button" class="btn btn-default" ng-show="!!searchCriteria" ng-click="clearSearch()"><i class="fa fa-times"></i></a>
 				<a role="button" class="btn btn-default" ng-click="search(searchCriteria)"><i class="fa fa-search"></i></a>
+				<a role="button" class="btn btn-default" ng-if="::config.showRefresh" ng-click="refresh(page)"><i class="fa fa-redo"></i></a>
 				<a role="button" class="btn btn-default" ng-if="::filters" ng-click="showFiltersBtnClick()"><i class="fa fa-filter"></i></a>
-				<a role="button" class="btn btn-default" ng-if="::config.showRefresh" ng-click="refresh(page)"><i class="fa fa-refresh"></i></a>
 			</div>
 		</div>
 	</form>
 </div>
 
-<div class="filters-container" ng-if="::filters">
-	<div class="row">
-		<div class="col-md-4">
-			<ui-filter-column filters="filtersCol1"></ui-filter-column>
+<div class="content-container">
+	<div class="filters-container" ng-if="::filters">
+		<div class="loading-dim filters-dim" ng-show="dataset.showDim">
+			<div class="loading-box"><i class="fa fa-spinner fa-pulse fa-fw fa-2x"></i></div>
 		</div>
-		<div class="col-md-4">
-			<ui-filter-column filters="filtersCol2"></ui-filter-column>
+		<div class="row">
+			<div class="col-md-4 filter-col">
+				<ui-filter-column filters="filtersCol1"></ui-filter-column>
+			</div>
+			<div class="col-md-4 filter-col">
+				<ui-filter-column filters="filtersCol2"></ui-filter-column>
+			</div>
+			<div class="col-md-4 filter-col">
+				<ui-filter-column filters="filtersCol3"></ui-filter-column>
+			</div>
 		</div>
-		<div class="col-md-4">
-			<ui-filter-column filters="filtersCol3"></ui-filter-column>
-		</div>
-	</div>
-	<div class="row">
+		<div class="row">
 			<div class="filters-footer">
 				<div class="pull-right">
-					<a role="button" class="btn btn-default" type="submit" style="margin-right: 8px;" ng-click="filter()"><i class="fa fa-filter"></i> {{::lang.l.btnFilter}}</a>
-					<a role="button" class="btn btn-default" ng-click="clearFilters()"><i class="fa fa-times"></i> {{::lang.l.btnClearFilters}}</a>
+					<a role="button" class="btn btn-default" type="submit" style="margin-right: 8px;" data-ng-click="filter()"><i class="fa fa-filter"></i> {{::lang.l.btnFilter}}</a>
+					<a role="button" class="btn btn-default" data-ng-click="clearFilters()"><i class="fa fa-times"></i> {{::lang.l.btnClearFilters}}</a>
 				</div>
 			</div>
 		</div>
-</div>
-<div class="fixed-table-container">
-	<div class="loading-dim" ng-show="dataset.showDim">
-		<div class="loading-box"><i class="fa fa-spinner fa-pulse fa-fw fa-2x"></i></div>
 	</div>
-	<div class="scrollable">
-		<table class="table table-striped table-hover data-grid">
-			<tr class="grid-header">
-				<th class="record-check">
-					<div class="th-inner"><input type="checkbox" ng-model="$parent.checkedAll" ng-disabled="clean"></div>
-				</th>
-				<th ng-repeat="f in visibleFields track by $index" width="{{::f.fieldSize}}%" class="col_{{f.name}}">
-					<div class="th-inner {{f.alignment == 'center' ? 'text-center' : ''}} {{f.alignment == 'right' ? 'text-right' : ''}} {{f.sortable ? 'sortable ' + (f.direction ? f.direction : 'both') : ''}}" ng-click="sort(f)" ng-if="::!f.htmlTitle">
-						{{::lang.l["res_" + config.path].fields[f.name] || f.displayLabel}}
-					</div>
-
-					<div class="th-inner {{f.alignment == 'center' ? 'text-center' : ''}} {{f.alignment == 'right' ? 'text-right' : ''}}" ng-bind-html="f.htmlTitle" ng-if="::f.htmlTitle">
-						{{::lang.l["res_" + config.path].fields[f.name] || f.displayLabel}}
-					</div>
-				</th>
-			</tr>
-			<tr ng-repeat="item in $parent.dataset.rows track by $index">
-				<td class="record-check"><input type="checkbox" ng-model="item.checked" ng-click="itemCheckClick()"></td>
-				<td class="table-data-field col_{{f.name}} {{f.alignment == 'center' ? 'text-center' : ''}} {{f.alignment == 'right' ? 'text-right' : ''}}" ng-click="edit(item)" ng-repeat="f in visibleFields track by $index" width="{{::f.fieldSize}}%"><ng-bind-html ng-bind-html="item[f.name]" ng-if="::f.getHtmlValue"></ng-bind-html>{{f.getHtmlValue ? '' : item[f.name]}}</td>
-			</tr>
-		</table>
+	<div class="fixed-table-container">
+		<div class="loading-dim" ng-show="dataset.showDim">
+			<div class="loading-box"><i class="fa fa-spinner fa-pulse fa-fw fa-2x"></i></div>
+		</div>
+		<div class="scrollable">
+			<table class="table table-striped table-hover data-grid">
+				<tr class="grid-header">
+					<th class="record-check">
+						<div class="th-inner"><input type="checkbox" ng-model="$parent.checkedAll" ng-disabled="clean"></div>
+					</th>
+					<th ng-repeat="f in visibleFields track by $index" width="{{::f.fieldSize}}%" class="col_{{f.name}}">
+						<div class="th-inner {{f.alignment == 'center' ? 'text-center' : ''}} {{f.alignment == 'right' ? 'text-right' : ''}} {{f.sortable ? 'sortable ' + (f.direction ? f.direction : 'both') : ''}}" ng-click="sort(f)" ng-if="::!f.getHtmlTitle()">
+							{{::lang.l["res_" + config.path].fields[f.name] || f.displayLabel}}
+						</div>
+						<div class="th-inner {{f.alignment == 'center' ? 'text-center' : ''}} {{f.alignment == 'right' ? 'text-right' : ''}}" ng-bind-html="trustAsHtml(f.getHtmlTitle())" ng-if="::f.getHtmlTitle()">
+							{{::lang.l["res_" + config.path].fields[f.name] || f.displayLabel}}
+						</div>
+					</th>
+				</tr>
+				<tr ng-repeat="item in $parent.dataset.rows track by $index" class="{{item.$options.customRow ? 'custom-row' : ''}}">
+					<td ng-if="!item.$options || !item.$options.customRow" class="record-check"><input type="checkbox" ng-model="item.checked" ng-click="itemCheckClick()"></td>
+					<td ng-if="!item.$options || !item.$options.customRow" class="table-data-field col_{{f.name}} {{f.alignment == 'center' ? 'text-center' : ''}} {{f.alignment == 'right' ? 'text-right' : ''}}  {{!!f.getHtmlClass ? f.getHtmlClass(item[f.name], item, f) : ''}}" ng-click="!!f.click ? f.click(item) : edit(item)" ng-repeat="f in visibleFields track by $index" width="{{::f.fieldSize}}%">
+						<ng-bind-html ng-bind-html="trustAsHtml(f.getHtmlValue(item[f.name], item, f))" ng-if="::f.getHtmlValue"></ng-bind-html>
+						{{f.getHtmlValue ? '' : item[f.name]}}
+					</td>
+					<td ng-if="!!item.$options.customRow"  ng-include="'/resources/' + config.path + '/row.html'" include-replace></td>
+				</tr>
+			</table>
+		</div>
+		<div class="no-record" ng-show="!!dataset && !dataset.error && !dataset.loading && (!dataset.rows || dataset.rows.length == 0)">
+			{{::lang.l.msgNoRecordFound}}
+		</div>
+		<div class="error-loading" ng-show="!!dataset && !!dataset.error">
+			{{::lang.l.msgLoadingErrorGrid}}
+		</div>
+		<div class="loading" ng-show="dataset.loading">
+			<div class="loading-box">
+				<i class="fa fa-spinner fa-pulse fa-fw"></i> {{::lang.l.msgLoadingGrid}}
+			</div>
+		</div>
 	</div>
-	<div class="no-record" ng-show="!!dataset && !dataset.error && !dataset.loading && (!dataset.rows || dataset.rows.length == 0)">
-		{{::lang.l.msgNoRecordFound}}
-	</div>
-
-	<div class="error-loading" ng-show="!!dataset && !!dataset.error">
-		{{::lang.l.msgLoadingErrorGrid}}
-	</div>
-
-	<div class="loading" ng-show="dataset.loading">
-		<div class="loading-box">
-			<i class="fa fa-spinner fa-pulse fa-fw"></i> {{::lang.l.msgLoadingGrid}}
+	<div class="pagination btn-group" ng-show="!!dataset && !dataset.loading && dataset.pagecount > 1">
+		<ul>
+			<li ng-repeat="i in pages" class="{{i.active ? 'active' : ''}} {{i.disabled ? 'disabled': ''}} {{i.hideSM ? 'hidden400' : ''}}">
+				<a ng-click="goto(i.page)">
+					<i class="fa fa-angle-double-left" ng-if="i.first"></i><i class="fa fa-angle-double-right" ng-if="i.last"></i> {{i.first || i.last ? '' : i.page}}
+				</a>
+			</li>
+		</ul>
+		<div class="pull-right" ng-if="showGoto">
+			<a role="button" id="gotoButton" class="btn btn-default" data-toggle="modal" data-target="#gotoPage"></i> {{::lang.l.btnGoto}}</a>
 		</div>
 	</div>
 </div>
-
-<div class="pagination btn-group" ng-show="!!dataset && !dataset.loading && dataset.pagecount > 1">
-	<ul>
-		<li ng-repeat="i in pages" class="{{i.active ? 'active' : ''}} {{i.disabled ? 'disabled': ''}} {{i.hideSM ? 'hidden400' : ''}}">
-			<a ng-click="goto(i.page)">
-				<i class="fa fa-angle-double-left" ng-if="i.first"></i><i class="fa fa-angle-double-right" ng-if="i.last"></i>  {{i.first || i.last ? '' : i.page}}
-			</a>
-		</li>
-	</ul>
-	<div class="pull-right" ng-if="showGoto">
-		<a role="button" id="gotoButton" class="btn btn-default" data-toggle="modal" data-target="#gotoPage"></i> {{::lang.l.btnGoto}}</a>
-	</div>
-</div>
-
 <div class="modal fade" id="gotoPage" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -112,4 +118,3 @@
 		</div>
 	</div>
 </div>
-

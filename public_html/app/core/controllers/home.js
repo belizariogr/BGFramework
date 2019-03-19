@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module("mainApp");
-app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', function($scope, $rootScope, $window, $location){
+app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', ($scope, $rootScope, $window, $location) => {
 	$scope.homeView = '';
 	$scope.plugins = app.plugins;
 	$scope.lang = app.lang;
@@ -9,27 +9,22 @@ app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', func
 	$scope.currentResource = {
 		name: "",
 		caption: "",
-		icon: ""
+		icon: "",
+		iconClass: ""
 	};
 
 	app.currentResource = $scope.currentResource;
-	app.setTitle = function(){
+	app.setTitle = () => {
 		if (!!$scope.lang.l["res_" + $scope.currentResource.name])
 			$scope.appTitle = app.appConfig.appName + ' :: ' + $scope.lang.l["res_" + $scope.currentResource.name].name;
 		else
 			$scope.appTitle = app.appConfig.appName + ' :: ' + $scope.currentResource.caption;
 	}
 
-	$scope.changeLang = function(lang){
-		app.lang.setLang(lang, function(){
-			location.reload();
-		});
-	}
+	$scope.changeLang = lang => app.lang.setLang(lang, () => location.reload());
+	$scope.isResourceActive = name => name === $scope.currentResource.name;
 
-	$scope.isResourceActive = function(name){
-		return name === $scope.currentResource.name
-	}
-	app.validateToken(app.restAPI, function(err){
+	app.validateToken(app.restAPI, err => {
 		if (!!err)
 			$location.path('/logout');
 		else {
@@ -41,15 +36,12 @@ app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', func
 	$scope.appConfig = app.appConfig;
 
 	var resources = app.appConfig.resources;
-	var groups = app.appConfig.menu_groups;
+	var groups = app.appConfig.menuGroups;
 	$scope.menu = [];
-
-	var curGroup = '';
-
-	var getGroup = function(name){
+	var getGroup = name => {
 		var group = null;
 
-		$scope.menu.forEach(function(g){
+		$scope.menu.forEach(g => {
 			if (g.isGroup && g.name == name){
 				group = g;
 				return false;
@@ -59,7 +51,7 @@ app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', func
 		if (group == null) {
 			var g_icon = "";
 			var g_caption = "";
-			groups.forEach(function(g){
+			groups.forEach(g => {
 				if (g.name == name){
 					g_icon = g.icon;
 					g_caption = g.caption;
@@ -71,35 +63,31 @@ app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', func
 		return group;
 	};
 
-	resources.forEach(function(r){
-		if (r.menu_group == '' || !r.menu_group)
-			$scope.menu.push({name: r.name, caption: r.caption, icon: r.icon, active: false, isGroup: false});
+	resources.forEach(r => {
+		if (r.group == '' || !r.group)
+			$scope.menu.push({name: r.name, caption: r.caption, icon: r.icon, iconClass: r.iconClass, active: false, isGroup: false});
 		else {
-			var group = getGroup(r.menu_group);
-			group.items.push({name: r.name, caption: r.caption, icon: r.icon, active: false, isGroup: false});
+			var group = getGroup(r.group);
+			group.items.push({name: r.name, caption: r.caption, icon: r.icon, iconClass: r.iconClass, active: false, isGroup: false});
 		}
 	});
 
-	$scope.setCurrentResource = function(path){
+	$scope.setCurrentResource = path => {
 		var p = path;
 		if (path){
 			p = path.split('/');
 			p = '/' + p[1];
 		}
 
-		app.appConfig.resources.forEach(function(r){
+		app.appConfig.resources.forEach(r => {
 			if (p === '/' + r.name || (p === '/' && r.name === app.appConfig.resources[0].name)){
-				$scope.currentResource = {
-					name: r.name,
-					caption: r.caption,
-					icon: r.icon
-				};
+				$scope.currentResource = r;
 				app.setTitle();
-				$scope.menu.forEach(function(m){
+				$scope.menu.forEach(m => {
 					m.active = false;
 					if (m.isGroup) {
 						var isActive = false;
-						m.items.forEach(function(s){
+						m.items.forEach(s => {
 							s.active = false;
 							if (s.name == $scope.currentResource.name) {
 								s.active = true;
@@ -119,7 +107,7 @@ app.controller('homeCtrl', ['$scope', '$rootScope', '$window', '$location', func
 	}
 	app.setCurrentResource = $scope.setCurrentResource;
 	$scope.showMessageBox = false;
-	app.messageBox = function(msg){
+	app.messageBox = msg => {
 		$scope.showMessageBox = !$scope.showMessageBox;
 		$scope.messageBoxContent = msg;
 	};

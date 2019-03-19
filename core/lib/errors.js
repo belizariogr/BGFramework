@@ -1,3 +1,3 @@
 "use strict";
 
-module.exports = (code, message) => { throw {code: code, message: message} };
+module.exports = (type, error) => { throw {type: type, error: error} };

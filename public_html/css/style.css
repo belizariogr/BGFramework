@@ -175,14 +175,24 @@ html { overflow-y: scroll; }
 	border: 0px;
 }
 
+.nav-subitem li a {
+	padding-left: 12px;
+	transition: all .3s ease-in-out;
+	-webkit-transition: all .3s ease-in-out;
+}
+
+.toggled-2 .nav-subitem li a {
+	padding-left: 0;
+}
 
 .nav-subitem-open {
 	display: block;
 }
 
 .nav-group:before {
-	content: "\f105";
-	font-family: FontAwesome;
+	font-family: "Font Awesome 5 Free" !important;
+	content: "\f105" !important;
+  font-weight: 600;
 	font-size: 12px;
 	line-height: 10px;
 	height: 10px;
@@ -212,14 +222,12 @@ html { overflow-y: scroll; }
 	border-radius: 0px;
 }
 
-
 .nav-subitem .active a, .nav-subitem .active a:hover, .nav-subitem .active a:focus {
 	background-color: rgba(0,0,0,.4) !important;
 }
 
-
 .sidebar-nav i {
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .sidebar-nav .active i {
@@ -242,6 +250,7 @@ html { overflow-y: scroll; }
 
 .sidebar-nav a span {
 	margin-right: 4px;
+	width: 2em;
 }
 
 .sidebar-nav > .sidebar-brand {
@@ -375,7 +384,7 @@ html { overflow-y: scroll; }
 	margin: 0;
 	padding: 0;
 	background-color: #ffffff;
-	height: 60px;
+	height: 50px;
 	margin: 0;
 	border: 0;
 	width: 100%;
@@ -392,12 +401,13 @@ html { overflow-y: scroll; }
 	display: inline-block;
 	font-size: 18px;
 	font-weight: 300;
-	line-height: 60px;
+	line-height: 50px;
 	margin-top: 0;
 	margin-bottom: 0;
 }
 
 .page-header i {
+	font-size: 20px;
 	margin: 0 12px 0 12px;
 }
 
@@ -498,10 +508,6 @@ html { overflow-y: scroll; }
 
 	#main-navbar-buttons {
 		float: right;
-	}
-
-	#main-navbar-buttons i {
-
 	}
 
 	#wrapper {

@@ -1,35 +1,45 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive("uiDateFilter", ['$compile', '$timeout', function($compile, $timeout){
+app.directive("uiDateFilter", ['$compile', '$timeout', ($compile, $timeout) => {
 	return {
 		restrict: "E",
-		templateUrl: "app/core/views/uiDateFilter.html",
+		template: '\
+	<div class="filter date-filter"><div class="row"><div class="caption col-md-12">{{::displayLabel}}</div></div><div class="row month-container" ng-show="filter.showMonth"><div class=year>\
+	<div class="btn-year minus"><a ng-click=decYear() href><i class="fa fa-chevron-left"></i> </a> </div><div class=year-number> <a ng-click=yearClick() href>{{Year}}</a> </div>\
+	<div class="btn-year plus"> <a ng-click=incYear() href> <i class="fa fa-chevron-right"></i> </a> </div></div></div><div class=row><div class="months col-md-12" ng-show="filter.showMonth">\
+	<div class={{months[1]}}><a ng-click=monthClick(1) href>{{::lang.l.dates.months[0]}}</a></div><div class="{{months[2]}} mid"><a ng-click=monthClick(2) href>{{::lang.l.dates.months[1]}}</a></div>\
+	<div class={{months[3]}}><a ng-click=monthClick(3) href>{{::lang.l.dates.months[2]}}</a></div><div class={{months[4]}}><a ng-click=monthClick(4) href>{{::lang.l.dates.months[3]}}</a></div>\
+	<div class="{{months[5]}} mid"><a ng-click=monthClick(5) href>{{::lang.l.dates.months[4]}}</a></div><div class={{months[6]}}><a ng-click=monthClick(6) href>{{::lang.l.dates.months[5]}}</a></div>\
+	<div class={{months[7]}}><a ng-click=monthClick(7) href>{{::lang.l.dates.months[6]}}</a></div><div class="{{months[8]}} mid"><a ng-click=monthClick(8) href>{{::lang.l.dates.months[7]}}</a></div>\
+	<div class={{months[9]}}><a ng-click=monthClick(9) href>{{::lang.l.dates.months[8]}}</a></div><div class={{months[10]}}><a ng-click=monthClick(10) href>{{::lang.l.dates.months[9]}}</a></div>\
+	<div class="{{months[11]}} mid"><a ng-click=monthClick(11) href>{{::lang.l.dates.months[10]}}</a></div><div class={{months[12]}}><a ng-click=monthClick(12) href>{{::lang.l.dates.months[11]}}</a></div>\
+	</div></div><form><div class=row><div class="col-md-12 filter-dates"><div class="start-date input-group {{startValueError}} row"><ui-input-date-time label-size="0" field-id="filter_{{id}}_start" value="startValue" placeholder="{{::startPlaceholder}}" type="date"></ui-input-date-time>\
+	</div><div class="end-date input-group {{endValueError}} row"><ui-input-date-time label-size="0" field-id="filter_{{id}}_end" value="endValue" placeholder="{{::endPlaceholder}}" type="date"></ui-input-date-time>\
+	</div></div></div><div class=row ng-show="startValueError || endValueError"><div class="col-md-6 filter-alert alert alert-danger">{{::lang.l.msgInvalidPeriod}}</div></div></form></div>',
 		replace: true,
 		scope: {
 			filter: '='
 		},
-		link: function($scope, element, attrs){
-
+		link: ($scope, element, attrs) => {
 			$scope.Year = (new Date()).getFullYear();
 			$scope.months = [,,,,,,,,,,,];
-			var selectMonth = function(){
+
+			$scope.selectMonth = () => {
 				if (!$scope.filter.showMonth)
 					return
 				$scope.months = [,,,,,,,,,,,];
 				if (!$scope.startValue || !$scope.endValue)
 					return
-				var f = decodeDate($scope.startValue, app.lang.l.formats.date);
-				var l = decodeDate($scope.endValue, app.lang.l.formats.date);
-				var lastDay = lastDayOfMonth($scope.endValue, app.lang.l.formats.date).getDate();
+				let f = decodeDate($scope.startValue, app.lang.l.formats.date);
+				let l = decodeDate($scope.endValue, app.lang.l.formats.date);
+				let lastDay = lastDayOfMonth($scope.endValue, app.lang.l.formats.date).getDate();
 				if (!!f && !!l && f.day == 1 && l.day == lastDay && f.month == l.month && f.year == l.year && f.year == $scope.Year)
 					$scope.months[f.month] = 'active';
 			}
 
 			$scope.lang = app.lang;
-
-
-
+			$scope.id = $scope.filter.name ||  $scope.filter.field || "";
 			var f = $scope.$parent.$parent.config.findField($scope.filter.field);
 			try{
 				$scope.displayLabel = app.lang.l["res_" + $scope.$parent.$parent.config.path]["fields"][f.name] || f.displayLabel || f.name;
@@ -41,156 +51,40 @@ app.directive("uiDateFilter", ['$compile', '$timeout', function($compile, $timeo
 				}
 			}
 
-			if (!!app.lang.l["languageCode"] && app.lang.l["languageCode"] != 'en'){
-				$.fn.datetimepicker.dates[app.lang.l["languageCode"]] = {
-				    days: app.lang.l["dates"]["days"],
-				    daysShort: app.lang.l["dates"]["daysShort"],
-				    daysMin: app.lang.l["dates"]["daysMin"],
-				    months: app.lang.l["dates"]["months"],
-				    monthsShort: app.lang.l["dates"]["monthsShort"],
-				    today: app.lang.l["dates"]["today"],
-				    meridiem: ''
-				};
-			}
-
-
-			$scope.dataFormat = app.lang.l.formats.date;
-			$scope.dataMask = app.lang.l.masks.date || '99/99/9999';
-			$scope.lastValidStartDate = null;
-			$scope.startValueError = '';
-			$scope.endValueError = '';
-
-			var init = function(){
-				$scope.startGroup = $(element).find('.start-date');
-				var input = '<input class="form-control" ng-model="startValue" ng-blur="onStartExit()" type="text" id="input_start_' + $scope.filter.name + '" placeholder="' + app.lang.l.edtStartDateFilter + '" ng-readonly="readOnly" mask="' + $scope.dataMask + '"></input><a role="button" class="btn btn-default input-group-addon add-on"> <i class="fa fa-calendar"></a>';
-				$scope.startGroup.append($compile(input)($scope));
-				$scope.startGroup.datetimepicker({
-					language: app.lang.l.languageCode || 'en',
-					pickTime: false,
-					pickDate: true,
-					format: $scope.dataFormat,
-				});
-				$scope.startPicker = $scope.startGroup.data('datetimepicker');
-				$scope.startPicker.setDate(null);
-				$scope.startGroup.on('changeDate', function(ev){
-					var oldValue;
-					if (!!$scope.startValue && isDate($scope.startValue, app.lang.l.formats.date))
-						oldValue = $scope.startValue;
-					var newValue;
-					if (ev.date)
-						newValue = formatDate(convertLocalDateToUTCDate(ev.date), app.lang.l.formats.date);
-					if ((!oldValue && !!newValue) || (!!oldValue && !newValue) || (oldValue && newValue && (newValue !== oldValue))){
-						if ($scope.startPicker.viewMode == 0 && !$scope.startPicker.pickingTime())
-							$scope.startPicker.hide();
-						$timeout(function(){
-							$scope.startGroup.find('input').trigger('input');
-							$scope.startGroup.find('input').trigger('change');
-						});
-					}
-				});
-
-				$scope.endGroup = $(element).find('.end-date');
-				var input = '<input class="form-control" ng-model="endValue" ng-blur="onEndExit()" type="text" id="input_start_' + $scope.filter.name + '" placeholder="' + app.lang.l.edtEndDateFilter + '" ng-readonly="readOnly" mask="' + $scope.dataMask + '"></input><a role="button" class="btn btn-default input-group-addon add-on"> <i class="fa fa-calendar"></a>';
-				$scope.endGroup.append($compile(input)($scope));
-				$scope.endGroup.datetimepicker({
-					language: app.lang.l["languageCode"] || 'en',
-					pickTime: false,
-					pickDate: true,
-					format: $scope.dataFormat,
-				});
-				$scope.endPicker = $scope.endGroup.data('datetimepicker');
-				$scope.endPicker.setDate(null);
-				$scope.endGroup.on('changeDate', function(ev){
-					var oldValue;
-					if (!!$scope.startValue && isDate($scope.endValue, app.lang.l.formats.date))
-						oldValue = $scope.endValue;
-					var newValue;
-					if (ev.date)
-						newValue = formatDate(convertLocalDateToUTCDate(ev.date), app.lang.l.formats.date);
-					if ((!oldValue && !!newValue) || (!!oldValue && !newValue) || (oldValue && newValue && (newValue !== oldValue))){
-						if ($scope.endPicker.viewMode == 0 && !$scope.endPicker.pickingTime())
-							$scope.endPicker.hide();
-						$timeout(function(){
-							$scope.endGroup.find('input').trigger('input');
-							$scope.endGroup.find('input').trigger('change');
-						});
-					}
-				});
-			}
-
-			$scope.$watch('startValue', function(newValue, oldValue){
-				if (!$scope.startPicker)
-					return
-				if (isDate(newValue, app.lang.l.formats.date)) {
-					var d = new Date(getDateFromFormat(newValue, app.lang.l.formats.date));
-					$scope.startPicker.setDate(convertUTCDateToLocalDate(d));
-					$scope.lastValidStartDate = d;
-					selectMonth();
-				} else if (!newValue)
-					selectMonth();
+			element.find('input').on("keyup", e => {
+				if (e.which === 13)
+					$scope.$parent.$parent.filter();
 			});
 
+			$scope.startPlaceholder = app.lang.l.edtStartDateFilter;
+			$scope.endPlaceholder = app.lang.l.edtStartDateFilter;
 
-
-			$scope.onStartExit = function(){
-				if (!$scope.startValue) {
-					$scope.lastValidStartDate = null;
-				} else if (!isDate($scope.startValue, app.lang.l.formats.date)) {
-					if (!!$scope.lastValidStartDate)
-						$scope.startValue = formatDate($scope.lastValidStartDate, app.lang.l.formats.date);
-					else
-						$scope.startValue = null;
-				}
-			}
-
-
-			$scope.$watch('endValue', function(newValue, oldValue){
-				if (!$scope.endPicker)
-					return
-				if (isDate(newValue, app.lang.l.formats.date)) {
-					var d = new Date(getDateFromFormat(newValue, app.lang.l.formats.date));
-					$scope.endPicker.setDate(convertUTCDateToLocalDate(d));
-					$scope.lastValidEndDate = d;
-					selectMonth();
-				} else if (!newValue)
-					selectMonth();
-			});
-
-			$scope.onEndExit = function(){
-				if (!$scope.endValue) {
-					$scope.lastValidEndDate = null;
-				} else if (!isDate($scope.endValue, app.lang.l.formats.date)) {
-					if (!!$scope.lastValidEndDate)
-						$scope.endValue = formatDate($scope.lastValidEndDate, app.lang.l.formats.date);
-					else
-						$scope.endValue = null;
-				}
-			}
-
-			$scope.monthClick = function(m){
+			$scope.dataFormat = app.lang.l.formats["date"] || 'MM/dd/yyyy'
+			$scope.monthClick = m => {
 				var d = new Date($scope.Year, m - 1, 1);
 				$scope.startValue = encodeDate($scope.Year, m, 1, app.lang.l.formats.date);
 				$scope.endValue = formatDate(lastDayOfMonth(d), app.lang.l.formats.date);
 				$scope.$parent.$parent.filter();
 			}
 
-			$scope.yearClick = function(){
+			$scope.yearClick = () => {
 				$scope.startValue = encodeDate($scope.Year, 1, 1, app.lang.l.formats.date);
 				$scope.endValue = encodeDate($scope.Year, 12, 31, app.lang.l.formats.date);
 				$scope.$parent.$parent.filter();
 			}
 
-			$scope.decYear = function(){
+			$scope.decYear = () => {
 				$scope.Year--;
-				selectMonth();
+				$scope.selectMonth();
 			}
 
-			$scope.incYear = function(){
+			$scope.incYear = () => {
 				$scope.Year++;
-				selectMonth();
+				$scope.selectMonth();
 			}
 
-			$scope.filter.clearFilter = function(){
+			$scope.filter.clearFilter = () => {
+				$scope.Year = (new Date()).getFullYear();
 				$scope.filter.used = false;
 				$scope.startValue = '';
 				$scope.endValue = '';
@@ -198,7 +92,20 @@ app.directive("uiDateFilter", ['$compile', '$timeout', function($compile, $timeo
 				$scope.endValueError = '';
 			}
 
-			$scope.filter.execFilter = function(){
+			$scope.filter.setStartValue = (v) => {
+				$scope.startValue = formatDate(v, app.lang.l.formats.date);
+				$scope.filter.startValue = formatDate(v, 'yyyy-MM-dd');
+			}
+
+			$scope.filter.setEndValue = (v) => {
+				$scope.endValue = formatDate(v, app.lang.l.formats.date);
+				$scope.filter.endValue = formatDate(v, 'yyyy-MM-dd');
+			}
+
+			$scope.$watch('startValue', (n, o) => {$scope.selectMonth();});
+			$scope.$watch('endValue', (n, o) => {$scope.selectMonth();});
+
+			$scope.filter.execFilter = () => {
 				$scope.filter.used = false;
 				$scope.startValueError = '';
 				$scope.endValueError = '';
@@ -219,9 +126,8 @@ app.directive("uiDateFilter", ['$compile', '$timeout', function($compile, $timeo
 				if ($scope.startValueError || $scope.endValueError)
 					return
 
-				$scope.filter.startValue = new Date(getDateFromFormat($scope.startValue, app.lang.l.formats.date));
-				$scope.filter.endValue = new Date(getDateFromFormat($scope.endValue, app.lang.l.formats.date));
-
+				$scope.filter.startValue = parseDate($scope.startValue, app.lang.l.formats.date);
+				$scope.filter.endValue = parseDate($scope.endValue, app.lang.l.formats.date);
 				if ($scope.filter.startValue > $scope.filter.endValue)
 					$scope.endValueError = "has-error";
 				if (!!$scope.startValueError || !!$scope.endValueError)
@@ -229,20 +135,20 @@ app.directive("uiDateFilter", ['$compile', '$timeout', function($compile, $timeo
 				$scope.filter.startValue = formatDate($scope.filter.startValue, 'yyyy-MM-dd');
 				$scope.filter.endValue = formatDate($scope.filter.endValue, 'yyyy-MM-dd');
 				$scope.filter.used = true;
+				$scope.selectMonth();
 			}
 
-			var initialize = function(){
+			var initialize = () => {
 				if (isDate($scope.filter.startValue, 'yyyy-MM-dd'))
-					$scope.startValue = formatDate(new Date(getDateFromFormat($scope.filter.startValue, 'yyyy-MM-dd')), app.lang.l.formats.date);
+					$scope.startValue = formatDate(parseDate($scope.filter.startValue, 'yyyy-MM-dd'), app.lang.l.formats.date);
 				if (isDate($scope.filter.endValue, 'yyyy-MM-dd'))
-					$scope.endValue = formatDate(new Date(getDateFromFormat($scope.filter.endValue, 'yyyy-MM-dd')), app.lang.l.formats.date);
-
+					$scope.endValue = formatDate(parseDate($scope.filter.endValue, 'yyyy-MM-dd'), app.lang.l.formats.date);
 				if (!($scope.startValue && $scope.endValue))
 					$scope.filter.clearFilter();
 				else
-					selectMonth();
+					$scope.selectMonth();
 			}
-			$timeout(init);
+
 			if ($scope.filter.used)
 				initialize();
 			else

@@ -18,7 +18,8 @@
 			"timeSeparator":	 ":",
 			"decimalSeparator":	 ".",
 			"thousandSeparator": ",",
-			"24Hour" :			 "false"
+			"24Hour" :			 "false",
+			"monthOfYear":		 "MMMM of YYYY"
 		},
 		"dates": {
 			"months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -58,6 +59,8 @@
 		"msgSaveError":			"Could not save the record.",
 		"msgInvalidPeriod":		"Invalid period.",
 		"msgNoResultsFound": 	"No results.",
+		"msgFieldRequired": 	"Field \"%s\" is required. Please, enter a value for the field.",
+		"msgFieldInvalid": 		"The value of field \"%s\" is invalid. Please, enter a valid value for the field.",
 
 		"res_dashboard":{
 			"name": 				"Dashboard"

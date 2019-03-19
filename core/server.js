@@ -18,41 +18,53 @@ global.SQLHelper = require('./lib/sqlhelper');
 
 class Server {
 
-	constructor(config, worker) {		
-		this.config = config;	
-		this.worker = worker;		
+	constructor(config, worker) {
+		this.config = config;
+		this.worker = worker;
 		this.initHttpServer();
 		this.initServices();
 		this.initMiddleware();
 		this.initDatabase();
 	}
 
-	initHttpServer() {		
+	initHttpServer() {
 		this.express = require('express');
 		this.secureRouter = this.express.Router();
 		this.cors = require('cors');
 		this.httpServer = this.express();
-		this.httpServer.use(this.cors());
+
+		if (this.config.allowedOrigins.indexOf('*') >= 0)
+			this.httpServer.use(this.cors())
+		else
+			this.httpServer.use(this.cors({
+				origin: (origin, callback) => {
+					if(!origin)
+						return callback(null, true);
+					if(this.config.allowedOrigins.indexOf(origin) === -1)
+						return callback('Cors blocked origin: ' + origin);
+					return callback(null, true);
+				}
+		}));
 	}
 
 	initServices() {
 		this.bcrypt = require('bcrypt');
 		this.saltRounds = 10;
 		this.routes = new Routes(this);
-		this.tokenService = new TokenService(this.config);	
+		this.tokenService = new TokenService(this.config);
 		this.extras = Resources.getExtras();
 		this.resources = Resources.getResources();
 	}
 
-	initMiddleware() {		
+	initMiddleware() {
 		this.bodyParser = require('body-parser');
 		if (this.config.usePublicHtml)
 			this.httpServer.use(this.express.static('public_html'));
-		this.httpServer.use(this.bodyParser.json());		
+		this.httpServer.use(this.bodyParser.json());
 
 		let contexts = Object.keys(this.resources);
-		contexts.forEach(context => this.httpServer.use('/api/' + context, this.secureRouter));		
-		
+		contexts.forEach(context => this.httpServer.use('/api/' + context, this.secureRouter));
+
 		this.httpServer.use((req, res, next) => {
 			req.server = this;
 			next();
@@ -61,26 +73,26 @@ class Server {
 		this.secureRouter.use((req, res, next) => {
 			req.server = this;
 			let auth = req.headers.authorization || '';
-			let token = auth.substring(7);			
+			let token = auth.substring(7);
 			if (!auth.startsWith("Bearer "))
-				return res.status(401).json({error: 'You need a valid token to acess the server.'});			
+				return res.status(401).json({error: 'You need a valid token to acess the server.'});
 			try{
-				req.token_obj = this.tokenService.verify(token);				
+				req.token_obj = this.tokenService.verify(token);
 				if (!req.token_obj)
 					return res.status(401).json({error: 'You need a valid token to acess the server.'})
 				req.$systemUser = req.token_obj.SystemUser;
-				if (req.method == "POST" || req.method == "PUT" || req.method == "DELETE"){										
+				if (req.method == "POST" || req.method == "PUT" || req.method == "DELETE"){
 					if (Array.isArray(req.body))
 						req.body.forEach(b => b[req.server.config.systemUserField] = req.token_obj.Id);
 					else if (typeof req.body == "object")
 						req.body[req.server.config.systemUserField] = req.token_obj.Id;
-				} else 
+				} else
 					req.query[req.server.config.systemUserField] = req.token_obj.Id;
 				next();
 			} catch(err){
 				res.status(401).json({error: 'You need a valid token to acess the server.'})
 			}
-		}); 
+		});
 
 		RouteResolver.getRoutes(this);
 		RouteResolver.resolveRequests(this);

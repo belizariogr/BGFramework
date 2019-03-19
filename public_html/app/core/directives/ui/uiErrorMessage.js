@@ -1,7 +1,7 @@
 'use strict';
 
 var app = angular.module('mainApp');
-app.directive("uiErrorMessage", function(){
+app.directive("uiErrorMessage", () => {
 	return {
 		restrict: "E",
 		transclude: true,

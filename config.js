@@ -10,6 +10,11 @@ module.exports = {
 
 	// Public HTML
 	usePublicHtml: true,
+	allowedOrigins: [
+		'*' // allow every orign
+		//'http://localhost',
+        // 'http://yourapp.com'
+	],
 
 	//Cluster
 	useCluster: false,
@@ -18,13 +23,14 @@ module.exports = {
 	// Database Information
 	databaseType: 'mysql',
 
+	//MySQL
 	mysqlHost: 'localhost',
 	mysqlPort: 3306,
 	mysqlUser: 'root',
 	mysqlPass: '12345',
-	mysqlDatabase: 'bgframework',
+	mysqlDatabase: 'finance',
 	mysqlConnectionLimit: 50,
-
+	//Firebird
 	fbHost: 'localhost',
 	fbUser: 'SYSDBA',
 	fbPass: 'masterkey',
@@ -53,6 +59,7 @@ module.exports = {
 
 	// Records Information
 	pageRecords: 20,
+	fieldOverflowAction: "trim",  // The options are: "trim" and "throw"
 
 	// Token
 	jwtPassword: '123456', // Dont forget to change this property.

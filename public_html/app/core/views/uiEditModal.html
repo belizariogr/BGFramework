@@ -1,5 +1,5 @@
 <div id="editModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog {{::config.modalLarge? 'modal-lg' : ''}}">
         <div class="modal-content">
         <form ng-disabled="errorLoading">
             <div class="modal-header">
@@ -11,16 +11,26 @@
                     <div class="loading-box"><i class="fa fa-spinner fa-pulse fa-fw fa-2x"></i></div>
                 </div>
 
-                <div class="form-group">
-                        <ng-include src="editPath" />
+                <div class="loading-dim" ng-show="errorLoading">
+                    <div class="dim-error">
+                        <ui-error-message ng-show="showEditError">
+                            <div ng-bind-html="editErrorMsg"></div>
+                        </ui-error-message>
+                   </div>
                 </div>
-                <ui-error-message ng-show="showEditError">{{editErrorMsg}}</ui-error-message>
+
+                <div class="form-group edit-content">
+                    <ng-include src="editPath" />
+                </div>
+                <ui-error-message ng-show="showEditError && !errorLoading">
+                    <div ng-bind-html="editErrorMsg"></div>
+                </ui-error-message>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" data-ng-click="save()" ng-disabled="errorLoading || showEditDim || editDisable">
+                <button type="submit" class="btn-save btn btn-primary" data-ng-click="save()" ng-disabled="errorLoading || showEditDim || editDisable">
                     {{::lang.l.btnSave}}
                 </button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" ng-disabled="showEditDim">
+                <button type="button" class="btn-cancel btn btn-default" data-dismiss="modal">
                     {{::lang.l.btnCancel}}
                 </button>
             </div>
